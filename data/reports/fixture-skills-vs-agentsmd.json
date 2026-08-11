@@ -1,0 +1,281 @@
+{
+  "slug": "fixture-skills-vs-agentsmd",
+  "fixture": true,
+  "title": "Fixture: skills vs AGENTS.md on identical guidance (synthetic sample data)",
+  "summary": "FIXTURE DATA. Packaging identical guidance as a skill versus a flat AGENTS.md file showed no detectable difference on this synthetic sample (delta -0.1 points, 95% CI -9.7 to +9.5). Both guided arms passed about 6 points more of the 587 judged executions than the no-guidance arm. Every number on this page is invented to exercise the report template.",
+  "taskSet": "sample-guidance-40 (fixture task set)",
+  "taskCount": 40,
+  "replicates": 5,
+  "venue": "self-run",
+  "arms": [
+    {
+      "armId": "skill",
+      "pinning": {
+        "harness": {
+          "id": "fixture-harness",
+          "version": "2.0.0"
+        },
+        "loadout": {
+          "id": "guidance-as-skill"
+        }
+      }
+    },
+    {
+      "armId": "agents-md",
+      "pinning": {
+        "harness": {
+          "id": "fixture-harness",
+          "version": "2.0.0"
+        },
+        "loadout": {
+          "id": "guidance-as-agents-md"
+        }
+      }
+    },
+    {
+      "armId": "no-guidance",
+      "pinning": {
+        "harness": {
+          "id": "fixture-harness",
+          "version": "2.0.0"
+        },
+        "loadout": {
+          "id": "none"
+        }
+      }
+    }
+  ],
+  "method": {
+    "id": "wilson",
+    "version": "1",
+    "parameters": {
+      "confidence": 0.95,
+      "verdictRule": "sole"
+    },
+    "preregistered": true
+  },
+  "lockedAt": "2026-08-09T14:20:11Z",
+  "reportedAt": "2026-08-10T21:05:37Z",
+  "headline": {
+    "skill": {
+      "n": 196,
+      "pass": 74,
+      "passRate": "0.378",
+      "wilsonInterval": {
+        "low": "0.312",
+        "high": "0.448"
+      }
+    },
+    "agents-md": {
+      "n": 195,
+      "pass": 74,
+      "passRate": "0.379",
+      "wilsonInterval": {
+        "low": "0.313",
+        "high": "0.450"
+      }
+    },
+    "no-guidance": {
+      "n": 196,
+      "pass": 62,
+      "passRate": "0.316",
+      "wilsonInterval": {
+        "low": "0.253",
+        "high": "0.385"
+      }
+    }
+  },
+  "completeness": {
+    "expected": 600,
+    "judged": 587
+  },
+  "attrition": {
+    "task-failure": 0,
+    "infrastructure-failure": 0,
+    "unscorable": 9,
+    "expired": 4,
+    "missing": 0,
+    "conflicted": 0,
+    "cancellation-drained": 0
+  },
+  "conflicted": {
+    "count": 0,
+    "cellKeys": []
+  },
+  "assurance": {
+    "preset": "deterministic-tests",
+    "resolved": {
+      "independence": "disclosed",
+      "minVerdicts": 1,
+      "distinctEvaluator": false,
+      "verdictRule": "sole"
+    },
+    "disclosure": "Distinct evaluator identities are workspace-minted keys; they prove agent-distinctness, not party-independence, on this self-run venue."
+  },
+  "disclosures": {
+    "integrityTierCounts": {
+      "re-derivable": 587,
+      "attested-only": 0
+    },
+    "pinningUnverifiableCounts": {
+      "harness": 0,
+      "model": 0,
+      "loadout": 0,
+      "isolation": 600
+    }
+  },
+  "limitations": [
+    "FIXTURE: every number in this bundle is synthetic sample data; nothing was run.",
+    "This is a self-run venue: the same operator controls task dispatch, execution, and evaluation. Locking the method is a discipline, not a proof against the run owner.",
+    "The minimum detectable effect declared before the run is 4 points; a smaller real difference would look exactly like this null.",
+    "One agent, one model, one instruction set: the measurement covers this content on these tasks, not skills in general.",
+    "Task contamination cannot be ruled out: tasks postdate the model's stated training cutoff per repo history, but semantic overlap with public code is possible.",
+    "3 disclosed preview runs preceded the lock; none entered official results.",
+    "Cost figures are self-reported from this venue's own resource observations; nothing settled them."
+  ],
+  "rehearsal": {
+    "previewCount": 3,
+    "timestamps": [
+      "2026-08-05T09:12:00Z",
+      "2026-08-06T10:03:00Z",
+      "2026-08-07T16:41:00Z"
+    ]
+  },
+  "verification": {
+    "command": "colophon bundle verify --bundle <bundle-dir> --json",
+    "checks": [
+      "manifest",
+      "evidence-closure",
+      "trust",
+      "matrix-rederivation",
+      "report-verification",
+      "claim-consistency"
+    ],
+    "trustRoot": "Signatures verify against the bundle-carried public keys minted by this workspace; there is no third-party trust anchor on the self-run venue."
+  },
+  "digests": {
+    "bundleIdentity": "b8690a76bb8ea2ee27a54a774ba268c2f2c62c817860b0b13b79d321d2cc954a",
+    "benchmarkSha256": "26432f82108688e7eb195ff063f08f4215a42c0af08ce35914cd9c880008c64a",
+    "runSha256": "282812892f0c730f7e50e4822bf80d2fc00f7604b15e8ad3df710e7edf470ded",
+    "matrixSha256": "ecd93812b8fdacae91adfdd43a32e9d7fc55ad40b6ea0fa4025e3617056c369b",
+    "reportSha256": "913542b904f45fc34fc74c60f00750c539f174229d9a3561be6479958621ed1a",
+    "reportEnvelopeSha256": "0d916e8d433494192645dc05e8144c9fe90d313a3fe52d1a81b8c13afe349f06"
+  },
+  "files": [
+    {
+      "path": "bundle.json",
+      "bytes": 3723,
+      "sha256": "b8690a76bb8ea2ee27a54a774ba268c2f2c62c817860b0b13b79d321d2cc954a"
+    },
+    {
+      "path": "README.md",
+      "bytes": 793,
+      "sha256": "aaa4415eb546fdb9c77b9bbbebf9cac77c50696fc3ea1fda9c74dc99a2d13944"
+    },
+    {
+      "path": "badge.svg",
+      "bytes": 640,
+      "sha256": "618e32a02f3b8b4300a35cd0889cb681781a6b1a0b80a9cbfb9526bc63e8e247"
+    },
+    {
+      "path": "benchmark.json",
+      "bytes": 812,
+      "sha256": "26432f82108688e7eb195ff063f08f4215a42c0af08ce35914cd9c880008c64a"
+    },
+    {
+      "path": "claim-package.json",
+      "bytes": 5270,
+      "sha256": "7f99920062abe68d0cdb25118c01da111fa81bc6bcf3d83d9ff1af5f51bf9b61"
+    },
+    {
+      "path": "evidence.json",
+      "bytes": 938,
+      "sha256": "ceed53f82fc5161418cfbdf7a71dabe84c9a323943f4f6ea4426210cbbe458e0"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1658,
+      "sha256": "c1bdbba78b0de1b18ffed71a3b5df45f4546520fc208ee517d784f1d5e519fcf"
+    },
+    {
+      "path": "matrix.json",
+      "bytes": 828,
+      "sha256": "ecd93812b8fdacae91adfdd43a32e9d7fc55ad40b6ea0fa4025e3617056c369b"
+    },
+    {
+      "path": "records/2c481f407d3cdb4ca8e250a3bf6c0b6e8f210f8b18b4415827aa02eaa1b74353.bin",
+      "bytes": 339,
+      "sha256": "2c481f407d3cdb4ca8e250a3bf6c0b6e8f210f8b18b4415827aa02eaa1b74353"
+    },
+    {
+      "path": "records/442b341e9dda802b0dd9c29ce4f5a9d34c261d0a22b3663458a56cd48b2e6c92.bin",
+      "bytes": 215,
+      "sha256": "442b341e9dda802b0dd9c29ce4f5a9d34c261d0a22b3663458a56cd48b2e6c92"
+    },
+    {
+      "path": "records/70688131176ef0629e51e71068e99fe57206cf75cc4af413e0ee56c9f2703522.bin",
+      "bytes": 339,
+      "sha256": "70688131176ef0629e51e71068e99fe57206cf75cc4af413e0ee56c9f2703522"
+    },
+    {
+      "path": "records/7306d226d1d508caab2eca9d074fc6711c91661a54770de508c4a10bbef4fef8.bin",
+      "bytes": 339,
+      "sha256": "7306d226d1d508caab2eca9d074fc6711c91661a54770de508c4a10bbef4fef8"
+    },
+    {
+      "path": "records/9721fd583f3b8c8a7ee146ed7fe781069a11a8931e58bdfeb39b7357e0e2451a.bin",
+      "bytes": 245,
+      "sha256": "9721fd583f3b8c8a7ee146ed7fe781069a11a8931e58bdfeb39b7357e0e2451a"
+    },
+    {
+      "path": "records/fba849cedb4a23f4dddcc825829ccc28884d553a9266e80e2994b4636d4085e7.bin",
+      "bytes": 238,
+      "sha256": "fba849cedb4a23f4dddcc825829ccc28884d553a9266e80e2994b4636d4085e7"
+    },
+    {
+      "path": "report-envelope.json",
+      "bytes": 290,
+      "sha256": "0d916e8d433494192645dc05e8144c9fe90d313a3fe52d1a81b8c13afe349f06"
+    },
+    {
+      "path": "report.json",
+      "bytes": 1751,
+      "sha256": "913542b904f45fc34fc74c60f00750c539f174229d9a3561be6479958621ed1a"
+    },
+    {
+      "path": "run.json",
+      "bytes": 564,
+      "sha256": "282812892f0c730f7e50e4822bf80d2fc00f7604b15e8ad3df710e7edf470ded"
+    },
+    {
+      "path": "share.txt",
+      "bytes": 335,
+      "sha256": "71c378a0456761107bb0396c6191d4ae786f2459b80cc0e6f44215adcce3c673"
+    },
+    {
+      "path": "social-card.svg",
+      "bytes": 1351,
+      "sha256": "04d9843ef4e31dadfceb893ec20e618e38e21f8b29bc308e575035262d466675"
+    },
+    {
+      "path": "static-bundle.json",
+      "bytes": 257,
+      "sha256": "42a6ebc7d870bb3d419523005143dffcd3554bf0c47800b85c9bb64526c73ac3"
+    },
+    {
+      "path": "trust/public-keys.json",
+      "bytes": 410,
+      "sha256": "56ad269ff9be4cde6a71ae3353403e345e6dc5cbef7d2d081b2915863c5b2676"
+    },
+    {
+      "path": "verdicts.json",
+      "bytes": 390,
+      "sha256": "052b52df85252df563eaf39531f3f0261ef96f10da66c23ec768335aa755b434"
+    },
+    {
+      "path": "verification/assembly.jsonl",
+      "bytes": 433,
+      "sha256": "e5c0e2db2bdd80ee07864020cbb63a3089499e2dfa8f298f40b635631fe61ac0"
+    }
+  ]
+}

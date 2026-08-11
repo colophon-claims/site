@@ -1,0 +1,42 @@
+{
+  "fixture": true,
+  "schema": "benchmark-product.bundle-evidence/1",
+  "records": [
+    {
+      "sha256": "2c481f407d3cdb4ca8e250a3bf6c0b6e8f210f8b18b4415827aa02eaa1b74353",
+      "roles": [
+        "task"
+      ]
+    },
+    {
+      "sha256": "70688131176ef0629e51e71068e99fe57206cf75cc4af413e0ee56c9f2703522",
+      "roles": [
+        "task"
+      ]
+    },
+    {
+      "sha256": "7306d226d1d508caab2eca9d074fc6711c91661a54770de508c4a10bbef4fef8",
+      "roles": [
+        "task"
+      ]
+    },
+    {
+      "sha256": "fba849cedb4a23f4dddcc825829ccc28884d553a9266e80e2994b4636d4085e7",
+      "roles": [
+        "evaluation-spec"
+      ]
+    },
+    {
+      "sha256": "442b341e9dda802b0dd9c29ce4f5a9d34c261d0a22b3663458a56cd48b2e6c92",
+      "roles": [
+        "solve-delivery"
+      ]
+    },
+    {
+      "sha256": "9721fd583f3b8c8a7ee146ed7fe781069a11a8931e58bdfeb39b7357e0e2451a",
+      "roles": [
+        "verdict"
+      ]
+    }
+  ]
+}

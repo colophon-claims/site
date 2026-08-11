@@ -1,0 +1,8 @@
+{
+  "fixture": true,
+  "schema": "benchmarking-interop.static-bundle/1",
+  "matrixSha256": "ecd93812b8fdacae91adfdd43a32e9d7fc55ad40b6ea0fa4025e3617056c369b",
+  "reportSha256s": [
+    "913542b904f45fc34fc74c60f00750c539f174229d9a3561be6479958621ed1a"
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "claimSchema": "benchmark-product.claim-package/1",
+  "fixture": true,
+  "scope": {
+    "draftId": "fixture-demo-1",
+    "benchmarkSha256": "26432f82108688e7eb195ff063f08f4215a42c0af08ce35914cd9c880008c64a",
+    "taskCount": 40,
+    "arms": [
+      {
+        "armId": "skill",
+        "pinning": {
+          "harness": {
+            "id": "fixture-harness",
+            "version": "2.0.0"
+          },
+          "loadout": {
+            "id": "guidance-as-skill"
+          }
+        }
+      },
+      {
+        "armId": "agents-md",
+        "pinning": {
+          "harness": {
+            "id": "fixture-harness",
+            "version": "2.0.0"
+          },
+          "loadout": {
+            "id": "guidance-as-agents-md"
+          }
+        }
+      },
+      {
+        "armId": "no-guidance",
+        "pinning": {
+          "harness": {
+            "id": "fixture-harness",
+            "version": "2.0.0"
+          },
+          "loadout": {
+            "id": "none"
+          }
+        }
+      }
+    ],
+    "replicates": 5,
+    "venue": "self-run"
+  },
+  "records": {
+    "benchmarkSha256": "26432f82108688e7eb195ff063f08f4215a42c0af08ce35914cd9c880008c64a",
+    "runSha256": "282812892f0c730f7e50e4822bf80d2fc00f7604b15e8ad3df710e7edf470ded",
+    "matrixSha256": "ecd93812b8fdacae91adfdd43a32e9d7fc55ad40b6ea0fa4025e3617056c369b",
+    "reportSha256": "913542b904f45fc34fc74c60f00750c539f174229d9a3561be6479958621ed1a",
+    "reportEnvelopeSha256": "0d916e8d433494192645dc05e8144c9fe90d313a3fe52d1a81b8c13afe349f06"
+  },
+  "method": {
+    "id": "wilson",
+    "version": "1",
+    "parameters": {
+      "confidence": 0.95,
+      "verdictRule": "sole"
+    },
+    "preregistered": true
+  },
+  "results": {
+    "note": "see report.json results.perSubject"
+  },
+  "headline": {
+    "skill": {
+      "n": 196,
+      "pass": 74,
+      "passRate": "0.378",
+      "wilsonInterval": {
+        "low": "0.312",
+        "high": "0.448"
+      }
+    },
+    "agents-md": {
+      "n": 195,
+      "pass": 74,
+      "passRate": "0.379",
+      "wilsonInterval": {
+        "low": "0.313",
+        "high": "0.450"
+      }
+    },
+    "no-guidance": {
+      "n": 196,
+      "pass": 62,
+      "passRate": "0.316",
+      "wilsonInterval": {
+        "low": "0.253",
+        "high": "0.385"
+      }
+    }
+  },
+  "completeness": {
+    "expected": 600,
+    "judged": 587
+  },
+  "attrition": {
+    "task-failure": 0,
+    "infrastructure-failure": 0,
+    "unscorable": 9,
+    "expired": 4,
+    "missing": 0,
+    "conflicted": 0,
+    "cancellation-drained": 0
+  },
+  "conflicted": {
+    "count": 0,
+    "cellKeys": []
+  },
+  "assurance": {
+    "preset": "deterministic-tests",
+    "resolved": {
+      "independence": "disclosed",
+      "minVerdicts": 1,
+      "distinctEvaluator": false,
+      "verdictRule": "sole"
+    },
+    "disclosure": "Distinct evaluator identities are workspace-minted keys; they prove agent-distinctness, not party-independence, on this self-run venue."
+  },
+  "disclosures": {
+    "perSubject": [
+      {
+        "integrityTiers": {
+          "re-derivable": 587,
+          "attested-only": 0
+        },
+        "pinning": {
+          "harness": {
+            "unverifiable": 0
+          },
+          "model": {
+            "unverifiable": 0
+          },
+          "loadout": {
+            "unverifiable": 0
+          },
+          "isolation": {
+            "unverifiable": 600
+          }
+        }
+      }
+    ],
+    "integrityTierCounts": {
+      "re-derivable": 587,
+      "attested-only": 0
+    },
+    "pinningUnverifiableCounts": {
+      "harness": 0,
+      "model": 0,
+      "loadout": 0,
+      "isolation": 600
+    }
+  },
+  "limitations": [
+    "FIXTURE: every number in this bundle is synthetic sample data; nothing was run.",
+    "This is a self-run venue: the same operator controls task dispatch, execution, and evaluation. Locking the method is a discipline, not a proof against the run owner.",
+    "The minimum detectable effect declared before the run is 4 points; a smaller real difference would look exactly like this null.",
+    "One agent, one model, one instruction set: the measurement covers this content on these tasks, not skills in general.",
+    "Task contamination cannot be ruled out: tasks postdate the model's stated training cutoff per repo history, but semantic overlap with public code is possible.",
+    "3 disclosed preview runs preceded the lock; none entered official results.",
+    "Cost figures are self-reported from this venue's own resource observations; nothing settled them."
+  ],
+  "venueHonesty": {
+    "venue": "self-run",
+    "note": "Local execution provides reproducibility and preregistration discipline, not proof of owner honesty."
+  },
+  "verification": {
+    "command": "colophon bundle verify --bundle <bundle-dir> --json",
+    "checks": [
+      "manifest",
+      "evidence-closure",
+      "trust",
+      "matrix-rederivation",
+      "report-verification",
+      "claim-consistency"
+    ],
+    "trustRoot": "Signatures verify against the bundle-carried public keys minted by this workspace; there is no third-party trust anchor on the self-run venue."
+  },
+  "rehearsal": {
+    "previewCount": 3,
+    "timestamps": [
+      "2026-08-05T09:12:00Z",
+      "2026-08-06T10:03:00Z",
+      "2026-08-07T16:41:00Z"
+    ]
+  }
+}

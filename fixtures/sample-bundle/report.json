@@ -1,0 +1,58 @@
+{
+  "fixture": true,
+  "schema": "benchmarking-records.report/1",
+  "matrixSha256": "ecd93812b8fdacae91adfdd43a32e9d7fc55ad40b6ea0fa4025e3617056c369b",
+  "title": "Fixture: skills vs AGENTS.md on identical guidance (synthetic sample data)",
+  "summary": "FIXTURE DATA. Packaging identical guidance as a skill versus a flat AGENTS.md file showed no detectable difference on this synthetic sample (delta -0.1 points, 95% CI -9.7 to +9.5). Both guided arms passed about 6 points more of the 587 judged executions than the no-guidance arm. Every number on this page is invented to exercise the report template.",
+  "reportedAt": "2026-08-10T21:05:37Z",
+  "method": {
+    "id": "wilson",
+    "version": "1",
+    "parameters": {
+      "confidence": 0.95,
+      "verdictRule": "sole"
+    },
+    "preregistered": true
+  },
+  "results": {
+    "perSubject": [
+      {
+        "results": {
+          "arms": {
+            "skill": {
+              "n": 196,
+              "pass": 74,
+              "passRate": "0.378",
+              "wilsonInterval": {
+                "low": "0.312",
+                "high": "0.448"
+              }
+            },
+            "agents-md": {
+              "n": 195,
+              "pass": 74,
+              "passRate": "0.379",
+              "wilsonInterval": {
+                "low": "0.313",
+                "high": "0.450"
+              }
+            },
+            "no-guidance": {
+              "n": 196,
+              "pass": 62,
+              "passRate": "0.316",
+              "wilsonInterval": {
+                "low": "0.253",
+                "high": "0.385"
+              }
+            }
+          },
+          "conflicted": {
+            "count": 0,
+            "cellKeys": []
+          }
+        }
+      }
+    ]
+  }
+}

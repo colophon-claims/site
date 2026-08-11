@@ -1,0 +1,1 @@
+FIXTURE (synthetic sample data): skills vs AGENTS.md on identical guidance. No detectable difference between containers on 587 of 600 expected executions judged; no comparative winner is stated. Report sha256:913542b904f45fc34fc74c60f00750c539f174229d9a3561be6479958621ed1a. Nothing was run; this bundle exercises the report pipeline.

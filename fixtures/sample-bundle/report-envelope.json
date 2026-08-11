@@ -1,0 +1,11 @@
+{
+  "fixture": true,
+  "payloadType": "application/vnd.benchmarking-report+json",
+  "payloadSha256": "913542b904f45fc34fc74c60f00750c539f174229d9a3561be6479958621ed1a",
+  "signatures": [
+    {
+      "keyid": "fixture-report-key",
+      "sig": "FIXTURE-SIGNATURE-NOT-VERIFIABLE"
+    }
+  ]
+}

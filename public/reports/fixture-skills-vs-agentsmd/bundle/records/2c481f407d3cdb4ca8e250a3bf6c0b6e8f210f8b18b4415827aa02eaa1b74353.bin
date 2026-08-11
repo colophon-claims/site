@@ -1,0 +1,9 @@
+{
+  "fixture": true,
+  "note": "FIXTURE record: synthetic bytes for the sample bundle; not produced by any run",
+  "roles": [
+    "task"
+  ],
+  "taskId": "fixture-task-01",
+  "description": "Sample task 1 of 40. Only 3 of the 40 task records are materialized in this fixture to keep it small; a real bundle carries one record per task."
+}
