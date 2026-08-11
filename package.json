@@ -1,0 +1,27 @@
+{
+  "name": "colophon-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public site for Colophon: renders published benchmark reports at immutable URLs and serves their evidence bundles byte-exact.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "npx serve out",
+    "typecheck": "tsc --noEmit",
+    "ingest": "node scripts/ingest-report.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/newsreader": "^5.2.14",
+    "@fontsource-variable/public-sans": "^5.2.14",
+    "@fontsource/ibm-plex-mono": "^5.2.14",
+    "next": "^15.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.6.0"
+  }
+}
