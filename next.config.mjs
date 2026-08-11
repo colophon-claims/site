@@ -2,6 +2,7 @@
 const nextConfig = {
   // Pure static export. No server features: no API routes, no ISR, no middleware.
   output: "export",
+  outputFileTracingRoot: import.meta.dirname,
   // Emit /reports/<slug>/index.html so report URLs serve as directories on any
   // static host, and relative links inside a report resolve predictably.
   trailingSlash: true,
