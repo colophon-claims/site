@@ -1,6 +1,0 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    { "name": "colophon-site", "runtimeExecutable": "npx", "runtimeArgs": ["serve", "-p", "4321", "out"], "port": 4321 }
-  ]
-}
