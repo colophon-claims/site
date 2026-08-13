@@ -13,16 +13,20 @@ const CONTACT_EMAIL = "ritsu@colophon.claims";
 
 const HOW_IT_WORKS: { title: string; body: string }[] = [
   {
-    title: "Lock the method",
-    body: "You pick the tasks, the setups, and what counts as a pass. That gets sealed with a timestamp before anything runs. Change your mind after seeing results and the report shows it.",
+    title: "Tell us what you're claiming",
+    body: "What you need to prove, which tasks reflect the real work, and who's going to argue with it.",
   },
   {
-    title: "Same work, every setup",
-    body: "Each setup gets the same tasks. If one drifts from what you locked, that run gets refused instead of quietly counted.",
+    title: "You approve the method before anything runs",
+    body: "The tasks, the setups being compared, what counts as a pass. Once you sign off it's sealed with a timestamp, so nobody can adjust it later to suit the result. Including us.",
   },
   {
-    title: "Publish all of it",
-    body: "Failures included. The report says how many runs were meant to happen, what became of each one, and why anything got dropped. The files ship with it, so a reader can redo your arithmetic without taking your word for anything.",
+    title: "Everything runs the same way",
+    body: "Same tasks for every setup. If one drifts from what you approved, that run gets thrown out rather than quietly counted.",
+  },
+  {
+    title: "You get a report people can check",
+    body: "A permanent URL with the result, what happened to every run including the failures, and the files to verify it. Put the badge in your README.",
   },
 ];
 
@@ -76,9 +80,7 @@ export default function Home() {
         {/* 2. The payoff — a real report, up front */}
         <section className="section" id="read-one">
           <div className="container">
-            <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>
-              What you get
-            </h2>
+            <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>Read one</h2>
             <div className="read-one">
               <div className="read-one-copy">
                 <p className="prose">
@@ -86,9 +88,8 @@ export default function Home() {
                   before running, what happened to all of it, and the files to check it yourself.
                 </p>
                 <p className="prose">
-                  Demo report #1 takes an argument people are having right now. Do skills actually
-                  beat putting the same instructions in AGENTS.md? It settles it the same way
-                  we&apos;d settle yours.
+                  This one asks whether skills actually beat putting the same instructions in
+                  AGENTS.md.
                 </p>
                 <div className="button-row">
                   <LinkButton href={featuredHref} variant="primary">
