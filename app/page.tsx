@@ -5,45 +5,43 @@ import { LinkButton } from "@/components/link-button";
 import { ReportSummaryCard } from "@/components/report-summary-card";
 import { listReports } from "@/lib/reports";
 
-// v3 (2026-08-13): customer-shaped arc — name the moment, show the payoff,
-// three beats of mechanism, who it's for, the engagement made concrete.
-// The report page is the primary landing surface (report URLs travel);
-// this page serves the visitor who came to answer "who is this, is it for
-// me, what's the move."
+// v4 (2026-08-13): same arc as v3, plainer register. Short sentences,
+// contractions, second person, concrete nouns. Deliberately avoids the
+// balanced triads, participial clauses and em-dash rhythm of v3.
 
 const CONTACT_EMAIL = "ritsu@colophon.claims";
 
 const HOW_IT_WORKS: { title: string; body: string }[] = [
   {
-    title: "Lock the method first",
-    body: "Choose what counts as success before you can see which answer it favours. Tasks, configurations, replicates, and success criteria are sealed with a digest and a timestamp — so the method your reader checks is provably the one you committed to.",
+    title: "Lock the method",
+    body: "You pick the tasks, the setups, and what counts as a pass. That gets sealed with a timestamp before anything runs. Change your mind after seeing results and the report shows it.",
   },
   {
-    title: "Run every arm on the same work",
-    body: "A comparison is only worth reading if the things being compared faced the same tasks. Every arm does, and a configuration that drifted from what you locked is refused rather than quietly counted.",
+    title: "Same work, every setup",
+    body: "Each setup gets the same tasks. If one drifts from what you locked, that run gets refused instead of quietly counted.",
   },
   {
-    title: "Publish with the evidence attached",
-    body: "The report ships as one immutable bundle: the records it came from, every expected execution accounted for — failures included, each with its reason — and enough for a skeptical reader to re-derive your number without trusting you.",
+    title: "Publish all of it",
+    body: "Failures included. The report says how many runs were meant to happen, what became of each one, and why anything got dropped. The files ship with it, so a reader can redo your arithmetic without taking your word for anything.",
   },
 ];
 
 const WHO_ITS_FOR: { title: string; body: string }[] = [
   {
-    title: "Shipping a launch that claims you're better",
-    body: "The number in your release post should survive the comments under it.",
+    title: "You're publishing a comparison",
+    body: "Your launch post says you're faster, cheaper, or better than something. People will poke at it.",
   },
   {
-    title: "Answering someone who disputes your number",
-    body: "Run the comparison people can check, instead of another round of the argument.",
+    title: "Someone's disputing your numbers",
+    body: "Stop arguing and run it again somewhere they can watch.",
   },
   {
-    title: "Choosing between configurations",
-    body: "Make the internal call — harness, model, guidance — in a way that still holds up when someone asks why.",
+    title: "You're choosing between setups",
+    body: "Pick the harness or the model, and still be able to show why six months later.",
   },
   {
-    title: "Publishing benchmarks worth trusting",
-    body: "If you measure things for a living, ship your results in a form readers can verify.",
+    title: "You benchmark for a living",
+    body: "Publish work other people can reproduce.",
   },
 ];
 
@@ -62,8 +60,7 @@ export default function Home() {
             <span className="eyebrow">Benchmark publishing for agent configurations</span>
             <h1>Publish benchmark claims people can check.</h1>
             <p className="hero-what">
-              For the moment before you put a number somewhere it will be argued with — a launch
-              post, a README, an answer to a skeptic.
+              You&apos;ve run the comparison. Now you need people to believe it.
             </p>
             <div className="button-row">
               <LinkButton href={featuredHref} variant="primary" size="lg">
@@ -80,19 +77,18 @@ export default function Home() {
         <section className="section" id="read-one">
           <div className="container">
             <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>
-              The product is the report
+              What you get
             </h2>
             <div className="read-one">
               <div className="read-one-copy">
                 <p className="prose">
-                  Every engagement ends in one of these: a permanent URL carrying the result, the
-                  method it was locked to, the accounting for every execution, and the bundle a
-                  reader can verify without trusting anyone.
+                  Every job ends with a report like this one. The result, the method you locked
+                  before running, what happened to all of it, and the files to check it yourself.
                 </p>
                 <p className="prose">
-                  Demo report #1 takes a question the agent community is arguing about in public —
-                  does packaging guidance as a skill beat putting the same content in AGENTS.md? —
-                  and runs it as a pre-registered comparison.
+                  Demo report #1 takes an argument people are having right now. Do skills actually
+                  beat putting the same instructions in AGENTS.md? It settles it the same way
+                  we&apos;d settle yours.
                 </p>
                 <div className="button-row">
                   <LinkButton href={featuredHref} variant="primary">
@@ -132,8 +128,8 @@ export default function Home() {
               ))}
             </div>
             <p className="prose" style={{ marginTop: "var(--space-7)" }}>
-              A person can drive it, or their agent can: every operation is one CLI verb with a
-              machine-readable answer. <Link href="/docs/">The docs</Link> carry the full surface.
+              A person can run this, or their agent can. Every step is one command.{" "}
+              <Link href="/docs/">The docs</Link> have the rest.
             </p>
           </div>
         </section>
@@ -142,7 +138,7 @@ export default function Home() {
         <section className="section" id="who-its-for">
           <div className="container">
             <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>
-              Where it earns its keep
+              Who this is for
             </h2>
             <div className="pillars">
               {WHO_ITS_FOR.map((item) => (
@@ -165,9 +161,8 @@ export default function Home() {
               Run it yourself
             </h2>
             <p className="prose">
-              Colophon runs from a source checkout today. There is no hosted service and no
-              account, and a first benchmark needs no API key and no funds: the sample benchmark
-              and both sample arms are bundled.
+              It runs from a source checkout. No account, no API key, and the first run costs
+              nothing. A sample benchmark and two setups come bundled.
             </p>
             <pre className="codeblock">
               <code>{`git clone https://github.com/Jinn-Network/mono.git
@@ -175,8 +170,8 @@ cd mono/packages/benchmark-product/core
 yarn install --immutable && yarn public-quickstart`}</code>
             </pre>
             <p className="code-note">
-              That drives the full lifecycle to a published bundle and verifies it from a copy.{" "}
-              <Link href="/docs/#quickstart">Full quickstart, prerequisites, and every verb</Link>.
+              That runs the whole thing end to end, then verifies the bundle it produced.{" "}
+              <Link href="/docs/#quickstart">Full quickstart and every command</Link>.
             </p>
           </div>
         </section>
@@ -189,13 +184,13 @@ yarn install --immutable && yarn public-quickstart`}</code>
           >
             <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>Bring a claim</h2>
             <p className="prose">
-              If you have a comparative claim you need to stand up, we run it with you: we scope
-              the tasks and arms together, you approve the method before it locks, and you get the
-              published report and its bundle at a URL you own.
+              Tell us what you need to prove. We&apos;ll work out the tasks and setups with you,
+              you sign off on the method before anything runs, and you get a report at a URL
+              that&apos;s yours.
             </p>
             <p className="prose">
-              Useful in a first email: the claim itself, the tasks that represent the real work,
-              the level of assurance your skeptics require, and when you need it by.
+              Worth putting in a first email: what you&apos;re claiming, which tasks reflect the
+              real work, how skeptical your audience is, and when you need it.
             </p>
             <div className="button-row">
               <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">

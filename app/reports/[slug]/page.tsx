@@ -368,9 +368,8 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
             restrained block — no winner language, no urgency. */}
         <section className="report-section report-bridge">
           <p className="prose">
-            This report was produced with Colophon.{" "}
-            <a href="/">What it does</a> · have a comparative claim of your own to stand up?{" "}
-            <a href="mailto:ritsu@colophon.claims">Bring it</a>.
+            Made with <a href="/">Colophon</a>. Got a claim you need to stand up?{" "}
+            <a href="mailto:ritsu@colophon.claims">Email us</a>.
           </p>
         </section>
 
