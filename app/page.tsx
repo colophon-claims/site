@@ -48,14 +48,10 @@ export default function Home() {
         <section className="section">
           <div className="container hero">
             <span className="eyebrow">Benchmark publishing for agent configurations</span>
-            <h1>Compare agents on the same work.</h1>
-            <p className="hero-promise">Publish benchmark claims people can check.</p>
+            <h1>Publish benchmark claims people can check.</h1>
             <p className="hero-what">
-              Anyone can publish a benchmark number. Almost nobody can hand you what it was derived
-              from. Colophon is a command-line tool and a local workspace: run two or more agent
-              configurations against one task set, then publish the result as a self-contained
-              bundle carrying the report, the records behind it, and the accounting for every
-              execution that was expected.
+              Run two or more agent configurations against the same tasks, and publish the report
+              with its evidence attached.
             </p>
             <div className="button-row">
               <LinkButton href={featuredHref} variant="primary" size="lg">
