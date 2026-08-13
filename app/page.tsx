@@ -84,10 +84,14 @@ export default function Home() {
               ))}
             </div>
             <p className="prose" style={{ marginTop: "var(--space-7)" }}>
-              A report is evidence about one question, on one task set, on one date. It is not a
-              certification, not a ranking, and no comparative winner is stated.{" "}
-              <Link href="/docs/#limits">What this does not do</Link> lists every limit, and each
-              one is printed in the product and in every report it produces.
+              Assurance is a ladder, and every report names its rung. Today&apos;s venue is
+              self-run: the method sealed before the run, every execution accounted for, the
+              evidence attached, so a reader can re-derive the claim without trusting the
+              operator. The record format is built for the rungs above it — independent
+              evaluators whose verdicts bind the run&apos;s owner — and a report will say so
+              plainly when it was produced that way. What a report never does, at any rung, is
+              declare a comparative winner. <Link href="/docs/#limits">What this does not do</Link>{" "}
+              states today&apos;s limits exactly, and each one is printed in every report.
             </p>
           </div>
         </section>
@@ -169,6 +173,11 @@ yarn install --immutable && yarn public-quickstart`}</code>
               If you have a comparative claim you need to stand up, we will run it with you.
               Useful to include: the claim itself, the tasks that represent the real work, and when
               you need it by.
+            </p>
+            <p className="prose">
+              And if the assurance you need is more than a self-run venue provides — independent
+              evaluation, a referee your skeptics would accept — say that too. The ladder is built
+              in the open, and what people need decides which rung ships next.
             </p>
             <div className="button-row">
               <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">
