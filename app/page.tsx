@@ -41,7 +41,7 @@ const WHO_ITS_FOR: { title: string; body: string }[] = [
   },
   {
     title: "You're choosing between setups",
-    body: "Pick the harness or the model, and still be able to show why six months later.",
+    body: "Decide which setup to use, and keep the evidence for when someone asks.",
   },
   {
     title: "You benchmark for a living",
