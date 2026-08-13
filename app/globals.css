@@ -243,6 +243,17 @@
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
+.report-badge-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+.report-badge-row a[href^="#"] {
+  font: var(--type-data);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
 .report-masthead h1 {
   font: var(--type-hero);
   font-size: var(--text-3xl);

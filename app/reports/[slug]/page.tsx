@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import {
   Callout,
+  ClaimBadge,
   CompletenessBar,
   Footnote,
   Imprint,
@@ -93,6 +94,22 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
     `${report.venue} venue; limitations in the report. Verify: ${report.verification.command}`,
   ].join("\n");
 
+  // How the report travels. The badge states the run outcome and its
+  // denominator, never a comparative winner: `status` is the vendored
+  // component's vocabulary (observed/conflicted/draft), not a pass/fail seal.
+  const SITE = "https://colophon.claims";
+  const reportUrl = `${SITE}/reports/${slug}/`;
+  const badgeUrl = `${SITE}/reports/${slug}/bundle/badge.svg`;
+  const badgeValue = `${report.completeness.judged} judged · ${armIds.length} arms`;
+  const badgeStatus: "observed" | "conflicted" | "draft" = report.fixture
+    ? "draft"
+    : report.conflicted.count > 0
+      ? "conflicted"
+      : "observed";
+  const badgeAlt = `colophon: ${badgeValue} (${badgeStatus})`;
+  const badgeTab = `[![${badgeAlt}](${badgeUrl})](${reportUrl})`;
+  const embedTab = `<a href="${reportUrl}"><img src="${badgeUrl}" alt="${badgeAlt}" height="22"></a>`;
+
   return (
     <>
       <SiteHeader />
@@ -121,6 +138,10 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
             timestamp={report.lockedAt ?? undefined}
             detailHref="#method"
           />
+          <div className="report-badge-row">
+            <ClaimBadge value={badgeValue} status={badgeStatus} href={reportUrl} />
+            <a href="#bundle">Put this badge in your README</a>
+          </div>
         </div>
 
         <section id="result" className="report-section">
@@ -310,6 +331,8 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
               { id: "verify", label: "Verify", value: verifyTab },
               { id: "digests", label: "Digests", value: digestsTab },
               { id: "cite", label: "Cite", value: citeTab },
+              { id: "badge", label: "Badge", value: badgeTab },
+              { id: "embed", label: "Embed", value: embedTab },
             ]}
           />
           <p className="prose" style={{ fontSize: "var(--text-base)", margin: 0 }}>

@@ -5,6 +5,7 @@
  * mono; never edit the vendored files — adapt here or wrap.
  */
 export { ReportCard } from "@/vendor/design-system/reference/components/claim/ReportCard";
+export { ClaimBadge } from "@/vendor/design-system/reference/components/claim/ClaimBadge";
 export { MethodLock } from "@/vendor/design-system/reference/components/claim/MethodLock";
 export { CompletenessBar } from "@/vendor/design-system/reference/components/evidence/CompletenessBar";
 export { VerdictChip } from "@/vendor/design-system/reference/components/evidence/VerdictChip";

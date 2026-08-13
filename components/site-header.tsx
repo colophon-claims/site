@@ -14,9 +14,8 @@ export function SiteHeader() {
         </Link>
         <nav className="site-nav">
           <Link href="/reports/">Reports</Link>
-          <a href="/#what-it-does">What it does</a>
-          <a href="/#run-it-yourself">Run it yourself</a>
-          <a href="/#limits">What this does not do</a>
+          <Link href="/docs/">Docs</Link>
+          <a href="/#contact">Contact</a>
         </nav>
       </div>
     </header>
