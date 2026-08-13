@@ -4,7 +4,8 @@ import { listReports } from "@/lib/reports";
 /** Footer per the surface copy §7. Adapted from the vendored site ui_kit's
  * SiteFooter (vendor/design-system/reference/ui_kits/site/Site.jsx).
  * "Built on Jinn." appears exactly twice on a page: the infrastructure note
- * and the legal line, both here. */
+ * and the legal line, both here. Links are real or absent — no pending
+ * placeholders on a public page. */
 export function SiteFooter() {
   const reports = listReports();
   return (
@@ -19,26 +20,23 @@ export function SiteFooter() {
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Product</span>
-          <Link href="/reports/">Read a published report</Link>
-          <a href="/#run-it-yourself">Run it yourself</a>
-          <a href="/#limits">What this does not do</a>
+          <Link href="/reports/">Reports</Link>
+          <Link href="/docs/">Docs</Link>
+          <a href="/#contact">Bring a claim</a>
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Reports</span>
-          {reports.slice(0, 2).map((r) => (
+          {reports.map((r) => (
             <Link key={r.slug} href={`/reports/${r.slug}/`}>
               {r.title}
             </Link>
           ))}
-          {reports.length < 2 && <span className="site-footer-pending">&lt;demo report #2 title&gt;</span>}
-          <span className="site-footer-pending">Bundle format</span>
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Developers</span>
           <a href="https://github.com/Jinn-Network/mono">Source</a>
-          <span className="site-footer-pending">CLI reference</span>
-          <span className="site-footer-pending">Public bundle guide</span>
-          <span className="site-footer-pending">Security and threat model</span>
+          <Link href="/docs/#quickstart">Quickstart</Link>
+          <Link href="/docs/#limits">What this does not do</Link>
         </div>
       </div>
       <div className="site-footer-legal">

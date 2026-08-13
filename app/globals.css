@@ -586,3 +586,13 @@
   color: var(--text-faint);
   flex-wrap: wrap;
 }
+
+/* Report-page bridge: quiet conversion line after the bundle section. */
+.report-bridge {
+  border-top: var(--border-hair) solid var(--rule);
+  padding-top: var(--space-8);
+}
+.report-bridge .prose {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+}

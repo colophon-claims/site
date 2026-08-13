@@ -364,6 +364,16 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
           </div>
         </section>
 
+        {/* The bridge: report readers are the site's real audience. One
+            restrained block — no winner language, no urgency. */}
+        <section className="report-section report-bridge">
+          <p className="prose">
+            This report was produced with Colophon.{" "}
+            <a href="/">What it does</a> · have a comparative claim of your own to stand up?{" "}
+            <a href="mailto:ritsu@colophon.claims">Bring it</a>.
+          </p>
+        </section>
+
         <Imprint
           builtOnJinn={false}
           rows={[
