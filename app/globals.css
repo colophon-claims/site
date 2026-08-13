@@ -243,6 +243,101 @@
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
+/* Docs surface. Deliberately not the marketing register: this borrows the
+   app ui_kit's shell language (fixed rail, inset ground, hairline rules,
+   type-ui nav) so documentation reads as product, not as another landing
+   section. */
+.docs-layout {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--space-9) var(--gutter) var(--space-12);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+}
+@media (min-width: 900px) {
+  .docs-layout {
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: var(--space-10);
+    padding-left: var(--gutter-lg);
+    padding-right: var(--gutter-lg);
+  }
+}
+.docs-rail {
+  align-self: start;
+}
+@media (min-width: 900px) {
+  .docs-rail {
+    position: sticky;
+    top: var(--space-9);
+    border-right: var(--border-hair) solid var(--rule);
+    padding-right: var(--space-7);
+    min-height: 60vh;
+  }
+}
+.docs-rail-label {
+  font: var(--type-data);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide, 0.06em);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 0 10px var(--space-5);
+  display: block;
+}
+.docs-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.docs-nav a {
+  display: block;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.docs-nav a:hover {
+  background: var(--surface-card);
+  color: var(--text-primary);
+}
+.docs-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+.docs-content > section {
+  scroll-margin-top: var(--space-9);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.docs-content h1 {
+  font: var(--type-section);
+  font-size: var(--text-2xl);
+  margin: 0;
+}
+.docs-content h2 {
+  font: var(--type-section);
+  font-size: var(--text-lg);
+  margin: 0;
+  padding-bottom: var(--space-4);
+  border-bottom: var(--border-hair) solid var(--rule);
+}
+.docs-lede {
+  font: var(--type-body);
+  color: var(--text-secondary);
+  max-width: var(--measure);
+  margin: 0;
+}
+/* The section flex gap owns vertical rhythm here; block margins would double it. */
+.docs-content p,
+.docs-content ul,
+.docs-content pre {
+  margin: 0;
+}
 .report-badge-row {
   display: flex;
   align-items: center;

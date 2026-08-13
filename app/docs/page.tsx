@@ -51,24 +51,40 @@ const LIMITS: { lead: string; body: string }[] = [
   },
 ];
 
+const NAV: { href: string; label: string }[] = [
+  { href: "#quickstart", label: "Quickstart" },
+  { href: "#verbs", label: "The run, verb by verb" },
+  { href: "#limits", label: "What this does not do" },
+];
+
 export default function Docs() {
   return (
     <>
       <SiteHeader />
-      <main>
-        <section className="section">
-          <div className="container hero">
-            <span className="eyebrow">Docs</span>
-            <h1>Running it, and what it does not establish.</h1>
-          </div>
-        </section>
+      <main className="docs-layout">
+        <aside className="docs-rail">
+          <span className="docs-rail-label">Docs</span>
+          <nav className="docs-nav">
+            {NAV.map((item) => (
+              <a href={item.href} key={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </aside>
 
-        <section className="section" id="quickstart">
-          <div
-            className="container"
-            style={{ display: "flex", flexDirection: "column", gap: "var(--space-7)" }}
-          >
-            <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>Quickstart</h2>
+        <div className="docs-content">
+          <section id="top">
+            <h1>Running it, and what it does not establish.</h1>
+            <p className="docs-lede">
+              Colophon runs from a source checkout. Everything below is the whole surface: one
+              command to see it work end to end, the eleven verbs that command wraps, and the
+              limits of what a report from this venue establishes.
+            </p>
+          </section>
+
+          <section id="quickstart">
+            <h2>Quickstart</h2>
             <p className="prose">
               Colophon runs from a source checkout today. There is no published package, no hosted
               service, and no account. A first benchmark needs no API key, no network venue, and no
@@ -91,17 +107,10 @@ yarn install --immutable && yarn public-quickstart`}</code>
               requires the standalone verifier to return all six checks from the copy. It prints a
               JSON evidence envelope and removes its own temporary directory.
             </p>
-          </div>
-        </section>
+          </section>
 
-        <section className="section" id="verbs">
-          <div
-            className="container"
-            style={{ display: "flex", flexDirection: "column", gap: "var(--space-7)" }}
-          >
-            <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>
-              The same run, verb by verb
-            </h2>
+          <section id="verbs">
+            <h2>The same run, verb by verb</h2>
             <pre className="codeblock">
               <code>{`colophon init         --workspace ./bench --principal you
 colophon draft create --workspace ./bench --principal you --id first --name "First benchmark"
@@ -135,15 +144,11 @@ colophon bundle verify --bundle ./bench/artifacts/first/public-bundles/<identity
               To bring your own tasks instead of the sample,{" "}
               <code>colophon import swebench</code> takes SWE-bench-shaped rows.
             </p>
-          </div>
-        </section>
+          </section>
 
-        <section className="section" id="limits">
-          <div className="container">
-            <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>
-              What this does not do
-            </h2>
-            <p className="prose" style={{ marginTop: "var(--space-6)" }}>
+          <section id="limits">
+            <h2>What this does not do</h2>
+            <p className="prose">
               These limits are printed in the product and in every report it produces. They are the
               reason the bundle exists.
             </p>
@@ -154,8 +159,8 @@ colophon bundle verify --bundle ./bench/artifacts/first/public-bundles/<identity
                 </li>
               ))}
             </ul>
-          </div>
-        </section>
+          </section>
+        </div>
       </main>
       <SiteFooter />
     </>

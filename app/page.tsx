@@ -15,23 +15,23 @@ const CONTACT_EMAIL = "ritsu@colophon.claims";
 const WHAT_IT_DOES: { title: string; body: string }[] = [
   {
     title: "Fix the method before the run",
-    body: "The task set, the configurations, the replicate counts, and what counts as success are sealed as one record with a SHA-256 digest and a timestamp. After the lock there are no task swaps, no added replicates, and no method edits.",
+    body: "Choose what counts as success before you can see which answer it favours. The task set, the configurations, the replicate counts, and the success criteria are sealed with a digest and a timestamp, so the method your reader checks is provably the one you committed to.",
   },
   {
     title: "Run every configuration against the same tasks",
-    body: "Each arm faces identical tasks. A configuration that drifted from what you locked is refused at dispatch rather than quietly counted.",
+    body: "A comparison is only worth reading if the things being compared faced the same work. Every arm gets identical tasks, and a configuration that has drifted from what you locked is refused at dispatch rather than quietly counted.",
   },
   {
     title: "Account for every expected result, including the failures",
-    body: "The sealed matrix carries the whole partition: what was expected, what was judged, and every excluded cell with the reason it was excluded. Only judged cells enter a denominator.",
+    body: "The quickest way to inflate a benchmark is to lose the runs that went badly. The sealed matrix carries every execution that was expected and what became of it, each exclusion with its reason, and only judged cells ever reach a denominator.",
   },
   {
     title: "Publish the report with its evidence attached",
-    body: "One immutable directory holds the report, the records it was derived from, the keys its signatures check against, a machine-readable claim, and a badge. A reader who does not want to run our tool can hash the files and re-derive the claim without it.",
+    body: "Nobody has to take your word for it. One immutable directory holds the report, the records it came from, and the keys its signatures check against, so a skeptical reader can hash the files and re-derive your claim without running our tool.",
   },
   {
     title: "Operated by a person or by their agent",
-    body: "Every operation is one library call, one CLI verb, and one action in the local app. Locking, launching, cancelling, reporting, and publishing are granted separately, and a delegated agent cannot grant itself anything.",
+    body: "An agent can run the whole thing end to end. Every operation is one library call, one CLI verb, and one action in the local app; locking, launching, and publishing are granted separately, and a delegated agent cannot grant itself anything.",
   },
 ];
 
@@ -51,9 +51,10 @@ export default function Home() {
             <h1>Compare agents on the same work.</h1>
             <p className="hero-promise">Publish benchmark claims people can check.</p>
             <p className="hero-what">
-              Colophon is a command-line tool and a local workspace for running two or more agent
-              configurations against one task set and publishing the result as a self-contained
-              bundle: the report, the records it was derived from, and the accounting for every
+              Anyone can publish a benchmark number. Almost nobody can hand you what it was derived
+              from. Colophon is a command-line tool and a local workspace: run two or more agent
+              configurations against one task set, then publish the result as a self-contained
+              bundle carrying the report, the records behind it, and the accounting for every
               execution that was expected.
             </p>
             <div className="button-row">
@@ -165,16 +166,13 @@ yarn install --immutable && yarn public-quickstart`}</code>
           >
             <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>Bring a claim</h2>
             <p className="prose">
-              If you have a comparative claim you need to stand up, write to{" "}
-              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-            </p>
-            <p className="prose">
+              If you have a comparative claim you need to stand up, we will run it with you.
               Useful to include: the claim itself, the tasks that represent the real work, and when
               you need it by.
             </p>
             <div className="button-row">
-              <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary">
-                {CONTACT_EMAIL}
+              <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">
+                Email us
               </LinkButton>
             </div>
           </div>
