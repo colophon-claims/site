@@ -7,13 +7,19 @@ import {
   type ReportData,
 } from "@/lib/reports";
 
-export function ReportSummaryCard({ report }: { report: ReportData }) {
+export function ReportSummaryCard({
+  report,
+  label = "Colophon report",
+}: {
+  report: ReportData;
+  label?: string;
+}) {
   if (isEvidenceReport(report)) {
     return (
       <article className="featured-report-card">
         <div className="featured-report-head">
           <div className="featured-report-eyebrow">
-            <Mark size={12} /> Colophon report
+              <Mark size={12} /> {label}
           </div>
           <h3>{report.title}</h3>
           <p>
@@ -55,7 +61,7 @@ export function ReportSummaryCard({ report }: { report: ReportData }) {
     <article className="featured-report-card">
       <div className="featured-report-head">
         <div className="featured-report-eyebrow">
-          <Mark size={12} /> Colophon report
+          <Mark size={12} /> {label}
         </div>
         <h3>{report.title}</h3>
         <p>

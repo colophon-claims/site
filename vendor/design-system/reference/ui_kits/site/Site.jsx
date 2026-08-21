@@ -1,40 +1,53 @@
-const { Button, Tag, Card, Callout, Footnote, Imprint, VerdictChip, CompletenessBar, ClaimBadge, ReportCard, CiteBlock, MethodLock, AssuranceMeter } = window.__C;
+const { Button, Footnote } = window.__C;
 
-function SiteHeader({onNav}){
+function SiteHeader(){
   const { Mark } = window.__K;
   return <header style={{position:'sticky',top:0,zIndex:9,background:'var(--surface-page)',borderBottom:'var(--border-hair) solid var(--rule)'}}>
     <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-6) var(--gutter-lg)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'var(--space-8)'}}>
-      <a href="#" onClick={e=>{e.preventDefault();onNav&&onNav('home');}} style={{display:'flex',alignItems:'center',gap:'var(--space-5)',textDecoration:'none'}}>
+      <a href="index.html" style={{display:'flex',alignItems:'center',gap:'var(--space-5)',textDecoration:'none'}}>
         <Mark size={22}/><span style={{fontFamily:'var(--font-display)',fontSize:'var(--text-xl)',color:'var(--text-primary)',letterSpacing:'var(--tracking-snug)'}}>Colophon</span>
       </a>
       <nav style={{display:'flex',alignItems:'center',gap:'var(--space-8)',font:'var(--type-ui)',fontSize:'var(--text-sm)'}}>
-        {[['Report','reports'],['What you get','outcomes'],['Docs','docs']].map(([l,k])=>
-          <a key={l} href="#" onClick={e=>{e.preventDefault();onNav&&onNav(k);}} style={{color:'var(--text-secondary)',textDecoration:'none'}}>{l}</a>)}
+        <a href="reports.html" style={{color:'var(--text-secondary)',textDecoration:'none'}}>Reports</a>
+        <a href="guide.html" style={{color:'var(--text-secondary)',textDecoration:'none'}}>Docs</a>
         <Button size="sm" variant="primary">Bring a claim</Button>
       </nav>
     </div>
   </header>;
 }
 
-function Hero({onNav}){
+function Hero(){
   return <section style={{borderBottom:'var(--border-hair) solid var(--rule)'}}>
-    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-14) var(--gutter-lg) var(--space-13)',display:'grid',gridTemplateColumns:'1.15fr .85fr',gap:'var(--space-12)',alignItems:'center'}}>
-      <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)'}}>
+    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-14) var(--gutter-lg) var(--space-13)',display:'grid',gridTemplateColumns:'minmax(0,1.08fr) minmax(26rem,.92fr)',gridTemplateAreas:'"copy proof" "actions proof"',columnGap:'var(--space-13)',rowGap:'var(--space-9)',alignItems:'start'}}>
+      <div style={{gridArea:'copy',display:'flex',flexDirection:'column',gap:'var(--space-8)'}}>
         <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Benchmark publishing for agent performance</span>
         <h1 style={{font:'var(--type-hero)',fontSize:'var(--text-6xl)',letterSpacing:'var(--tracking-tight)',margin:0,maxWidth:'13ch'}}>Publish benchmark claims people can check.</h1>
         <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',maxWidth:'46ch',margin:0}}>Lock the method, account for every expected result, and publish the evidence so the claim can survive outside the person who made it.</p>
-        <div style={{display:'flex',gap:'var(--space-5)',alignItems:'center'}}>
-          <Button variant="primary" size="lg">Bring a claim</Button>
-          <Button variant="secondary" size="lg" onClick={()=>onNav&&onNav('reports')}>Read a published report</Button>
-        </div>
-        <div style={{display:'flex',gap:'var(--space-5)',alignItems:'center',flexWrap:'wrap',font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-muted)'}}>
-          <span>Every claim ships as a badge that resolves to the full report:</span><ClaimBadge value="71.1% · 500 tasks" status="observed"/>
-        </div>
       </div>
-      <div style={{border:'var(--border-hair) solid var(--rule)',background:'var(--surface-card)',padding:'var(--space-8)',display:'flex',flexDirection:'column',gap:'var(--space-7)'}}>
-        <MethodLock state="locked" digest="sha256:9f3c1d7a…a71b" timestamp="2026-08-02T14:20:11Z" compact/>
-        <CompletenessBar size="lg" total={1500} label="1,500 expected executions" segments={[{verdict:'met',count:958},{verdict:'unmet',count:362},{verdict:'conflicted',count:88},{verdict:'incomplete',count:92}]}/>
-        <AssuranceMeter value="majority" readOnly caption="Three evaluator identities. Splits retained, not resolved."/>
+      <div style={{gridArea:'actions',display:'flex',gap:'var(--space-5)',alignItems:'center',flexWrap:'wrap'}}>
+        <Button variant="primary" size="lg">Bring a claim</Button>
+        <Button variant="secondary" size="lg" onClick={()=>window.location.href='reports.html'}>Browse reports</Button>
+      </div>
+      <div style={{gridArea:'proof',paddingTop:'var(--space-8)',display:'flex',flexDirection:'column',gap:'var(--space-6)'}}>
+        <article style={{background:'var(--surface-card)',border:'var(--border-hair) solid var(--rule-strong)',borderTop:'var(--border-slab) solid var(--rule-accent)'}}>
+          <div style={{padding:'var(--space-8)',display:'flex',flexDirection:'column',gap:'var(--space-4)'}}>
+            <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Latest report</span>
+            <h2 style={{font:'var(--type-title)',fontSize:'var(--text-2xl)',letterSpacing:'var(--tracking-tight)',margin:0}}>Do you need a Skill, or is CLAUDE.md enough?</h2>
+            <span style={{font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-secondary)'}}>SkillsBench v1.1 · claude-haiku-4-5-20251001</span>
+          </div>
+          <div style={{borderTop:'var(--border-hair) solid var(--rule)',padding:'var(--space-7) var(--space-8)',display:'grid',gridTemplateColumns:'.72fr 1.28fr',gap:'var(--space-8)'}}>
+            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-3)'}}>
+              <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Paired A−B</span>
+              <strong style={{font:'var(--type-data)',fontSize:'var(--text-3xl)',fontWeight:500}}>−0.047</strong>
+            </div>
+            <dl style={{margin:0,display:'flex',flexDirection:'column',gap:'var(--space-4)',font:'var(--type-data)',fontSize:'var(--text-xs)'}}>
+              <div style={{display:'grid',gridTemplateColumns:'5.5rem 1fr',gap:'var(--space-4)'}}><dt style={{color:'var(--text-muted)'}}>95% CI</dt><dd style={{margin:0}}>−0.223 to 0.129</dd></div>
+              <div style={{display:'grid',gridTemplateColumns:'5.5rem 1fr',gap:'var(--space-4)'}}><dt style={{color:'var(--text-muted)'}}>Analysis</dt><dd style={{margin:0}}>14/41 tasks</dd></div>
+              <div style={{display:'grid',gridTemplateColumns:'5.5rem 1fr',gap:'var(--space-4)'}}><dt style={{color:'var(--text-muted)'}}>Accounting</dt><dd style={{margin:0}}>492/492 cells</dd></div>
+            </dl>
+          </div>
+        </article>
+        <p style={{font:'var(--type-body)',fontSize:'var(--text-sm)',color:'var(--text-muted)',margin:0}}>No winner emerged. The method, failed checks, and limits still travel with the answer.</p>
       </div>
     </div>
   </section>;
@@ -70,8 +83,7 @@ function Deliverables(){
     <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)'}}>
       <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',margin:'0 0 var(--space-9)',maxWidth:'18ch'}}>What you get.</h2>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'var(--space-9)'}}>
-        {items.map(([t,b],i)=><div key={t} style={{display:'flex',flexDirection:'column',gap:'var(--space-5)',borderTop:'var(--border-heavy) solid var(--rule-heavy)',paddingTop:'var(--space-6)'}}>
-          <span style={{font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-faint)'}}>{String(i+1).padStart(2,'0')}</span>
+        {items.map(([t,b])=><div key={t} style={{display:'flex',flexDirection:'column',gap:'var(--space-5)',borderTop:'var(--border-heavy) solid var(--rule-heavy)',paddingTop:'var(--space-6)'}}>
           <h3 style={{font:'var(--type-section)',fontSize:'var(--text-lg)',margin:0}}>{t}</h3>
           <p style={{font:'var(--type-body)',fontSize:'var(--text-base)',color:'var(--text-secondary)',margin:0}}>{b}</p>
         </div>)}
@@ -108,31 +120,32 @@ function VerificationSection(){
 }
 
 function ReportIndex({onOpen}){
-  const rows=[
-    ['hb-2026-08','Three harness loadouts on the same 500 tasks','SWE-bench Verified','2026-08-04','conflicted','71.1%'],
-    ['pl-2026-07','Does the retrieval plugin help on long repos?','internal-suite-4','2026-07-28','observed','54.2%'],
-    ['sk-2026-07','Four skill bundles, one refactor suite','refactor-200','2026-07-19','incomplete','48.9%'],
-    ['mx-2026-06','Model swap under a fixed harness','SWE-bench Verified','2026-06-30','observed','63.8%']];
-  const S={observed:'met',conflicted:'conflicted',incomplete:'incomplete'};
-  return <section>
-    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)',display:'flex',flexDirection:'column',gap:'var(--space-8)'}}>
-      <div style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',gap:'var(--space-8)',borderTop:'var(--border-heavy) solid var(--rule-heavy)',paddingTop:'var(--space-6)'}}>
-        <h2 style={{font:'var(--type-title)',fontSize:'var(--text-2xl)',margin:0}}>Recently published</h2>
-        <a href="#" style={{font:'var(--type-ui)',fontSize:'var(--text-sm)'}}>All reports</a>
+  return <main>
+    <section style={{borderBottom:'var(--border-hair) solid var(--rule)'}}>
+      <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-13) var(--gutter-lg) var(--space-11)',display:'flex',flexDirection:'column',gap:'var(--space-6)'}}>
+        <h1 style={{font:'var(--type-hero)',fontSize:'var(--text-5xl)',letterSpacing:'var(--tracking-tight)',margin:0}}>Reports</h1>
+        <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',maxWidth:'52ch',margin:0}}>Published benchmark claims, with their methods, limits, and evidence attached.</p>
       </div>
-      <div style={{border:'var(--border-hair) solid var(--rule)',background:'var(--surface-card)'}}>
-        {rows.map((r,i)=><a key={r[0]} href="#" onClick={e=>{e.preventDefault();onOpen&&onOpen();}} style={{display:'grid',gridTemplateColumns:'110px 1fr 190px 100px 150px 70px',gap:'var(--space-7)',alignItems:'center',padding:'var(--space-6) var(--space-8)',borderTop:i?'var(--border-hair) solid var(--rule)':'none',textDecoration:'none',color:'inherit'}}>
-          <span style={{font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-muted)'}}>{r[0]}</span>
-          <span style={{font:'var(--type-body)',fontSize:'var(--text-base)'}}>{r[1]}</span>
-          <span style={{font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-secondary)'}}>{r[2]}</span>
-          <span style={{font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-faint)'}}>{r[3]}</span>
-          <VerdictChip size="sm" verdict={S[r[4]]}>{r[4]==='observed'?'Observed':r[4]==='conflicted'?'Conflicted':'Incomplete'}</VerdictChip>
-          <span style={{font:'var(--type-data)',textAlign:'right'}}>{r[5]}</span>
-        </a>)}
-      </div>
+    </section>
+    <section>
+      <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-11) var(--gutter-lg) var(--space-13)',display:'flex',flexDirection:'column',gap:'var(--space-8)'}}>
+        <a href="#" onClick={e=>{e.preventDefault();onOpen&&onOpen();}} style={{display:'grid',gridTemplateColumns:'minmax(0,1.25fr) minmax(18rem,.75fr)',gap:'var(--space-10)',alignItems:'start',padding:'var(--space-8) 0',borderTop:'var(--border-heavy) solid var(--rule-heavy)',borderBottom:'var(--border-hair) solid var(--rule)',textDecoration:'none',color:'inherit'}}>
+          <div style={{display:'flex',flexDirection:'column',gap:'var(--space-5)'}}>
+            <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Published report</span>
+            <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',letterSpacing:'var(--tracking-tight)',margin:0}}>Do you need a Skill, or is CLAUDE.md enough?</h2>
+            <p style={{font:'var(--type-body)',fontSize:'var(--text-base)',color:'var(--text-secondary)',maxWidth:'62ch',margin:0}}>The same instruction bytes were loaded as a native Skill or root CLAUDE.md, with a no-instructions arm. The point estimate slightly favored CLAUDE.md, but the interval includes zero.</p>
+          </div>
+          <dl style={{margin:0,display:'grid',gridTemplateColumns:'auto 1fr',gap:'var(--space-4) var(--space-7)',font:'var(--type-data)',fontSize:'var(--text-xs)'}}>
+            <dt style={{color:'var(--text-muted)'}}>Benchmark</dt><dd style={{margin:0}}>SkillsBench v1.1</dd>
+            <dt style={{color:'var(--text-muted)'}}>Model</dt><dd style={{margin:0}}>claude-haiku-4-5-20251001</dd>
+            <dt style={{color:'var(--text-muted)'}}>Published</dt><dd style={{margin:0}}>August 18, 2026</dd>
+            <dt style={{color:'var(--text-muted)'}}>Accounting</dt><dd style={{margin:0}}>492/492 cells</dd>
+          </dl>
+        </a>
       <Footnote marker="†">Colophon does not rank published reports against each other. A report is evidence about one question at one date.</Footnote>
-    </div>
-  </section>;
+      </div>
+    </section>
+  </main>;
 }
 
 function SiteFooter(){

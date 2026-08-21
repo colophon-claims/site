@@ -129,7 +129,7 @@ export function EvidenceReportPage({ report }: { report: EvidenceReportData }) {
               </div>
               <div>
                 <dt>What the method allowed</dt>
-                <dd>An estimate only—no selection, ranking, or certification.</dd>
+                <dd>An estimate only, with no selection, ranking, or certification.</dd>
               </div>
             </dl>
           </div>
@@ -276,7 +276,7 @@ export function EvidenceReportPage({ report }: { report: EvidenceReportData }) {
           </p>
           <div className="oracle-record">
             <div>
-              <span className="eyebrow">Two host checks failed—and stayed in the record</span>
+              <span className="eyebrow">Two host checks failed and stayed in the record</span>
               <p>
                 Both tasks failed closed in the {report.accounting.expectedCells}-run denominator.
                 Nothing was removed after the result was known.

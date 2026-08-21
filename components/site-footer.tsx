@@ -9,7 +9,7 @@ import { listReports } from "@/lib/reports";
 export function SiteFooter() {
   const reports = listReports();
   const report = reports[0];
-  const reportsHref = report === undefined ? "/#read-one" : `/reports/${report.slug}/`;
+  const reportHref = report === undefined ? "/reports/" : `/reports/${report.slug}/`;
   return (
     <footer className="site-footer">
       <div className="site-footer-grid">
@@ -22,12 +22,13 @@ export function SiteFooter() {
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Product</span>
-          <Link href={reportsHref}>Report</Link>
+          <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
           <a href="/#contact">Bring a claim</a>
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Reports</span>
+          <Link href="/reports/">All reports</Link>
           {reports.map((r) => (
             <Link key={r.slug} href={`/reports/${r.slug}/`}>
               {r.title}
@@ -36,9 +37,9 @@ export function SiteFooter() {
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Verification</span>
-          {report !== undefined && <Link href={`${reportsHref}#bundle`}>Check the bytes</Link>}
-          <Link href="/docs/#reader">Reader</Link>
-          <Link href="/docs/#limits">What this does not do</Link>
+          {report !== undefined && <Link href={`${reportHref}#bundle`}>Check the bytes</Link>}
+          <Link href="/docs/#verification">Check a report</Link>
+          <Link href="/docs/#limits">What a report does not prove</Link>
         </div>
       </div>
       <div className="site-footer-legal">

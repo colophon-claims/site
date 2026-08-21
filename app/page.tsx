@@ -50,7 +50,7 @@ export default function Home() {
     <>
       <SiteHeader />
       <main>
-        {/* 1. First fold: the promise beside the public proof */}
+        {/* 1. Proof-led first fold. Narrow screens read copy, proof, then actions. */}
         <section className="hero-section" id="read-one">
           <div className="container hero-grid">
             <div className="hero-copy">
@@ -60,14 +60,6 @@ export default function Home() {
                 Lock the method, account for every expected result, and publish the evidence so the
                 claim can survive outside the person who made it.
               </p>
-              <div className="button-row">
-                <LinkButton href="#contact" variant="primary" size="lg">
-                  Bring a claim
-                </LinkButton>
-                <LinkButton href={featuredHref} variant="secondary" size="lg">
-                  Read the report
-                </LinkButton>
-              </div>
             </div>
             <div className="hero-feature">
               {featured !== undefined ? (
@@ -76,7 +68,7 @@ export default function Home() {
                   className="hero-report-link"
                   href={featuredHref}
                 >
-                  <ReportSummaryCard report={featured} />
+                  <ReportSummaryCard report={featured} label="Latest report" />
                 </Link>
               ) : (
                 <p className="prose">No report is published yet.</p>
@@ -85,6 +77,14 @@ export default function Home() {
                 No winner emerged. The method, failed checks, and limits still travel with the
                 answer.
               </p>
+            </div>
+            <div className="button-row hero-actions">
+              <LinkButton href="#contact" variant="primary" size="lg">
+                Bring a claim
+              </LinkButton>
+              <LinkButton href="/reports/" variant="secondary" size="lg">
+                Browse reports
+              </LinkButton>
             </div>
           </div>
         </section>
@@ -114,9 +114,8 @@ export default function Home() {
           <div className="container">
             <h2 className="section-title">What you get.</h2>
             <div className="deliverables-grid">
-              {DELIVERABLES.map((item, i) => (
+              {DELIVERABLES.map((item) => (
                 <div className="deliverable" key={item.title}>
-                  <span className="deliverable-number">{String(i + 1).padStart(2, "0")}</span>
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
                 </div>
@@ -142,7 +141,7 @@ export default function Home() {
                 <LinkButton href="#contact" variant="primary" size="lg">
                   Bring us your claim
                 </LinkButton>
-                <Link href="/docs/#execution">See the execution methods</Link>
+                <Link href="/docs/#methods">See the benchmark methods</Link>
               </div>
             </div>
           </div>
@@ -157,7 +156,7 @@ export default function Home() {
                 Every report links the exact bundle. A reader can verify its manifest, evidence,
                 signatures, matrix, report, and claim consistency in one command.
               </p>
-              <Link href="/docs/#reader">What the reader checks</Link>
+              <Link href="/docs/#verification">How checking works</Link>
             </div>
             <pre className="codeblock">
               <code>npx @colophon-claims/verify@0.1 ./bundle</code>

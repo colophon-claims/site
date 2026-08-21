@@ -380,7 +380,7 @@ function LegacyReportPage({ report, slug }: { report: LegacyReportData; slug: st
         </section>
 
         {/* The bridge: report readers are the site's real audience. One
-            restrained block — no winner language, no urgency. */}
+            restrained block with no winner language and no urgency. */}
         <section className="report-section report-bridge">
           <p className="prose">
             Made with <a href="/">Colophon</a>. Got a claim you need to stand up?{" "}
