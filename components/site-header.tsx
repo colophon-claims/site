@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mark } from "./mark";
+import { LinkButton } from "./link-button";
 import { listReports } from "@/lib/reports";
 
 /** Adapted from the vendored site ui_kit's SiteHeader
@@ -18,7 +19,7 @@ export function SiteHeader() {
         <nav className="site-nav">
           <Link href={reportsHref}>Report</Link>
           <Link href="/docs/">Docs</Link>
-          <a href="/#contact">Contact</a>
+          <LinkButton href="/#contact" variant="primary">Bring a claim</LinkButton>
         </nav>
       </div>
     </header>

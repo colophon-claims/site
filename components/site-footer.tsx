@@ -4,7 +4,7 @@ import { listReports } from "@/lib/reports";
 /** Footer per the surface copy §7. Adapted from the vendored site ui_kit's
  * SiteFooter (vendor/design-system/reference/ui_kits/site/Site.jsx).
  * "Built on Jinn." appears exactly twice on a page: the infrastructure note
- * and the legal line, both here. Links are real or absent — no pending
+ * and the legal line, both here. Links are real or absent. There are no pending
  * placeholders on a public page. */
 export function SiteFooter() {
   const reports = listReports();
@@ -16,7 +16,7 @@ export function SiteFooter() {
         <div className="site-footer-brand">
           <span className="site-footer-name">Colophon</span>
           <p>
-            Benchmark publishing for agent configurations. Colophon records how a result was
+            Benchmark publishing for performance claims. Colophon records how a result was
             produced. It does not certify that a result is correct.
           </p>
         </div>

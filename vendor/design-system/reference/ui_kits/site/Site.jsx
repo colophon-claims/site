@@ -8,7 +8,7 @@ function SiteHeader({onNav}){
         <Mark size={22}/><span style={{fontFamily:'var(--font-display)',fontSize:'var(--text-xl)',color:'var(--text-primary)',letterSpacing:'var(--tracking-snug)'}}>Colophon</span>
       </a>
       <nav style={{display:'flex',alignItems:'center',gap:'var(--space-8)',font:'var(--type-ui)',fontSize:'var(--text-sm)'}}>
-        {[['Report','reports'],['How it works','how'],['Docs','docs'],['Contact','home']].map(([l,k])=>
+        {[['Report','reports'],['What you get','outcomes'],['Docs','docs']].map(([l,k])=>
           <a key={l} href="#" onClick={e=>{e.preventDefault();onNav&&onNav(k);}} style={{color:'var(--text-secondary)',textDecoration:'none'}}>{l}</a>)}
         <Button size="sm" variant="primary">Bring a claim</Button>
       </nav>
@@ -20,12 +20,12 @@ function Hero({onNav}){
   return <section style={{borderBottom:'var(--border-hair) solid var(--rule)'}}>
     <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-14) var(--gutter-lg) var(--space-13)',display:'grid',gridTemplateColumns:'1.15fr .85fr',gap:'var(--space-12)',alignItems:'center'}}>
       <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)'}}>
-        <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Benchmark publishing for agent configurations</span>
+        <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Benchmark publishing for agent performance</span>
         <h1 style={{font:'var(--type-hero)',fontSize:'var(--text-6xl)',letterSpacing:'var(--tracking-tight)',margin:0,maxWidth:'13ch'}}>Publish benchmark claims people can check.</h1>
         <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',maxWidth:'46ch',margin:0}}>Lock the method, account for every expected result, and publish the evidence so the claim can survive outside the person who made it.</p>
         <div style={{display:'flex',gap:'var(--space-5)',alignItems:'center'}}>
-          <Button variant="primary" size="lg" onClick={()=>onNav&&onNav('reports')}>Read a published report</Button>
-          <Button variant="secondary" size="lg">Bring a claim</Button>
+          <Button variant="primary" size="lg">Bring a claim</Button>
+          <Button variant="secondary" size="lg" onClick={()=>onNav&&onNav('reports')}>Read a published report</Button>
         </div>
         <div style={{display:'flex',gap:'var(--space-5)',alignItems:'center',flexWrap:'wrap',font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-muted)'}}>
           <span>Every claim ships as a badge that resolves to the full report:</span><ClaimBadge value="71.1% · 500 tasks" status="observed"/>
@@ -40,35 +40,69 @@ function Hero({onNav}){
   </section>;
 }
 
-function Pillars(){
+function BuyerMoments(){
   const items=[
-    ['Fix the method first','The task set, the entrants, the evaluation policy and the budget are sealed with a digest before the official run. The report carries that digest and the time it was sealed.'],
-    ['Choose the assurance','Deterministic tests, one evaluator, an evaluator separated from the solver, majority, or unanimous. The report states which, in the same words you chose it with.'],
-    ['Account for everything','Scores are denominated by expected executions. Cancellations, timeouts and unreturned deliveries stay in the denominator and stay on the page.'],
-    ['Publish something checkable','A reader can open the method, read the evidence, clone the benchmark, rerun it, or challenge the result. Colophon does not decide who is right.']];
+    ['You are about to make a performance claim','Publish the basis before customers, contributors, or competitors ask how you know.'],
+    ['You are choosing between agent setups','Make the decision on a comparison approved before execution, not on the most convenient run.'],
+    ['Someone else needs to inspect the result','Give them the method, every planned outcome, the limits, and the exact evidence behind the answer.']];
   return <section style={{borderBottom:'var(--border-hair) solid var(--rule)'}}>
-    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'var(--space-9)'}}>
-      {items.map(([t,b],i)=><div key={t} style={{display:'flex',flexDirection:'column',gap:'var(--space-5)',borderTop:'var(--border-heavy) solid var(--rule-heavy)',paddingTop:'var(--space-6)'}}>
-        <span style={{font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-faint)'}}>{String(i+1).padStart(2,'0')}</span>
-        <h3 style={{font:'var(--type-section)',fontSize:'var(--text-lg)',margin:0}}>{t}</h3>
-        <p style={{font:'var(--type-body)',fontSize:'var(--text-base)',color:'var(--text-secondary)',margin:0}}>{b}</p>
-      </div>)}
+    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)',display:'grid',gridTemplateColumns:'.8fr 1.2fr',gap:'var(--space-12)',alignItems:'start'}}>
+      <div style={{display:'flex',flexDirection:'column',gap:'var(--space-6)'}}>
+        <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',margin:0,maxWidth:'17ch'}}>When the claim has to hold up.</h2>
+        <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',margin:0,maxWidth:'35ch'}}>You do not need another unsupported score. You need an answer that can travel.</p>
+      </div>
+      <div style={{borderTop:'var(--border-heavy) solid var(--rule-heavy)'}}>
+        {items.map(([t,b])=><div key={t} style={{display:'grid',gridTemplateColumns:'.8fr 1.2fr',gap:'var(--space-8)',padding:'var(--space-7) 0',borderBottom:'var(--border-hair) solid var(--rule)'}}>
+          <h3 style={{font:'var(--type-section)',fontSize:'var(--text-lg)',margin:0}}>{t}</h3>
+          <p style={{font:'var(--type-body)',fontSize:'var(--text-base)',color:'var(--text-secondary)',margin:0}}>{b}</p>
+        </div>)}
+      </div>
     </div>
   </section>;
 }
 
-function ServiceSection(){
+function Deliverables(){
+  const items=[
+    ['The comparison, fixed first','Approve the tasks, setups, grading, and limits. Colophon seals that method before execution.'],
+    ['Every planned result, accounted for','Passes, failures, timeouts, and ungradable cells remain visible. Nothing disappears because it is inconvenient.'],
+    ['A report that travels','Get a permanent URL, a readable result, the evidence bundle, and one-command verification.']];
+  return <section style={{borderBottom:'var(--border-hair) solid var(--rule)'}}>
+    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)'}}>
+      <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',margin:'0 0 var(--space-9)',maxWidth:'18ch'}}>What you get.</h2>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'var(--space-9)'}}>
+        {items.map(([t,b],i)=><div key={t} style={{display:'flex',flexDirection:'column',gap:'var(--space-5)',borderTop:'var(--border-heavy) solid var(--rule-heavy)',paddingTop:'var(--space-6)'}}>
+          <span style={{font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-faint)'}}>{String(i+1).padStart(2,'0')}</span>
+          <h3 style={{font:'var(--type-section)',fontSize:'var(--text-lg)',margin:0}}>{t}</h3>
+          <p style={{font:'var(--type-body)',fontSize:'var(--text-base)',color:'var(--text-secondary)',margin:0}}>{b}</p>
+        </div>)}
+      </div>
+    </div>
+  </section>;
+}
+
+function SuiteSection(){
   return <section style={{background:'var(--surface-inset)',borderBottom:'var(--border-hair) solid var(--rule)'}}>
-    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'var(--space-12)',alignItems:'center'}}>
+    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-13) var(--gutter-lg)',display:'grid',gridTemplateColumns:'1fr .82fr',gap:'var(--space-12)',alignItems:'end',borderTop:'var(--border-slab) solid var(--rule-accent)'}}>
       <div style={{display:'flex',flexDirection:'column',gap:'var(--space-7)'}}>
-        <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Bring the stack that runs the work</span>
-        <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',color:'var(--text-primary)',margin:0,maxWidth:'20ch'}}>Run your harness against work people recognize.</h2>
-        <p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:0,maxWidth:'50ch'}}>Bring the harness or agent setup you want to test. Use a known benchmark suite, or a task set built around the claim. Colophon locks the comparison, accounts for every expected result, and publishes the evidence.</p>
+        <h2 style={{font:'var(--type-title)',fontSize:'var(--text-4xl)',color:'var(--text-primary)',margin:0,maxWidth:'22ch'}}>Turn a benchmark run into a claim others can verify.</h2>
+        <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',margin:0,maxWidth:'56ch'}}>Run on <strong style={{color:'var(--text-primary)'}}>APEX-Agents</strong>, <strong style={{color:'var(--text-primary)'}}>SWE-bench Verified</strong>, <strong style={{color:'var(--text-primary)'}}>Terminal-Bench 3.0</strong>, or another established suite. Or use a benchmark built for your claim.</p>
       </div>
-      <div style={{borderTop:'var(--border-heavy) solid var(--rule-heavy)',paddingTop:'var(--space-7)',display:'grid',gap:'var(--space-7)'}}>
-        <div><strong style={{font:'var(--type-section)',fontSize:'var(--text-lg)'}}>Known benchmark work</strong><p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:'var(--space-3) 0 0'}}>Keep the suite and harness that define the comparison. Colophon records the approved setup and the outcome of every expected run.</p></div>
-        <div><strong style={{font:'var(--type-section)',fontSize:'var(--text-lg)'}}>A task set shaped around the claim</strong><p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:'var(--space-3) 0 0'}}>When an existing suite does not match the question, define the relevant work first and lock it before execution.</p></div>
+      <div style={{display:'flex',flexDirection:'column',gap:'var(--space-6)',alignItems:'flex-start'}}>
+        <p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:0}}>We lock the method, account for every result, and publish the evidence.</p>
+        <Button variant="primary" size="lg">Bring us your claim</Button>
       </div>
+    </div>
+  </section>;
+}
+
+function VerificationSection(){
+  return <section style={{borderBottom:'var(--border-hair) solid var(--rule)'}}>
+    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)',display:'grid',gridTemplateColumns:'.9fr 1.1fr',gap:'var(--space-12)',alignItems:'center'}}>
+      <div style={{display:'flex',flexDirection:'column',gap:'var(--space-6)'}}>
+        <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',margin:0,maxWidth:'18ch'}}>The evidence travels with the claim.</h2>
+        <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',margin:0,maxWidth:'42ch'}}>Every report links the exact bundle. A reader can verify its manifest, evidence, signatures, matrix, report, and claim consistency in one command.</p>
+      </div>
+      <pre style={{margin:0,padding:'var(--space-8)',background:'var(--surface-card)',border:'var(--border-hair) solid var(--rule-strong)',font:'var(--type-code)',overflowX:'auto'}}><code>npx @colophon-claims/verify@0.1 ./bundle</code></pre>
     </div>
   </section>;
 }
@@ -106,7 +140,7 @@ function SiteFooter(){
     <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-11) var(--gutter-lg) var(--space-9)',display:'grid',gridTemplateColumns:'1.4fr repeat(3,1fr)',gap:'var(--space-10)'}}>
       <div style={{display:'flex',flexDirection:'column',gap:'var(--space-5)'}}>
         <span style={{fontFamily:'var(--font-display)',fontSize:'var(--text-lg)'}}>Colophon</span>
-        <p style={{font:'var(--type-body)',fontSize:'var(--text-sm)',color:'var(--text-secondary)',margin:0,maxWidth:'34ch'}}>Benchmark publishing for agent configurations. Colophon records how a result was produced. It does not certify that a result is correct.</p>
+        <p style={{font:'var(--type-body)',fontSize:'var(--text-sm)',color:'var(--text-secondary)',margin:0,maxWidth:'34ch'}}>Benchmark publishing for performance claims. Colophon records how a result was produced. It does not certify that a result is correct.</p>
       </div>
       {[['Product',['Bring a claim','How it works','Execution paths']],['Reports',['Published report','Check the bundle','Claim JSON schema']],['Readers',['Docs','Verification','Limits']]].map(([h,ls])=>
         <div key={h} style={{display:'flex',flexDirection:'column',gap:'var(--space-4)'}}>
@@ -121,4 +155,4 @@ function SiteFooter(){
     </div>
   </footer>;
 }
-Object.assign(window.__K,{SiteHeader,Hero,Pillars,ServiceSection,ReportIndex,SiteFooter});
+Object.assign(window.__K,{SiteHeader,Hero,BuyerMoments,Deliverables,SuiteSection,VerificationSection,ReportIndex,SiteFooter});

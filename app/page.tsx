@@ -11,37 +11,33 @@ import { listReports } from "@/lib/reports";
 
 const CONTACT_EMAIL = "ritsu@colophon.claims";
 
-const HOW_IT_WORKS: { title: string; body: string }[] = [
+const BUYER_MOMENTS: { title: string; body: string }[] = [
   {
-    title: "Bring the claim and the harness",
-    body: "Tell us what you need to establish, what already runs the work, and which benchmark would make the result meaningful.",
+    title: "You’re about to make a performance claim",
+    body: "Publish the basis before customers, contributors, or competitors ask how you know.",
   },
   {
-    title: "You approve the method before anything runs",
-    body: "The tasks, the setups being compared, what counts as a pass. Once you sign off it's sealed with a timestamp, so nobody can adjust it later to suit the result. Including us.",
+    title: "You’re choosing between agent setups",
+    body: "Make the decision on a comparison approved before execution, not on the most convenient run.",
   },
   {
-    title: "Everything runs the same way",
-    body: "Same tasks for every setup. If one drifts from what you approved, that run gets thrown out rather than quietly counted.",
-  },
-  {
-    title: "You get a report people can check",
-    body: "A permanent URL with the result, what happened to every run including the failures, and the files to check it.",
+    title: "Someone else needs to inspect the result",
+    body: "Give them the method, every planned outcome, the limits, and the exact evidence behind the answer.",
   },
 ];
 
-const WHO_ITS_FOR: { title: string; body: string }[] = [
+const DELIVERABLES: { title: string; body: string }[] = [
   {
-    title: "You're shipping a skill, harness, or loadout",
-    body: "You have a performance claim people will test, quote, or argue with.",
+    title: "The comparison, fixed first",
+    body: "Approve the tasks, setups, grading, and limits. Colophon seals that method before execution.",
   },
   {
-    title: "You're making a review-agent claim",
-    body: "Show which review work you tested, what each setup saw, and what happened to every run.",
+    title: "Every planned result, accounted for",
+    body: "Passes, failures, timeouts, and ungradable cells remain visible. Nothing disappears because it is inconvenient.",
   },
   {
-    title: "You're choosing between setups",
-    body: "Make the choice on a method you approved first, then keep the evidence for when someone asks.",
+    title: "A report that travels",
+    body: "Get a permanent URL, a readable result, the evidence bundle, and one-command verification.",
   },
 ];
 
@@ -54,22 +50,22 @@ export default function Home() {
     <>
       <SiteHeader />
       <main>
-        {/* 1. First fold — the promise beside the public proof */}
+        {/* 1. First fold: the promise beside the public proof */}
         <section className="hero-section" id="read-one">
           <div className="container hero-grid">
             <div className="hero-copy">
-              <span className="eyebrow">Benchmark publishing for agent configurations</span>
+              <span className="eyebrow">Benchmark publishing for agent performance</span>
               <h1>Publish benchmark claims people can check.</h1>
               <p className="hero-what">
                 Lock the method, account for every expected result, and publish the evidence so the
                 claim can survive outside the person who made it.
               </p>
               <div className="button-row">
-                <LinkButton href={featuredHref} variant="primary" size="lg">
-                  Read the report
-                </LinkButton>
-                <LinkButton href="#contact" variant="secondary" size="lg">
+                <LinkButton href="#contact" variant="primary" size="lg">
                   Bring a claim
+                </LinkButton>
+                <LinkButton href={featuredHref} variant="secondary" size="lg">
+                  Read the report
                 </LinkButton>
               </div>
             </div>
@@ -86,113 +82,102 @@ export default function Home() {
                 <p className="prose">No report is published yet.</p>
               )}
               <p className="hero-feature-note">
-                One narrow question, with the task limit, host deviation, failed checks, and full
-                evidence bundle kept beside the answer.
+                No winner emerged. The method, failed checks, and limits still travel with the
+                answer.
               </p>
             </div>
           </div>
         </section>
 
-        {/* 2. Current engagement shape */}
-        <section className="service-section" id="service">
-          <div className="container service-grid">
-            <div className="service-lede">
-              <span className="eyebrow">Benchmark engagement</span>
-              <h2>Bring your harness. Test it on work people recognize.</h2>
-            </div>
-            <div className="service-body">
+        {/* 2. Buyer situations */}
+        <section className="section buyer-section" id="when-it-matters">
+          <div className="container buyer-grid">
+            <div className="buyer-lede">
+              <h2 className="section-title">When the claim has to hold up.</h2>
               <p>
-                You bring the agent or harness you want to evaluate. When a known benchmark fits
-                the claim, we run the comparison around that suite, lock the method before
-                execution, and publish the result as a report people can inspect.
+                You don&apos;t need another unsupported score. You need an answer that can travel.
               </p>
-              <div className="service-paths">
-                <div>
-                  <span>Known benchmark</span>
-                  <p>Keep the suite and grading path your audience already understands.</p>
+            </div>
+            <div className="buyer-needs">
+              {BUYER_MOMENTS.map((item) => (
+                <article className="buyer-need" key={item.title}>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 3. Engagement outcomes */}
+        <section className="section deliverables-section" id="what-you-get">
+          <div className="container">
+            <h2 className="section-title">What you get.</h2>
+            <div className="deliverables-grid">
+              {DELIVERABLES.map((item, i) => (
+                <div className="deliverable" key={item.title}>
+                  <span className="deliverable-number">{String(i + 1).padStart(2, "0")}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
                 </div>
-                <div>
-                  <span>Claim-shaped task set</span>
-                  <p>
-                    If no existing suite fits, define the relevant work with us before it is locked.
-                  </p>
-                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Managed suite breadth */}
+        <section className="suite-section" id="benchmark-methods">
+          <div className="container suite-grid">
+            <div className="suite-copy">
+              <h2>Turn a benchmark run into a claim others can verify.</h2>
+              <p>
+                Run on <strong>APEX-Agents</strong>, <strong>SWE-bench Verified</strong>,{" "}
+                <strong>Terminal-Bench 3.0</strong>, or another established suite. Or use a
+                benchmark built for your claim.
+              </p>
+            </div>
+            <div className="suite-action">
+              <p>We lock the method, account for every result, and publish the evidence.</p>
+              <div className="button-row">
+                <LinkButton href="#contact" variant="primary" size="lg">
+                  Bring us your claim
+                </LinkButton>
+                <Link href="/docs/#execution">See the execution methods</Link>
               </div>
-              <Link href="/docs/#execution">See the current execution paths</Link>
-            </div>
-          </div>
-        </section>
-
-        {/* 3. How it works */}
-        <section className="section" id="what-it-does">
-          <div className="container">
-            <h2 className="section-title">How it works</h2>
-            <div className="pillars">
-              {HOW_IT_WORKS.map((item, i) => (
-                <div className="pillar" key={item.title}>
-                  <span className="pillar-number">{String(i + 1).padStart(2, "0")}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              ))}
-            </div>
-            <p className="section-note prose">
-              The report page exposes the manifest, signed envelope, claim package, and source
-              disclosures directly. <Link href="/docs/">The docs</Link> explain the reader path and
-              its limits.
-            </p>
-          </div>
-        </section>
-
-        {/* 4. Who it's for */}
-        <section className="section" id="who-its-for">
-          <div className="container">
-            <h2 className="section-title">Who this is for</h2>
-            <div className="pillars">
-              {WHO_ITS_FOR.map((item) => (
-                <div className="pillar" key={item.title}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              ))}
             </div>
           </div>
         </section>
 
         {/* 5. Reader path */}
         <section className="section verification-section" id="check-it-yourself">
-          <div className="container stacked-section">
-            <h2 className="section-title">Check it yourself</h2>
-            <p className="prose">
-              Every report links its manifest, signed envelope, claim package, and source
-              disclosures. The public reader checks the complete bundle in one command.
-            </p>
+          <div className="container verification-grid">
+            <div className="verification-copy">
+              <h2 className="section-title">The evidence travels with the claim.</h2>
+              <p className="prose">
+                Every report links the exact bundle. A reader can verify its manifest, evidence,
+                signatures, matrix, report, and claim consistency in one command.
+              </p>
+              <Link href="/docs/#reader">What the reader checks</Link>
+            </div>
             <pre className="codeblock">
               <code>npx @colophon-claims/verify@0.1 ./bundle</code>
             </pre>
-            <p className="code-note">
-              It checks the manifest, evidence closure, artifacts, signatures, matrix, signed
-              report, and claim consistency. <Link href="/docs/#reader">What that means</Link>.
-            </p>
           </div>
         </section>
 
         {/* 6. The engagement */}
-        <section className="section" id="contact">
-          <div className="container stacked-section">
-            <h2 className="section-title">Bring the harness and the claim.</h2>
-            <p className="prose">
-              Tell us what you want to establish, what already runs the work, and which benchmark
-              your audience will recognize. We&apos;ll shape the comparison with you, you sign off on
-              the method before anything runs, and you get a report at a permanent URL.
-            </p>
-            <p className="prose">
-              Worth putting in a first email: what you&apos;re claiming, which tasks reflect the
-              real work, how skeptical your audience is, and when you need it.
-            </p>
-            <div className="button-row">
+        <section className="section contact-section" id="contact">
+          <div className="container contact-grid">
+            <div className="contact-copy">
+              <h2 className="section-title">What claim needs to hold up?</h2>
+              <p className="prose">
+                Send us the claim, the decision it supports, and the benchmark you have in mind. If
+                no suite fits, we&apos;ll shape the task set and lock the method with you.
+              </p>
+            </div>
+            <div className="contact-action">
               <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">
-                Email us
+                Bring us your claim
               </LinkButton>
             </div>
           </div>

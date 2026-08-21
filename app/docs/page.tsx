@@ -47,7 +47,7 @@ const LIMITS: { lead: string; body: string }[] = [
 const NAV = [
   { href: "#reader", label: "Reader" },
   { href: "#bundle", label: "Bundle shape" },
-  { href: "#execution", label: "Execution paths" },
+  { href: "#execution", label: "Benchmark methods" },
   { href: "#limits", label: "Limits" },
 ];
 
@@ -110,62 +110,61 @@ export default function Docs() {
           </section>
 
           <section id="execution">
-            <h2>Bring the harness. Choose the work.</h2>
+            <h2>Run the benchmark. Keep the evidence.</h2>
             <p className="prose">
-              Colophon is currently offered as an assisted benchmark engagement, not as a generic
-              self-serve runner. Bring the harness or agent setup behind the claim. We use a known
-              benchmark suite when it fits, or define a task set around the claim before the method
-              is locked.
+              Colophon is currently offered as a managed benchmark engagement, not as a generic
+              self-serve runner. Bring the performance claim. We run an established suite according
+              to its locked method, or define a custom benchmark around the question.
             </p>
             <p className="prose">
-              The source product currently implements the paths below. The public reader is on npm;
-              the broader runner is not. A customer harness outside these paths needs an explicit
-              integration and qualification step before it can enter a locked comparison.
+              The public reader is on npm. The broader runner remains operator managed. Where a
+              suite specifies the agent, engine, repetitions, or grading, those choices are part of
+              the official method and stay fixed. Change them and the result becomes a custom
+              comparison on that task source, not an official-suite run.
             </p>
             <dl className="integration-list">
               <div>
-                <dt>Agent harnesses</dt>
+                <dt>Official suite protocols</dt>
                 <dd>
-                  The current managed adapters are Claude Code and Codex. Colophon records the
-                  selected executable, model, effort, and loadout instead of accepting an unbounded
-                  shell command.
+                  Terminal-Bench 2.1 and 3.0, SWE-bench Verified, APEX-Agents, APEX-SWE-dev,
+                  DeepSWE v1.1, and Inspect eval. Colophon seals the selected suite version,
+                  coverage, repetitions, and official execution requirements.
                 </dd>
               </div>
               <div>
-                <dt>Evaluation runtime</dt>
+                <dt>Execution engines</dt>
                 <dd>
-                  Inspect. A selected Inspect evaluation runs each cell beneath the locked Colophon
-                  method; its evaluation log remains runtime evidence, not the published claim by
-                  itself.
+                  Harbor, the SWE-bench harness, Archipelago, the APEX-SWE runners, Pier, and
+                  Inspect. Each engine owns the work it runs or grades. Colophon owns the method
+                  lock, the accounting, and the published bundle.
                 </dd>
               </div>
               <div>
-                <dt>Official suite paths</dt>
+                <dt>Your agent or harness</dt>
                 <dd>
-                  Terminal-Bench 2.1 through Harbor, and SWE-bench Verified through its official
-                  harness. The suite engine runs or grades the work; Colophon owns the lock,
-                  accounting, and bundle.
+                  Where the benchmark method permits a custom setup, current managed adapters
+                  include Claude Code and Codex. If your harness needs another integration, we build
+                  and qualify that path as part of the engagement before it enters the comparison.
                 </dd>
               </div>
               <div>
-                <dt>Execution venue</dt>
+                <dt>Custom benchmark</dt>
                 <dd>
-                  The current product profile runs locally, with pinned Docker or OCI grading when
-                  the benchmark requires a task environment. Network venues are not part of this
-                  release.
+                  If no established suite answers the question, we fix the task sources, work
+                  environments, grading, comparison arms, and exclusions with you before execution.
+                  Those choices travel with the result.
                 </dd>
               </div>
             </dl>
             <p className="prose">
-              This report is a worked example of another path: pinned SkillsBench v1.1 task
-              packages, Colophon-owned arm construction, one Claude Code harness, and the upstream
-              task verifiers in pinned containers.
+              The published Skill-versus-CLAUDE.md report shows the custom path: pinned SkillsBench
+              v1.1 task packages, versioned arm construction, one Claude Code setup, and the
+              upstream task verifiers in pinned containers.
             </p>
             <p className="prose">
-              When no known suite matches the claim, the task package becomes part of the method:
-              where the tasks came from, what they preserve, and how they are judged must all be
-              fixed before execution. That is scoped engagement work, not a promise that any suite
-              or shell command can be dropped in unchanged.
+              A managed integration is not a promise that any suite or shell command can be dropped
+              in unchanged. It means the required path is made explicit, qualified, and locked
+              before the official run.
             </p>
           </section>
 
