@@ -1,2 +1,0 @@
-{"fixture":true,"kind":"header","schema":"benchmark-product.bundle-assembly/1","runSha256":"282812892f0c730f7e50e4822bf80d2fc00f7604b15e8ad3df710e7edf470ded","expectedCells":600}
-{"fixture":true,"kind":"cell","cellKey":"skill/fixture-task-01/r1","outcome":"met","deliverySha256":"442b341e9dda802b0dd9c29ce4f5a9d34c261d0a22b3663458a56cd48b2e6c92","verdictSha256s":["9721fd583f3b8c8a7ee146ed7fe781069a11a8931e58bdfeb39b7357e0e2451a"]}

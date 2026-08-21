@@ -11,7 +11,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://colophon.claims"),
   title: {
-    default: "Colophon — compare agents on the same work",
+    default: "Colophon — publish claims people can check",
     template: "%s — Colophon",
   },
   description: "Publish benchmark claims people can check.",

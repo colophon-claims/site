@@ -26,33 +26,29 @@ const HOW_IT_WORKS: { title: string; body: string }[] = [
   },
   {
     title: "You get a report people can check",
-    body: "A permanent URL with the result, what happened to every run including the failures, and the files to verify it. Put the badge in your README.",
+    body: "A permanent URL with the result, what happened to every run including the failures, and the files to check it.",
   },
 ];
 
 const WHO_ITS_FOR: { title: string; body: string }[] = [
   {
-    title: "You're publishing a comparison",
-    body: "Your launch post says you're faster, cheaper, or better than something. People will poke at it.",
+    title: "You're shipping a skill, harness, or loadout",
+    body: "You have a performance claim people will test, quote, or argue with.",
   },
   {
-    title: "Someone's disputing your numbers",
-    body: "Stop arguing and run it again somewhere they can watch.",
+    title: "You're making a review-agent claim",
+    body: "Show which review work you tested, what each setup saw, and what happened to every run.",
   },
   {
     title: "You're choosing between setups",
-    body: "Decide which setup to use, and keep the evidence for when someone asks.",
-  },
-  {
-    title: "You benchmark for a living",
-    body: "Publish work other people can reproduce.",
+    body: "Make the choice on a method you approved first, then keep the evidence for when someone asks.",
   },
 ];
 
 export default function Home() {
   const reports = listReports();
   const featured = reports[0];
-  const featuredHref = featured === undefined ? "/reports/" : `/reports/${featured.slug}/`;
+  const featuredHref = featured === undefined ? "#contact" : `/reports/${featured.slug}/`;
 
   return (
     <>
@@ -64,7 +60,8 @@ export default function Home() {
             <span className="eyebrow">Benchmark publishing for agent configurations</span>
             <h1>Publish benchmark claims people can check.</h1>
             <p className="hero-what">
-              You&apos;ve run the comparison. Now you need people to believe it.
+              Lock the method, account for every cell, and publish the evidence so the claim can
+              survive outside the person who made it.
             </p>
             <div className="button-row">
               <LinkButton href={featuredHref} variant="primary" size="lg">
@@ -84,19 +81,16 @@ export default function Home() {
             <div className="read-one">
               <div className="read-one-copy">
                 <p className="prose">
-                  Every job ends with a report like this one. The result, the method you locked
-                  before running, what happened to all of it, and the files to check it yourself.
-                </p>
-                <p className="prose">
-                  This one asks whether skills actually beat putting the same instructions in
-                  AGENTS.md.
+                  One narrow question, fully accounted: the same instruction bytes as a native
+                  Skill or root <code>CLAUDE.md</code>, plus a no-instructions arm. The report keeps
+                  the scale limit, host deviation, and two failed oracles on its face.
                 </p>
                 <div className="button-row">
                   <LinkButton href={featuredHref} variant="primary">
                     Read the report
                   </LinkButton>
                   <LinkButton href={`${featuredHref}#bundle`} variant="secondary">
-                    Download the bundle
+                    Check the bundle
                   </LinkButton>
                 </div>
               </div>
@@ -129,8 +123,13 @@ export default function Home() {
               ))}
             </div>
             <p className="prose" style={{ marginTop: "var(--space-7)" }}>
-              A person can run this, or their agent can. Every step is one command.{" "}
-              <Link href="/docs/">The docs</Link> have the rest.
+              Keep the tools that already run the work. Colophon sits around the comparison: it
+              locks the method, records what ran, and publishes the evidence. <Link href="/docs/#execution">See the current execution paths</Link>.
+            </p>
+            <p className="prose" style={{ marginTop: "var(--space-5)" }}>
+              The report page exposes the manifest, signed envelope, claim package, and source
+              disclosures directly. <Link href="/docs/">The docs</Link> explain the reader path and
+              its limits.
             </p>
           </div>
         </section>
@@ -152,27 +151,25 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5. Quickstart pointer */}
-        <section className="section" id="run-it-yourself">
+        {/* 5. Reader path */}
+        <section className="section" id="check-it-yourself">
           <div
             className="container"
             style={{ display: "flex", flexDirection: "column", gap: "var(--space-7)" }}
           >
             <h2 style={{ font: "var(--type-title)", fontSize: "var(--text-2xl)" }}>
-              Run it yourself
+              Check it yourself
             </h2>
             <p className="prose">
-              It runs from a source checkout. No account, no API key, and the first run costs
-              nothing. A sample benchmark and two setups come bundled.
+              Every report links its manifest, signed envelope, claim package, and source
+              disclosures. The public reader checks the complete bundle in one command.
             </p>
             <pre className="codeblock">
-              <code>{`git clone https://github.com/Jinn-Network/mono.git
-cd mono/packages/benchmark-product/core
-yarn install --immutable && yarn public-quickstart`}</code>
+              <code>npx @colophon-claims/verify@0.1 ./bundle</code>
             </pre>
             <p className="code-note">
-              That runs the whole thing end to end, then verifies the bundle it produced.{" "}
-              <Link href="/docs/#quickstart">Full quickstart and every command</Link>.
+              It checks the manifest, evidence closure, artifacts, signatures, matrix, signed
+              report, and claim consistency. <Link href="/docs/#reader">What that means</Link>.
             </p>
           </div>
         </section>

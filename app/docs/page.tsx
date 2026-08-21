@@ -1,60 +1,54 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-
-// Detail moved off the landing page in v2 (2026-08-13). The quickstart and the
-// limitations are reproduced verbatim from surface copy v1.0; the limits are
-// also printed in the product and in every report it produces.
+import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
   title: "Docs",
-  description:
-    "Running Colophon from a source checkout, every verb, and the limits of what a report establishes.",
+  description: "How to read a Colophon report, check its bundle, and understand its limits.",
 };
+
+const CHECKS = [
+  "manifest closure",
+  "evidence closure",
+  "artifact integrity",
+  "signature validity",
+  "matrix re-derivation",
+  "report verification",
+  "claim consistency",
+];
 
 const LIMITS: { lead: string; body: string }[] = [
   {
-    lead: "This is a self-run venue.",
-    body: "The same operator controls task dispatch, execution, and evaluation. Locking the method is a discipline this tool enforces on that operator's own process, not a proof against them: nothing stops a run owner from altering a record before publishing it. What a local run establishes is reproducibility and internal discipline. If you want the claim settled rather than shown, clone the benchmark and run it yourself.",
+    lead: "A local run does not prove honesty against its owner.",
+    body: "A locked method disciplines the operator's process. The bundle lets another reader inspect and replay that process. Neither one stops the run owner from withholding a different run before publication.",
   },
   {
-    lead: "Distinct evaluator identities are not distinct parties.",
-    body: "Each evaluator identity is backed by its own signing key minted in the same workspace, and Colophon checks every verdict signature against it. That establishes which key signed which verdict. It does not establish that unrelated people or organizations were involved.",
+    lead: "Distinct identities are not distinct real-world parties.",
+    body: "A key can establish which identity signed a record. It does not establish that unrelated people or organizations controlled those identities.",
   },
   {
-    lead: "Agreement among evaluators is not correctness.",
-    body: "A majority or a unanimous result is a reduction rule you declared before the run, applied to judgments that can be wrong together. Reports state the independence mode, the verdict counts, and the reduction rule that actually applied, not just the label you picked.",
+    lead: "A valid signature is not a correct judgment.",
+    body: "The reader checks the signed bytes and the declared reduction. Evaluators can still be wrong, including together.",
   },
   {
-    lead: "A report is not a certification and not a ranking.",
-    body: "Nothing here is accredited, official, or scored against other reports. No comparative winner is stated, and the published assets say so on their face. A report is evidence about one question, on one task set, on one date.",
+    lead: "A report is not a certification or ranking.",
+    body: "It answers one declared question over one bounded task population. It does not grant a seal, score unrelated reports, or establish a general winner.",
   },
   {
-    lead: "Pinning covers three axes, and one is vacuous.",
-    body: "Harness, model, and loadout are enforced at dispatch. The isolation axis is not: this venue's launchers admit exactly one isolation policy, so a match on it proves nothing about containment strength. Reports carry the per-axis counts rather than implying that everything configured was enforced.",
+    lead: "Scope travels with the result.",
+    body: "The task population, model, loading paths, analysis subset, host deviations, and failed cells stay visible. A compact claim that drops those limits is not the report.",
   },
   {
-    lead: "Cost figures are self-reported.",
-    body: "They come from this venue's own resource observations. Nothing settled them.",
-  },
-  {
-    lead: "Rehearsals happen, and they are disclosed.",
-    body: "A preview is an unregistered run. It produces disposable artifacts, never enters official results, and when any preview preceded an official run, that run's report says so in its limitations.",
-  },
-  {
-    lead: "Publishing makes the run public, and it writes to your disk.",
-    body: "The bundle deliberately contains the tasks, deliveries, verdicts, report, and claim. Drafts, grants, audit state, environment data, and private keys stay behind, but the bundle is not a PII scrubber. publish uploads nothing, hosts nothing, and deploys nothing: the reports on this site are files placed here by hand.",
-  },
-  {
-    lead: "Network execution is not available yet.",
-    body: "The marketplace venue, where pre-registration and completeness become checkable against the run's own owner, has prerequisites that are not built. Until they are, the product reports that venue as unavailable rather than running everything locally under a stronger name.",
+    lead: "Publishing is local bundle emission, not upload.",
+    body: "The product writes an immutable bundle to disk. This site receives and serves a byte-exact copy as a separate operator step.",
   },
 ];
 
-const NAV: { href: string; label: string }[] = [
-  { href: "#quickstart", label: "Quickstart" },
-  { href: "#verbs", label: "The run, verb by verb" },
-  { href: "#limits", label: "What this does not do" },
+const NAV = [
+  { href: "#reader", label: "Reader" },
+  { href: "#bundle", label: "Bundle shape" },
+  { href: "#execution", label: "Execution paths" },
+  { href: "#limits", label: "Limits" },
 ];
 
 export default function Docs() {
@@ -66,92 +60,108 @@ export default function Docs() {
           <span className="docs-rail-label">Docs</span>
           <nav className="docs-nav">
             {NAV.map((item) => (
-              <a href={item.href} key={item.href}>
-                {item.label}
-              </a>
+              <a href={item.href} key={item.href}>{item.label}</a>
             ))}
           </nav>
         </aside>
 
         <div className="docs-content">
           <section id="top">
-            <h1>Running it, and what it does not establish.</h1>
+            <h1>Read the report. Then check its bytes.</h1>
             <p className="docs-lede">
-              Colophon runs from a source checkout. Everything below is the whole surface: one
-              command to see it work end to end, the eleven verbs that command wraps, and the
-              limits of what a report from this venue establishes.
+              The page is a reading surface for a published bundle. It makes the result and its
+              limits legible; it is not the source of truth for the claim.
             </p>
           </section>
 
-          <section id="quickstart">
-            <h2>Quickstart</h2>
+          <section id="reader">
+            <h2>Reader</h2>
             <p className="prose">
-              Colophon runs from a source checkout today. There is no published package, no hosted
-              service, and no account. A first benchmark needs no API key, no network venue, and no
-              funds: the sample benchmark and both sample arms are bundled.
-            </p>
-            <p className="prose">
-              Node.js 22 (22.23.1 is the verified runtime), Yarn 4.13.0, and a checkout with the
-              workspace dependency distributions already built in the order used by{" "}
-              <code>.github/workflows/benchmark-product-ci.yml</code>.
+              Download a report bundle, then run the public reader from npm.
             </p>
             <pre className="codeblock">
-              <code>{`git clone https://github.com/Jinn-Network/mono.git
-cd mono/packages/benchmark-product/core
-yarn install --immutable && yarn public-quickstart`}</code>
+              <code>npx @colophon-claims/verify@0.1 ./bundle</code>
             </pre>
             <p className="code-note">
-              That builds the CLI, creates a temporary workspace, attaches the bundled three-task
-              benchmark and two real subprocess arms, and drives the full lifecycle to a published
-              bundle. It then copies the bundle out, deletes the workspace that made it, and
-              requires the standalone verifier to return all six checks from the copy. It prints a
-              JSON evidence envelope and removes its own temporary directory.
+              The reader checks {CHECKS.join(", ")}. You can also inspect the JSON, recompute the
+              listed SHA-256 digests, or verify the signatures with other tools; Colophon is not
+              required to check a Colophon bundle.
+            </p>
+            <p className="code-note">
+              Protocol identifiers under <code>https://spec.jinn.network/</code> are names; that
+              origin is not hosted yet. The reader uses the exact platform bytes installed from
+              npm.
             </p>
           </section>
 
-          <section id="verbs">
-            <h2>The same run, verb by verb</h2>
-            <pre className="codeblock">
-              <code>{`colophon init         --workspace ./bench --principal you
-colophon draft create --workspace ./bench --principal you --id first --name "First benchmark"
-colophon sample init  --workspace ./bench --principal you --draft first
-
-colophon arm add --workspace ./bench --principal you --draft first \\
-  --arm baseline --pinning '{"harness":{"id":"prediction-v1-baseline","version":"1.0.0"}}'
-colophon arm add --workspace ./bench --principal you --draft first \\
-  --arm sample-uniform --pinning '{"harness":{"id":"sample-uniform","version":"0.1.0"}}'
-
-colophon quote   --workspace ./bench --principal you --draft first
-colophon lock    --workspace ./bench --principal you --draft first
-colophon launch  --workspace ./bench --principal you --draft first
-colophon collect --workspace ./bench --principal you --draft first
-colophon report  --workspace ./bench --principal you --draft first
-colophon publish --workspace ./bench --principal you --draft first
-
-colophon bundle verify --bundle ./bench/artifacts/first/public-bundles/<identity> --json`}</code>
-            </pre>
-            <p className="code-note">
-              From a source checkout the binary is <code>node dist/cli/bin.js</code>;{" "}
-              <code>colophon</code> is the command name once the package is on your path, and{" "}
-              <code>benchmark-product</code> remains as an alias.
+          <section id="bundle">
+            <h2>Bundle shape</h2>
+            <p className="prose">
+              <code>bundle.json</code> is the complete byte and digest inventory. An evidence-native
+              bundle also carries the public reading record, signed report envelope, machine claim
+              package, declared analysis, evidence cohort, result matrix, evidence records,
+              artifacts, public keys, and source disclosures.
             </p>
-            <p className="code-note">
-              <code>colophon help</code> lists every verb and its flags. Add <code>--json</code> to
-              any of them for one machine-readable envelope on stdout. Exit codes: 0 success, 2
-              invalid invocation, 3 authority denied, 1 every other typed error.
+            <p className="prose">
+              The report page links the canonical files first and gives the bundle identity and
+              report-envelope digest in full. Every manifest-bound path remains available under
+              the report&apos;s <code>/bundle/</code> directory. The site does not rewrite those files.
             </p>
-            <p className="code-note">
-              To bring your own tasks instead of the sample,{" "}
-              <code>colophon import swebench</code> takes SWE-bench-shaped rows.
+          </section>
+
+          <section id="execution">
+            <h2>Bring the stack that runs your trials</h2>
+            <p className="prose">
+              Colophon does not replace the framework, agent harness, or suite that executes the
+              work. It locks the comparison around that engine, accounts for every result, and
+              carries the evidence into one published bundle.
+            </p>
+            <p className="prose">
+              The paths below are implemented in the source product. They are not yet available to
+              a stranger through npm; publishing the public packages is still a release gate.
+            </p>
+            <dl className="integration-list">
+              <div>
+                <dt>Agent harnesses</dt>
+                <dd>
+                  Claude Code and Codex. Colophon records the selected executable, model, effort,
+                  and loadout instead of accepting an unbounded shell command.
+                </dd>
+              </div>
+              <div>
+                <dt>Evaluation runtime</dt>
+                <dd>
+                  Inspect. A selected Inspect evaluation runs each cell beneath the locked Colophon
+                  method; its evaluation log remains runtime evidence, not the published claim by
+                  itself.
+                </dd>
+              </div>
+              <div>
+                <dt>Official suite paths</dt>
+                <dd>
+                  Terminal-Bench 2.1 through Harbor, and SWE-bench Verified through its official
+                  harness. The suite engine runs or grades the work; Colophon owns the lock,
+                  accounting, and bundle.
+                </dd>
+              </div>
+              <div>
+                <dt>Execution venue</dt>
+                <dd>
+                  The current product profile runs locally, with pinned Docker or OCI grading when
+                  the benchmark requires a task environment. Network venues are not part of this
+                  release.
+                </dd>
+              </div>
+            </dl>
+            <p className="prose">
+              This report is a worked example of another path: pinned SkillsBench v1.1 task
+              packages, Colophon-owned arm construction, one Claude Code harness, and the upstream
+              task verifiers in pinned containers.
             </p>
           </section>
 
           <section id="limits">
-            <h2>What this does not do</h2>
-            <p className="prose">
-              These limits are printed in the product and in every report it produces. They are the
-              reason the bundle exists.
-            </p>
+            <h2>What this does not establish</h2>
             <ul className="limits-list">
               {LIMITS.map((item) => (
                 <li key={item.lead}>

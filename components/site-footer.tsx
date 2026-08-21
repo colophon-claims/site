@@ -8,6 +8,8 @@ import { listReports } from "@/lib/reports";
  * placeholders on a public page. */
 export function SiteFooter() {
   const reports = listReports();
+  const report = reports[0];
+  const reportsHref = report === undefined ? "/#read-one" : `/reports/${report.slug}/`;
   return (
     <footer className="site-footer">
       <div className="site-footer-grid">
@@ -20,7 +22,7 @@ export function SiteFooter() {
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Product</span>
-          <Link href="/reports/">Reports</Link>
+          <Link href={reportsHref}>Report</Link>
           <Link href="/docs/">Docs</Link>
           <a href="/#contact">Bring a claim</a>
         </div>
@@ -33,21 +35,20 @@ export function SiteFooter() {
           ))}
         </div>
         <div className="site-footer-col">
-          <span className="site-footer-head">Developers</span>
-          <a href="https://github.com/Jinn-Network/mono">Source</a>
-          <Link href="/docs/#quickstart">Quickstart</Link>
+          <span className="site-footer-head">Verification</span>
+          {report !== undefined && <Link href={`${reportsHref}#bundle`}>Check the bytes</Link>}
+          <Link href="/docs/#reader">Reader</Link>
           <Link href="/docs/#limits">What this does not do</Link>
         </div>
       </div>
       <div className="site-footer-legal">
         <p className="site-footer-infra">
-          Colophon&apos;s execution, evidence, and verification layers are Jinn packages. Colophon
-          defines the benchmark method, the evaluation policy, the accounting, and the published
-          report. <strong>Built on Jinn, by Jinn contributors.</strong>
+          Colophon runs benchmark executions on Jinn infrastructure. Jinn provides the execution,
+          evidence and verification layers; Colophon defines the benchmark method, the evaluation
+          policy, the accounting and the published report. <strong>Built on Jinn, by Jinn contributors.</strong>
         </p>
         <div className="site-footer-line">
           <span>© 2026 Colophon</span>
-          <span>Built on Jinn.</span>
         </div>
       </div>
     </footer>

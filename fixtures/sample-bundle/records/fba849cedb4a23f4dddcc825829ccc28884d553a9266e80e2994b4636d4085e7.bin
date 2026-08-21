@@ -1,9 +1,0 @@
-{
-  "fixture": true,
-  "note": "FIXTURE record: synthetic bytes for the sample bundle; not produced by any run",
-  "roles": [
-    "evaluation-spec"
-  ],
-  "specId": "fixture-eval-spec",
-  "rule": "containerized test harness, pass/fail"
-}

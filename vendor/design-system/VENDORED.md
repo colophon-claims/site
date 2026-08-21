@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | Source | `packages/benchmark-product/design-system/reference/` in the Jinn mono |
-| Source commit | `04f309de8190bcbe4aad771a66033ebe32111f52` (`origin/integration/evidence-v1`) |
-| Vendored | 2026-08-11 |
+| Source commit | `611c718e94e72054bcc055b07d190f96cdbec26d` (sealed report merge) |
+| Vendored | 2026-08-21 |
 
 The canonical copy lives in the Jinn mono; update by re-vendoring, never by
 editing here.
