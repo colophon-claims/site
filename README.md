@@ -38,9 +38,11 @@ editing here. Source commit, date, and the re-vendor command are in
 
 ## Publishing a report
 
-A report starts as a public bundle produced by `colophon publish`
-(format `benchmark-product-public-bundle/1`; see `PUBLIC-BUNDLE.md` in the
-Jinn mono). To put it on the site:
+A report starts as an immutable public bundle emitted locally by Colophon.
+The site accepts the legacy application bundle
+(`benchmark-product-public-bundle/1`) and the evidence-native claim bundle
+(`benchmark-product-public-bundle/5`). The latter carries its public reading
+record in `presentation.json`. To put either format on the site:
 
 ```bash
 node scripts/ingest-report.mjs <bundle-dir> --slug <slug>
@@ -49,16 +51,17 @@ npm run build
 
 The ingest step:
 
-1. validates the bundle against its own `bundle.json` manifest: the 16 fixed
-   members present, every entry's byte length and SHA-256 matching, no stray
-   files;
+1. validates the format's required members and the complete `bundle.json`
+   manifest: every entry present, every byte length and SHA-256 matching, no
+   stray files or symbolic links;
 2. copies the bundle **byte-exact** into `public/reports/<slug>/bundle/`;
 3. emits `data/reports/<slug>.json`, the read model the report page renders.
    Every field in it is extracted from the bundle's records, never invented.
 
-Commit all three (the emitted data, the copied bundle, and nothing else) and
-the report appears at `/reports/<slug>/` with a download table linking every
-bundle member.
+Commit the emitted data and copied bundle. The report appears at
+`/reports/<slug>/`. Evidence-native pages link the canonical report files and
+the complete manifest; every manifest-bound path remains served under the
+report's `/bundle/` directory.
 
 ## Append-only URL policy
 
@@ -67,20 +70,29 @@ slug, and nothing on the site ever edits an ingested bundle. Publishing a
 correction means publishing a new bundle under a new slug; the old URL keeps
 serving the old bytes.
 
-## The fixture
-
-No real bundle exists yet, so the repo ships one dev fixture
-(`fixtures/sample-bundle/`, ingested as slug `fixture-skills-vs-agentsmd`)
-that conforms to the bundle format's file layout. Every value in it is
-synthetic and labeled as such: in the title, in the bundle's own README,
-badge, social card, and share text, and by the fixture banner the report page
-renders. Regenerate it with `node scripts/make-fixture.mjs` (deterministic;
-regeneration is byte-stable). When the first real report is published, the
-fixture ingest can be dropped by deleting `data/reports/fixture-*.json` and
-`public/reports/fixture-*/`.
-
 ## Page copy
 
-The landing page copy is the Colophon surface copy v1.0 (2026-08-11),
-rendered verbatim. The `<contact email>` and `<demo report #2 title>` tokens
-are deliberately visible placeholders until those values exist.
+The landing page keeps the short v4 register and features the first real
+report without reproducing it. The public report title and slug come from the
+bundle's `presentation.json`; internal run labels stay confined to technical
+provenance and sealed source filenames. Public contact is
+`ritsu@colophon.claims`.
+
+The reader command shown publicly is
+`npx @colophon-claims/verify@0.1 ./bundle`. The public reader checks the
+manifest, evidence closure, artifacts, signatures, matrix, signed report, and
+claim consistency. The report also keeps the manifest, report envelope, claim
+package, digests, and source disclosures directly available.
+
+Broader framework and execution copy belongs in Docs, not in a report's
+provenance. A report names only the stack that produced its evidence. Docs may
+name implemented source paths only with their release state attached; the
+current npm package cut is still a public-availability gate.
+
+## Operator go-live check
+
+The static preview is not the live increment. Go-live is complete only when
+the operator has pointed `colophon.claims` at the static export, HTTPS is
+valid, the append-only report URL returns the ingested bytes, the contact
+address works, and a browser network check shows no external requests. DNS,
+the domain flip, and human-contact surfaces remain operator actions.

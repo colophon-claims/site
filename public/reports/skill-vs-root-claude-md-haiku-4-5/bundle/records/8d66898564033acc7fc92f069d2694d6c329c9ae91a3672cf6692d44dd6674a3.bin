@@ -1,0 +1,303 @@
+{
+  "@context": [
+    "https://w3id.org/ro/crate/1.3/context",
+    "https://w3id.org/ro/terms/workflow-run/context",
+    {
+      "jinn": "https://spec.jinn.network/terms/",
+      "prov": "http://www.w3.org/ns/prov#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "ro-crate-metadata.json",
+      "@type": "CreativeWork",
+      "about": {
+        "@id": "./"
+      },
+      "conformsTo": {
+        "@id": "https://w3id.org/ro/crate/1.3"
+      }
+    },
+    {
+      "@id": "./",
+      "@type": "Dataset",
+      "conformsTo": {
+        "@id": "https://spec.jinn.network/profiles/execution-evidence/v1"
+      },
+      "creator": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "dateCreated": "2026-08-18T00:00:00.000Z",
+      "datePublished": "2026-08-18T00:00:00.000Z",
+      "description": "Demo-1 arm cell video-silence-remover/B-flat-claude-md/r0 on claude-haiku-4-5-20251001. The agent ran on the host; grading ran in the task's pinned container.",
+      "hasPart": [
+        {
+          "@id": "task/input.json"
+        },
+        {
+          "@id": "runtime/runtime.json"
+        },
+        {
+          "@id": "runtime/base-image"
+        },
+        {
+          "@id": "results/output.json"
+        },
+        {
+          "@id": "trace/native.json"
+        }
+      ],
+      "license": {
+        "@id": "https://www.apache.org/licenses/LICENSE-2.0"
+      },
+      "mentions": {
+        "@id": "urn:uuid:000001e6-0000-4000-8000-0000000001e6"
+      },
+      "name": "video-silence-remover/B-flat-claude-md/r0",
+      "prov:wasGeneratedBy": {
+        "@id": "#capture"
+      }
+    },
+    {
+      "@id": "https://spec.jinn.network/profiles/execution-evidence/v1",
+      "@type": [
+        "CreativeWork",
+        "Profile"
+      ],
+      "name": "Jinn Execution Evidence Profile 1.0"
+    },
+    {
+      "@id": "https://www.apache.org/licenses/LICENSE-2.0",
+      "@type": "CreativeWork"
+    },
+    {
+      "@id": "task/input.json",
+      "@type": [
+        "File",
+        "CreativeWork",
+        "prov:Plan"
+      ],
+      "contentSize": 166,
+      "encodingFormat": "application/json",
+      "name": "video-silence-remover/B-flat-claude-md/r0-task.json",
+      "prov:qualifiedAttribution": {
+        "@id": "#attribution-1"
+      },
+      "sha256": "fcea3ca53c68f9fa8060c69a250814ad8500466268d46d061dbb0ed7ee3282b8"
+    },
+    {
+      "@id": "runtime/runtime.json",
+      "@type": [
+        "File",
+        "SoftwareApplication"
+      ],
+      "contentSize": 186,
+      "encodingFormat": "application/json",
+      "hasPart": [
+        {
+          "@id": "runtime/base-image"
+        }
+      ],
+      "name": "SkillsBench",
+      "prov:qualifiedAttribution": {
+        "@id": "#attribution-3"
+      },
+      "sha256": "0995285620ac2ce70e23aea9752ba86bcebcfd31e61afddb35411ce823c39a4d",
+      "softwareVersion": "1.1"
+    },
+    {
+      "@id": "runtime/base-image",
+      "@type": "File",
+      "contentSize": 94,
+      "encodingFormat": "application/json",
+      "name": "base-image.json",
+      "prov:qualifiedAttribution": {
+        "@id": "#attribution-2"
+      },
+      "sha256": "f830b19cf46ef030064d01072c27ab2f3365916a56068632ac590e2162e55c05"
+    },
+    {
+      "@id": "urn:uuid:000001e6-0000-4000-8000-0000000001e6",
+      "@type": [
+        "CreateAction",
+        "prov:Activity"
+      ],
+      "actionStatus": {
+        "@id": "https://schema.org/CompletedActionStatus"
+      },
+      "agent": {
+        "@id": "urn:agent:claude-haiku-4-5-20251001"
+      },
+      "endTime": "2026-08-18T00:00:00.000Z",
+      "instrument": {
+        "@id": "runtime/runtime.json"
+      },
+      "name": "video-silence-remover/B-flat-claude-md/r0",
+      "object": {
+        "@id": "task/input.json"
+      },
+      "resourceUsage": {
+        "@id": "#duration-ms"
+      },
+      "result": {
+        "@id": "results/output.json"
+      },
+      "startTime": "2026-08-18T00:00:00.000Z",
+      "subjectOf": {
+        "@id": "trace/native.json"
+      }
+    },
+    {
+      "@id": "urn:agent:claude-haiku-4-5-20251001",
+      "@type": [
+        "SoftwareApplication",
+        "prov:SoftwareAgent"
+      ],
+      "name": "Claude Code (claude-haiku-4-5-20251001)",
+      "prov:qualifiedAttribution": {
+        "@id": "#attribution-4"
+      }
+    },
+    {
+      "@id": "results/output.json",
+      "@type": "File",
+      "contentSize": 51,
+      "encodingFormat": "application/json",
+      "name": "video-silence-remover/B-flat-claude-md/r0-result.json",
+      "prov:qualifiedAttribution": {
+        "@id": "#attribution-5"
+      },
+      "prov:wasGeneratedBy": {
+        "@id": "urn:uuid:000001e6-0000-4000-8000-0000000001e6"
+      },
+      "sha256": "ca8e23d6c9676980475bebad5cfeb43aa1a730478c0e91340ed70b539b5ce5fd"
+    },
+    {
+      "@id": "trace/native.json",
+      "@type": "File",
+      "about": {
+        "@id": "urn:uuid:000001e6-0000-4000-8000-0000000001e6"
+      },
+      "conformsTo": {
+        "@id": "https://spec.jinn.network/formats/skillsbench-arm-cell"
+      },
+      "contentSize": 52,
+      "encodingFormat": "application/json",
+      "name": "video-silence-remover/B-flat-claude-md/r0-trace.json",
+      "prov:qualifiedAttribution": {
+        "@id": "#attribution-6"
+      },
+      "sha256": "3955e6e664080a4c37a7b25010aea14cd32badca9bf1b3e456753de05770aa5e"
+    },
+    {
+      "@id": "https://spec.jinn.network/formats/skillsbench-arm-cell",
+      "@type": [
+        "CreativeWork",
+        "Profile"
+      ]
+    },
+    {
+      "@id": "urn:agent:colophon-skillsbench",
+      "@type": [
+        "SoftwareApplication",
+        "prov:SoftwareAgent"
+      ],
+      "name": "Colophon",
+      "prov:qualifiedAttribution": {
+        "@id": "#attribution-7"
+      }
+    },
+    {
+      "@id": "#capture",
+      "@type": "prov:Activity",
+      "agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "endTime": "2026-08-18T00:00:00.000Z",
+      "name": "Execution Recorder capture and sealing"
+    },
+    {
+      "@id": "#duration-ms",
+      "@type": "PropertyValue",
+      "name": "durationMs",
+      "propertyID": "https://spec.jinn.network/terms/durationMs",
+      "unitCode": "ms",
+      "value": 0
+    },
+    {
+      "@id": "#attribution-1",
+      "@type": "prov:Attribution",
+      "prov:agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "prov:hadRole": {
+        "@id": "urn:jinn:execution-recorder:role:producer-observer"
+      }
+    },
+    {
+      "@id": "#attribution-2",
+      "@type": "prov:Attribution",
+      "prov:agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "prov:hadRole": {
+        "@id": "urn:jinn:execution-recorder:role:producer-observer"
+      }
+    },
+    {
+      "@id": "#attribution-3",
+      "@type": "prov:Attribution",
+      "prov:agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "prov:hadRole": {
+        "@id": "urn:jinn:execution-recorder:role:producer-observer"
+      }
+    },
+    {
+      "@id": "#attribution-4",
+      "@type": "prov:Attribution",
+      "prov:agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "prov:hadRole": {
+        "@id": "urn:jinn:execution-recorder:role:producer-observer"
+      }
+    },
+    {
+      "@id": "#attribution-5",
+      "@type": "prov:Attribution",
+      "prov:agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "prov:hadRole": {
+        "@id": "urn:jinn:execution-recorder:role:producer-observer"
+      }
+    },
+    {
+      "@id": "#attribution-6",
+      "@type": "prov:Attribution",
+      "prov:agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "prov:hadRole": {
+        "@id": "urn:jinn:execution-recorder:role:producer-observer"
+      }
+    },
+    {
+      "@id": "#attribution-7",
+      "@type": "prov:Attribution",
+      "prov:agent": {
+        "@id": "urn:agent:colophon-skillsbench"
+      },
+      "prov:hadRole": {
+        "@id": "urn:jinn:execution-recorder:role:producer-observer"
+      }
+    },
+    {
+      "@id": "urn:jinn:execution-recorder:role:producer-observer",
+      "@type": "prov:Role",
+      "name": "Producer observer"
+    }
+  ]
+}

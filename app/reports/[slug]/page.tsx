@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EvidenceReportPage } from "@/components/evidence-report-page";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import {
@@ -12,7 +13,14 @@ import {
   VerdictChip,
 } from "@/components/ds";
 import { CiteBlock } from "@/components/ds-client";
-import { formatPercent, formatUtc, getReport, listReports, shortDigest, type ReportData } from "@/lib/reports";
+import {
+  formatPercent,
+  formatUtc,
+  getReport,
+  isEvidenceReport,
+  listReports,
+  type LegacyReportData,
+} from "@/lib/reports";
 
 export const dynamicParams = false;
 
@@ -26,7 +34,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: report.title,
     description: report.summary ?? undefined,
-    openGraph: { images: [`/reports/${slug}/bundle/social-card.svg`] },
+    ...(report.socialCardPath === null
+      ? {}
+      : { openGraph: { images: [`/reports/${slug}/bundle/${report.socialCardPath}`] } }),
   };
 }
 
@@ -40,7 +50,7 @@ const ATTRITION_LABELS: Record<string, string> = {
   "cancellation-drained": "Cancellation-drained",
 };
 
-function armPass(report: ReportData, armId: string): number {
+function armPass(report: LegacyReportData, armId: string): number {
   const arm = report.headline[armId];
   return arm.pass ?? Math.round(Number(arm.passRate) * arm.n);
 }
@@ -52,6 +62,11 @@ function formatBytes(bytes: number): string {
 export default async function ReportPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const report = getReport(slug);
+  if (isEvidenceReport(report)) return <EvidenceReportPage report={report} />;
+  return <LegacyReportPage report={report} slug={slug} />;
+}
+
+function LegacyReportPage({ report, slug }: { report: LegacyReportData; slug: string }) {
   const bundleBase = `/reports/${slug}/bundle`;
 
   const armIds = report.arms.map((a) => a.armId);

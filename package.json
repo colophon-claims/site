@@ -5,10 +5,11 @@
   "description": "Public site for Colophon: renders published benchmark reports at immutable URLs and serves their evidence bundles byte-exact.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run validate:reports && next build",
     "start": "npx serve out",
     "typecheck": "tsc --noEmit",
-    "ingest": "node scripts/ingest-report.mjs"
+    "ingest": "node scripts/ingest-report.mjs",
+    "validate:reports": "node scripts/validate-published-reports.mjs"
   },
   "dependencies": {
     "@fontsource-variable/newsreader": "^5.2.14",
