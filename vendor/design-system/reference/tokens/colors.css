@@ -15,6 +15,13 @@
 /* --- semantic: surface --- */
 --surface-page:var(--paper);--surface-card:var(--paper-raised);--surface-sunken:var(--ink-100);
 --surface-inset:var(--ink-50);--surface-inverse:var(--ink-900);--surface-accent:var(--vermilion-100);
+/* --- semantic: actions & controls --- */
+--action-primary-bg:var(--ink-900);--action-primary-fg:var(--ink-50);--action-primary-border:var(--ink-900);
+--action-accent-bg:var(--vermilion-600);--action-accent-fg:var(--ink-50);--action-accent-border:var(--vermilion-600);
+--action-secondary-bg:var(--surface-card);--action-secondary-fg:var(--text-primary);--action-secondary-border:var(--rule-strong);
+--action-ghost-fg:var(--text-secondary);--action-danger-fg:var(--vermilion-600);--action-danger-border:var(--vermilion-300);
+--control-checked-bg:var(--ink-900);--control-checked-border:var(--ink-900);--control-thumb:var(--ink-50);
+--control-unchecked-bg:var(--ink-200);--control-unchecked-border:var(--rule-strong);--control-accent:var(--indigo-600);
 /* --- semantic: rules & edges --- */
 --rule:var(--ink-200);--rule-strong:var(--ink-300);--rule-heavy:var(--ink-900);--rule-accent:var(--vermilion-500);
 --focus-ring:var(--indigo-500);
@@ -28,12 +35,17 @@
 }
 [data-theme="dark"]{
 --paper:#14120e;--paper-raised:#1c1915;
---text-primary:#f2eee4;--text-secondary:#bdb5a8;--text-muted:#9b9387;--text-faint:#7c746a;
+--text-primary:#f2eee4;--text-secondary:#bdb5a8;--text-muted:#9b9387;--text-faint:#8b8378;
 --text-inverse:#14120e;--text-accent:#e2755d;
 --link:#9fb6d8;--link-hover:#e2755d;--link-visited:#8ea6cb;
 --surface-page:#14120e;--surface-card:#1c1915;--surface-sunken:#221e19;--surface-inset:#1a1713;
 --surface-inverse:#f2eee4;--surface-accent:#3a1b14;
---rule:#332e27;--rule-strong:#453e35;--rule-heavy:#f2eee4;--rule-accent:#c7402a;
+--action-primary-bg:#f2eee4;--action-primary-fg:#14120e;--action-primary-border:#f2eee4;
+--action-secondary-bg:#1c1915;--action-secondary-fg:#f2eee4;--action-secondary-border:#71685d;
+--action-ghost-fg:#bdb5a8;--action-danger-fg:#e2755d;--action-danger-border:#e2755d;
+--control-checked-bg:#f2eee4;--control-checked-border:#f2eee4;--control-thumb:#14120e;
+--control-unchecked-bg:#332e27;--control-unchecked-border:#71685d;--control-accent:#9fb6d8;
+--rule:#514a41;--rule-strong:#71685d;--rule-heavy:#f2eee4;--rule-accent:#c7402a;
 --focus-ring:#9fb6d8;
 --verdict-met:#7cbf9a;--verdict-met-bg:#1b2c22;
 --verdict-unmet:#e2755d;--verdict-unmet-bg:#33170f;

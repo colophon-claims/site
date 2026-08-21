@@ -1,5 +1,5 @@
 import React from 'react';
-const S={sm:26,md:32,lg:38};
+const S={sm:36,md:44,lg:48};
 export function IconButton({label,icon,size='md',variant='ghost',disabled=false,onClick,style,...rest}){
   const d=S[size];
   const v=variant==='outline'?{border:'var(--border-hair) solid var(--rule-strong)',background:'var(--surface-card)'}:{border:'var(--border-hair) solid transparent',background:'transparent'};

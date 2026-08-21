@@ -8,12 +8,20 @@ import Link from "next/link";
  * keeps its exact variant and size styles on an <a>.
  */
 const V: Record<string, CSSProperties> = {
-  primary: { background: "var(--ink-900)", color: "var(--ink-50)", borderColor: "var(--ink-900)" },
-  secondary: { background: "var(--surface-card)", color: "var(--text-primary)", borderColor: "var(--rule-strong)" },
+  primary: {
+    background: "var(--action-primary-bg)",
+    color: "var(--action-primary-fg)",
+    borderColor: "var(--action-primary-border)",
+  },
+  secondary: {
+    background: "var(--action-secondary-bg)",
+    color: "var(--action-secondary-fg)",
+    borderColor: "var(--action-secondary-border)",
+  },
 };
 const S: Record<string, CSSProperties> = {
-  md: { padding: "7px 14px", fontSize: "var(--text-sm)", gap: "var(--space-4)" },
-  lg: { padding: "10px 20px", fontSize: "var(--text-base)", gap: "var(--space-4)" },
+  md: { minHeight: 44, padding: "7px 14px", fontSize: "var(--text-sm)", gap: "var(--space-4)" },
+  lg: { minHeight: 48, padding: "10px 20px", fontSize: "var(--text-base)", gap: "var(--space-4)" },
 };
 
 export function LinkButton({

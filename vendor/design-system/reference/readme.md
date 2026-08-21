@@ -66,8 +66,8 @@ audit log.
 
 | Surface | Copy |
 |---|---|
-| Hero | Compare agents on the same work. |
-| Hero sub | Run two or more configurations against one task set, choose how the results are judged, and publish a claim whose method, evidence and failures anyone can inspect. |
+| Hero | Publish benchmark claims people can check. |
+| Hero sub | Lock the method, account for every expected result, and publish the evidence so the claim can survive outside the person who made it. |
 | Report headline | Three harness loadouts on the same 500 tasks |
 | Method lock | Method locked before execution — no change after this point is reflected in the official result. |
 | Cancel warning | Cancelling does not remove expected executions from the accounting. They are published as incomplete. |
@@ -78,9 +78,11 @@ audit log.
 
 ## Visual foundations
 
-**The metaphor is ink on paper, not glass on black.** A Colophon surface looks like a well-set
+**The metaphor is ink and paper, not application chrome.** A Colophon surface looks like a well-set
 technical publication: hairline rules instead of drop shadows, generous margins, real footnotes,
-marginalia, a printer's mark, and an imprint that states how the work was made.
+marginalia, a printer's mark, and an imprint that states how the work was made. The public origin is
+the night edition: warm black paper with soft off-white type. The workspace remains the daylight
+edition unless a user chooses otherwise.
 
 **Colour.** Warm paper `#f7f4ed` and warm ink `#14120e` — never blue-grey. One accent: printer's
 vermilion `#c7402a`, used for the mark, the reference entrant, live state and rules of emphasis, and
@@ -102,10 +104,11 @@ track +0.08em.
 **Spacing.** 8px baseline, steps 2 → 160px. Three page widths: 1240px app shell, 880px report, 720px
 prose. Reading measure 66ch.
 
-**Backgrounds.** Flat paper. No photography, no gradients, no meshes, no textures behind content, no
-full-bleed imagery, no illustration. The only tonal shift is the one dark section on the marketing
-page (the agent-native block) and the sunken `--surface-inset` used for code and quiet panels. If a
-surface needs interest, it comes from rules, numerals and typography.
+**Backgrounds.** Flat paper in either edition. No photography, no gradients, no meshes, no textures
+behind content, no full-bleed imagery, no illustration. The public landing, Docs and report profiles
+set `[data-theme="dark"]`; the product workspace keeps the light profile. Tonal shifts come from
+`--surface-card` and `--surface-inset`, not from special one-off sections. Interest comes from rules,
+numerals and typography.
 
 **Borders and rules.** Edges are rules. 1px `--rule` for containers and table rows; 2px `--rule-heavy`
 above section heads; 3px `--rule-accent` for live state and the top edge of a report card. Rules do
@@ -139,20 +142,25 @@ controls that need to read as physically depressed.
 **Focus.** 2px `--focus-ring` (indigo) at 2px offset, on everything interactive. Deliberately a
 different hue from every verdict colour.
 
+**Targets.** Primary controls expose at least a 44px interactive target. A 36px compact variant is
+reserved for dense toolbars and tab rows where neighboring targets remain separated; it is not the
+default for public calls to action.
+
 **Inverted surfaces — one rule.** `--paper` and the other semantic tokens flip under
-`[data-theme="dark"]`; `--ink-*` and `--vermilion-*` do not. So anything painted on a *fixed* ink or
-vermilion ground must use `--ink-50`, never `--paper` — otherwise it goes dark-on-dark in dark theme.
-This applies to the primary and accent buttons, the ink `Tag`, the switch knob, the badge's source
-field and the site's dark block. The asterism mark is the one exception: on ink it stays
-`--vermilion-500`, which is stable across themes and reads as the brand's ink stamp.
+`[data-theme="dark"]`; `--ink-*` and `--vermilion-*` do not. Actions and controls therefore use the
+`--action-*` and `--control-*` semantic tokens instead of fixed ink values. Anything intentionally
+painted on a *fixed* ink or vermilion ground still uses `--ink-50`, never `--paper`. The asterism mark
+is the one exception: on ink it stays `--vermilion-500`, which is stable across themes and reads as
+the brand's ink stamp.
 
 **Data visualization.** Bars and rules only. Accounting bars are denominated by *expected*
 executions, so missing work occupies real width. Ranking bars use vermilion for the reference entrant
 and neutral ink for the rest — position and label carry the ranking, not hue. No pie charts, no area
 fills, no gradients, no 3D, no sparkline decoration.
 
-**Imagery.** There is none, by design. If product imagery is ever needed, it is a screenshot of a real
-report on paper-coloured ground, warm and unfiltered — no dark-mode hero shots, no perspective mockups.
+**Imagery.** There is none, by design. The preferred visual proof is a real report card or report
+section on its native paper ground, warm and unfiltered. No perspective mockups or decorative device
+frames.
 
 ---
 

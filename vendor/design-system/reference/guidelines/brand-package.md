@@ -115,9 +115,8 @@ artifact designed to be checked.
 5. *Every run accounted for.* (accounting/rigor)
 
 **Short description (≤ 40 words)**
-Colophon runs two or more agent configurations against the same tasks, records how every execution
-turned out, and publishes a report whose method, evidence and failures anyone can inspect, cite,
-clone or rerun.
+Colophon locks a benchmark comparison before execution, records what happened to every expected
+result, and publishes the method, evidence, failures, and limits at a permanent report URL.
 
 **Long description**
 Colophon is where builders take a performance claim public. You import or select a task set,
@@ -134,10 +133,10 @@ the result. Authorized agents can perform the entire workflow. Colophon records 
 produced; it does not certify that a result is correct.
 
 **Landing hero**
-> **Compare agents on the same work.**
-> Run two or more configurations against one task set, choose how the results are judged, and publish
-> a claim whose method, evidence and failures anyone can inspect.
-> [Start a benchmark] [Read a published report]
+> **Publish benchmark claims people can check.**
+> Lock the method, account for every expected result, and publish the evidence so the claim can
+> survive outside the person who made it.
+> [Read a published report] [Bring a claim]
 
 **Report headline pattern**
 `<What was compared> on <task set> (<n> tasks)` — e.g. *Three harness loadouts on the same 500 tasks*.
@@ -168,8 +167,9 @@ was obtained. Not "verified," not a checkmark, always a link to the full report.
 - **Naming logic:** printing and publishing vocabulary — Colophon, Imprint, Folio, Errata, Recto.
 - **Verbal style:** sentence case, denominators always present, limitations in body type. Second
   person for the builder; third person for the artifact.
-- **Visual principles:** warm paper and warm ink; hairline rules instead of shadows; a real
-  typographic mark (asterism); footnotes and marginalia; radii 0–4px; one accent ink.
+- **Visual principles:** warm paper and warm ink in daylight and night editions; hairline rules
+  instead of shadows; a real typographic mark (asterism); footnotes and marginalia; radii 0–4px;
+  one accent ink.
 - **Strengths:** unmistakable beside competitors; the report becomes the brand; naturally honest
   about uncertainty (print has always had errata, footnotes and "n = ").
 - **Weaknesses:** print metaphors can read old-fashioned; needs discipline to stay legible in a CLI
@@ -179,7 +179,7 @@ was obtained. Not "verified," not a checkmark, always a link to the full report.
 - **Trust risk:** an imprint block can start to *feel* like a seal. Mitigation: the imprint is a
   factual list, never a stamp; no ribbons, no crests.
 - **Difference from Jinn:** no sigils, no mythology, no protocol language; a common English noun from
-  publishing, warm paper palette, editorial serif — a different world entirely.
+  publishing, warm ink-and-paper palette, editorial serif — a different world entirely.
 - **Examples:** landing hero above; report as in `ui_kits/report`; social card as `ReportCard`.
 
 ### Territory B — **The Instrument**
@@ -422,9 +422,9 @@ shield, never a badge-with-ribbon. See readme.md § Iconography.
 increment, bars extend. Nothing pulses, glows, bounces or shimmers. `prefers-reduced-motion` zeroes
 all durations.
 
-**Light and dark.** Light is the default and the canonical report mode (reports print). Dark is warm
-black, used for the agent-native marketing block and for the app at the user's preference — never for
-the published report by default.
+**Light and dark.** Both are print profiles, not separate identities. The public origin—landing,
+Docs and published reports—defaults to warm black as the night edition. The workspace defaults to
+warm paper and may honor a user's theme preference. Print styles return reports to warm paper.
 
 **Applied surfaces** (built in this system):
 landing page · application shell · configuration comparison table · assurance selector · live
@@ -550,6 +550,8 @@ do" — hero, pricing, onboarding, the app shell, social assets.
   not an animation, so it degrades cleanly.
 - **Focus.** 2px indigo focus ring at 2px offset on every interactive element; ring colour is distinct
   from every verdict colour.
+- **Targets.** Public calls to action and default controls expose at least a 44px interactive target;
+  36px compact controls are limited to dense toolbars and tab rows.
 - **Type size floors.** 11px only for uppercase small-caps labels with 0.08em tracking; 12px minimum
   for sentence-case UI text; 17px reading body.
 - **Screen readers.** IconButton requires a label. Verdict chips read their word, not their colour.

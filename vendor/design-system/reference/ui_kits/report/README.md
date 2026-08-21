@@ -18,3 +18,5 @@ the method, checks the accounting, sees the disagreement, and cites, clones, rer
 4. Disagreement is a published section, not a hidden state.
 5. The imprint closes the report and is the only place "Built on Jinn." appears.
 6. Compact assets (badge, social card, embed) resolve to this page.
+7. The public report defaults to the warm dark profile. Print styles return it to warm paper without
+   changing hierarchy or evidence content.

@@ -8,9 +8,9 @@ function SiteHeader({onNav}){
         <Mark size={22}/><span style={{fontFamily:'var(--font-display)',fontSize:'var(--text-xl)',color:'var(--text-primary)',letterSpacing:'var(--tracking-snug)'}}>Colophon</span>
       </a>
       <nav style={{display:'flex',alignItems:'center',gap:'var(--space-8)',font:'var(--type-ui)',fontSize:'var(--text-sm)'}}>
-        {[['Reports','reports'],['How it works','how'],['Assurance','how'],['Docs','docs'],['Pricing','home']].map(([l,k])=>
+        {[['Report','reports'],['How it works','how'],['Docs','docs'],['Contact','home']].map(([l,k])=>
           <a key={l} href="#" onClick={e=>{e.preventDefault();onNav&&onNav(k);}} style={{color:'var(--text-secondary)',textDecoration:'none'}}>{l}</a>)}
-        <Button size="sm" variant="primary">Start a benchmark</Button>
+        <Button size="sm" variant="primary">Bring a claim</Button>
       </nav>
     </div>
   </header>;
@@ -21,11 +21,11 @@ function Hero({onNav}){
     <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-14) var(--gutter-lg) var(--space-13)',display:'grid',gridTemplateColumns:'1.15fr .85fr',gap:'var(--space-12)',alignItems:'center'}}>
       <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)'}}>
         <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Benchmark publishing for agent configurations</span>
-        <h1 style={{font:'var(--type-hero)',fontSize:'var(--text-6xl)',letterSpacing:'var(--tracking-tight)',margin:0,maxWidth:'13ch'}}>Compare agents on the same work.</h1>
-        <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',maxWidth:'46ch',margin:0}}>Run two or more configurations against one task set, choose how the results are judged, and publish a claim whose method, evidence and failures anyone can inspect.</p>
+        <h1 style={{font:'var(--type-hero)',fontSize:'var(--text-6xl)',letterSpacing:'var(--tracking-tight)',margin:0,maxWidth:'13ch'}}>Publish benchmark claims people can check.</h1>
+        <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',maxWidth:'46ch',margin:0}}>Lock the method, account for every expected result, and publish the evidence so the claim can survive outside the person who made it.</p>
         <div style={{display:'flex',gap:'var(--space-5)',alignItems:'center'}}>
-          <Button variant="primary" size="lg">Start a benchmark</Button>
-          <Button variant="secondary" size="lg" onClick={()=>onNav&&onNav('reports')}>Read a published report</Button>
+          <Button variant="primary" size="lg" onClick={()=>onNav&&onNav('reports')}>Read a published report</Button>
+          <Button variant="secondary" size="lg">Bring a claim</Button>
         </div>
         <div style={{display:'flex',gap:'var(--space-5)',alignItems:'center',flexWrap:'wrap',font:'var(--type-data)',fontSize:'var(--text-xs)',color:'var(--text-muted)'}}>
           <span>Every claim ships as a badge that resolves to the full report:</span><ClaimBadge value="71.1% · 500 tasks" status="observed"/>
@@ -57,27 +57,18 @@ function Pillars(){
   </section>;
 }
 
-function AgentSection(){
-  return <section style={{background:'var(--ink-900)',color:'var(--ink-50)',borderBottom:'var(--border-hair) solid var(--rule)'}}>
+function ServiceSection(){
+  return <section style={{background:'var(--surface-inset)',borderBottom:'var(--border-hair) solid var(--rule)'}}>
     <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-12) var(--gutter-lg)',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'var(--space-12)',alignItems:'center'}}>
       <div style={{display:'flex',flexDirection:'column',gap:'var(--space-7)'}}>
-        <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--ink-400)'}}>Agent-native and human-legible</span>
-        <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',color:'var(--ink-50)',margin:0,maxWidth:'20ch'}}>Every action a person can take, an authorized agent can take.</h2>
-        <p style={{font:'var(--type-body)',color:'var(--ink-300)',margin:0,maxWidth:'50ch'}}>The verbs are stable and explicit, so they read the same in a permission dialog, an audit log and an API call. Spending, locking, cancellation and publication can be held for human approval.</p>
+        <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Bring the stack that runs the work</span>
+        <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',color:'var(--text-primary)',margin:0,maxWidth:'20ch'}}>Run your harness against work people recognize.</h2>
+        <p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:0,maxWidth:'50ch'}}>Bring the harness or agent setup you want to test. Use a known benchmark suite, or a task set built around the claim. Colophon locks the comparison, accounts for every expected result, and publishes the evidence.</p>
       </div>
-      <pre style={{margin:0,padding:'var(--space-8)',background:'var(--ink-800)',border:'var(--border-hair) solid var(--ink-700)',borderRadius:'var(--radius-sm)',font:'var(--type-code)',color:'var(--ink-200)',overflowX:'auto'}}>{`$ colophon configure_entrant --id loadout-c \\
-    --harness 2.4 --tools full+retrieval
-
-$ colophon set_assurance --policy majority --retain-disagreement
-$ colophon lock_method
-  method locked  2026-08-02T14:20:11Z
-  sha256:9f3c1d7a…a71b
-
-$ colophon launch_run --budget 2400.00
-  1,500 executions queued · approval required above cap
-
-$ colophon publish_report --slug hb-2026-08
-  published  https://colophon.press/r/hb-2026-08`}</pre>
+      <div style={{borderTop:'var(--border-heavy) solid var(--rule-heavy)',paddingTop:'var(--space-7)',display:'grid',gap:'var(--space-7)'}}>
+        <div><strong style={{font:'var(--type-section)',fontSize:'var(--text-lg)'}}>Known benchmark work</strong><p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:'var(--space-3) 0 0'}}>Keep the suite and harness that define the comparison. Colophon records the approved setup and the outcome of every expected run.</p></div>
+        <div><strong style={{font:'var(--type-section)',fontSize:'var(--text-lg)'}}>A task set shaped around the claim</strong><p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:'var(--space-3) 0 0'}}>When an existing suite does not match the question, define the relevant work first and lock it before execution.</p></div>
+      </div>
     </div>
   </section>;
 }
@@ -117,7 +108,7 @@ function SiteFooter(){
         <span style={{fontFamily:'var(--font-display)',fontSize:'var(--text-lg)'}}>Colophon</span>
         <p style={{font:'var(--type-body)',fontSize:'var(--text-sm)',color:'var(--text-secondary)',margin:0,maxWidth:'34ch'}}>Benchmark publishing for agent configurations. Colophon records how a result was produced. It does not certify that a result is correct.</p>
       </div>
-      {[['Product',['Start a benchmark','Assurance policies','Execution modes','Pricing']],['Reports',['Recently published','Clone a benchmark','Challenge a result','Claim JSON schema']],['Developers',['Docs','CLI reference','API reference','Infrastructure']]].map(([h,ls])=>
+      {[['Product',['Bring a claim','How it works','Execution paths']],['Reports',['Published report','Check the bundle','Claim JSON schema']],['Readers',['Docs','Verification','Limits']]].map(([h,ls])=>
         <div key={h} style={{display:'flex',flexDirection:'column',gap:'var(--space-4)'}}>
           <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>{h}</span>
           {ls.map(l=><a key={l} href="#" style={{font:'var(--type-ui)',fontSize:'var(--text-sm)',textDecoration:'none',color:'var(--text-secondary)'}}>{l}</a>)}
@@ -130,4 +121,4 @@ function SiteFooter(){
     </div>
   </footer>;
 }
-Object.assign(window.__K,{SiteHeader,Hero,Pillars,AgentSection,ReportIndex,SiteFooter});
+Object.assign(window.__K,{SiteHeader,Hero,Pillars,ServiceSection,ReportIndex,SiteFooter});

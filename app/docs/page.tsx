@@ -110,22 +110,25 @@ export default function Docs() {
           </section>
 
           <section id="execution">
-            <h2>Bring the stack that runs your trials</h2>
+            <h2>Bring the harness. Choose the work.</h2>
             <p className="prose">
-              Colophon does not replace the framework, agent harness, or suite that executes the
-              work. It locks the comparison around that engine, accounts for every result, and
-              carries the evidence into one published bundle.
+              Colophon is currently offered as an assisted benchmark engagement, not as a generic
+              self-serve runner. Bring the harness or agent setup behind the claim. We use a known
+              benchmark suite when it fits, or define a task set around the claim before the method
+              is locked.
             </p>
             <p className="prose">
-              The paths below are implemented in the source product. They are not yet available to
-              a stranger through npm; publishing the public packages is still a release gate.
+              The source product currently implements the paths below. The public reader is on npm;
+              the broader runner is not. A customer harness outside these paths needs an explicit
+              integration and qualification step before it can enter a locked comparison.
             </p>
             <dl className="integration-list">
               <div>
                 <dt>Agent harnesses</dt>
                 <dd>
-                  Claude Code and Codex. Colophon records the selected executable, model, effort,
-                  and loadout instead of accepting an unbounded shell command.
+                  The current managed adapters are Claude Code and Codex. Colophon records the
+                  selected executable, model, effort, and loadout instead of accepting an unbounded
+                  shell command.
                 </dd>
               </div>
               <div>
@@ -157,6 +160,12 @@ export default function Docs() {
               This report is a worked example of another path: pinned SkillsBench v1.1 task
               packages, Colophon-owned arm construction, one Claude Code harness, and the upstream
               task verifiers in pinned containers.
+            </p>
+            <p className="prose">
+              When no known suite matches the claim, the task package becomes part of the method:
+              where the tasks came from, what they preserve, and how they are judged must all be
+              fixed before execution. That is scoped engagement work, not a promise that any suite
+              or shell command can be dropped in unchanged.
             </p>
           </section>
 
