@@ -21,7 +21,7 @@ function Hero(){
     <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-14) var(--gutter-lg) var(--space-13)',display:'grid',gridTemplateColumns:'minmax(0,1.08fr) minmax(26rem,.92fr)',gridTemplateAreas:'"copy proof" "actions proof"',columnGap:'var(--space-13)',rowGap:'var(--space-9)',alignItems:'start'}}>
       <div style={{gridArea:'copy',display:'flex',flexDirection:'column',gap:'var(--space-8)'}}>
         <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Benchmark publishing for agent performance</span>
-        <h1 style={{font:'var(--type-hero)',fontSize:'var(--text-6xl)',letterSpacing:'var(--tracking-tight)',margin:0,maxWidth:'13ch'}}>Publish benchmark claims people can check.</h1>
+        <h1 style={{font:'var(--type-hero)',fontSize:'var(--text-6xl)',letterSpacing:'var(--tracking-tight)',margin:0,maxWidth:'13ch'}}>Turn benchmark results into claims that hold up.</h1>
         <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',maxWidth:'46ch',margin:0}}>Lock the method, account for every expected result, and publish the evidence so the claim can survive outside the person who made it.</p>
       </div>
       <div style={{gridArea:'actions',display:'flex',gap:'var(--space-5)',alignItems:'center',flexWrap:'wrap'}}>

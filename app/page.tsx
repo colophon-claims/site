@@ -55,7 +55,7 @@ export default function Home() {
           <div className="container hero-grid">
             <div className="hero-copy">
               <span className="eyebrow">Benchmark publishing for agent performance</span>
-              <h1>Publish benchmark claims people can check.</h1>
+              <h1>Turn benchmark results into claims that hold up.</h1>
               <p className="hero-what">
                 Lock the method, account for every expected result, and publish the evidence so the
                 claim can survive outside the person who made it.
