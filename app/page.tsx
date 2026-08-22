@@ -124,11 +124,11 @@ export default function Home() {
         <section className="suite-section" id="benchmark-methods">
           <div className="container suite-layout">
             <div className="suite-copy">
-              <h2>Turn a benchmark run into a claim others can verify.</h2>
+              <h2>Run the benchmark that fits the claim.</h2>
               <p>
-                Run on <strong>APEX-Agents</strong>, <strong>SWE-bench Verified</strong>,{" "}
-                <strong>Terminal-Bench 3.0</strong>, or another established suite. Or use a
-                benchmark built for your claim.
+                Use <strong>APEX-Agents</strong>, <strong>SWE-bench Verified</strong>,{" "}
+                <strong>Terminal-Bench 3.0</strong>, or another established suite. If none fits,
+                we&apos;ll build one around your claim.
               </p>
             </div>
             <div className="suite-action">
