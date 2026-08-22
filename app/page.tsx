@@ -73,10 +73,6 @@ export default function Home() {
               ) : (
                 <p className="prose">No report is published yet.</p>
               )}
-              <p className="hero-feature-note">
-                No winner emerged. The method, failed checks, and limits still travel with the
-                answer.
-              </p>
             </div>
             <div className="button-row hero-actions">
               <LinkButton href="#contact" variant="primary" size="lg">

@@ -28,7 +28,7 @@ function Hero(){
         <Button variant="primary" size="lg">Bring a claim</Button>
         <Button variant="secondary" size="lg" onClick={()=>window.location.href='reports.html'}>Browse reports</Button>
       </div>
-      <div style={{gridArea:'proof',paddingTop:'var(--space-8)',display:'flex',flexDirection:'column',gap:'var(--space-6)'}}>
+      <div style={{gridArea:'proof',paddingTop:'var(--space-8)'}}>
         <article style={{background:'var(--surface-card)',border:'var(--border-hair) solid var(--rule-strong)',borderTop:'var(--border-slab) solid var(--rule-accent)'}}>
           <div style={{padding:'var(--space-8)',display:'flex',flexDirection:'column',gap:'var(--space-4)'}}>
             <span style={{font:'var(--type-label)',letterSpacing:'var(--tracking-caps)',textTransform:'uppercase',color:'var(--text-muted)'}}>Latest report</span>
@@ -47,7 +47,6 @@ function Hero(){
             </dl>
           </div>
         </article>
-        <p style={{font:'var(--type-body)',fontSize:'var(--text-sm)',color:'var(--text-muted)',margin:0}}>No winner emerged. The method, failed checks, and limits still travel with the answer.</p>
       </div>
     </div>
   </section>;
