@@ -1,5 +1,47 @@
 const { Button, Footnote } = window.__C;
 
+function CopyCommand({value}){
+  const [status,setStatus]=React.useState('idle');
+  const copy=async()=>{
+    try {
+      if(navigator.clipboard){
+        try {
+          await navigator.clipboard.writeText(value);
+        } catch {
+          const field=document.createElement('textarea');
+          field.value=value;
+          field.style.position='fixed';
+          field.style.opacity='0';
+          document.body.appendChild(field);
+          field.select();
+          const copied=document.execCommand('copy');
+          field.remove();
+          if(!copied) throw new Error('Clipboard unavailable');
+        }
+      } else {
+        const field=document.createElement('textarea');
+        field.value=value;
+        field.style.position='fixed';
+        field.style.opacity='0';
+        document.body.appendChild(field);
+        field.select();
+        const copied=document.execCommand('copy');
+        field.remove();
+        if(!copied) throw new Error('Clipboard unavailable');
+      }
+      setStatus('copied');
+      window.setTimeout(()=>setStatus('idle'),1600);
+    } catch {
+      setStatus('failed');
+    }
+  };
+  const label=status==='copied'?'Copied':status==='failed'?'Try again':'Copy';
+  return <div style={{display:'inline-flex',width:'fit-content',maxWidth:'100%',minWidth:0,justifySelf:'start',alignItems:'stretch',overflow:'hidden',background:'var(--surface-inset)',border:'var(--border-hair) solid var(--rule-strong)',borderRadius:'var(--radius-sm)',font:'var(--type-code)',color:'var(--text-secondary)'}}>
+    <code style={{flex:'1 1 auto',minWidth:0,padding:'var(--space-5) var(--space-6)',font:'inherit',whiteSpace:'nowrap',overflowX:'auto'}}>{value}</code>
+    <button type="button" aria-live="polite" onClick={copy} style={{flex:'0 0 auto',minWidth:'var(--space-13)',minHeight:44,padding:'var(--space-4) var(--space-5)',border:0,borderLeft:'var(--border-hair) solid var(--rule-strong)',background:'var(--surface-card)',color:'var(--text-secondary)',font:'var(--type-ui-strong)',cursor:'pointer',transition:'var(--transition-ui)'}}>{label}</button>
+  </div>;
+}
+
 function SiteHeader(){
   const { Mark } = window.__K;
   return <header style={{position:'sticky',top:0,zIndex:9,background:'var(--surface-page)',borderBottom:'var(--border-hair) solid var(--rule)'}}>
@@ -112,7 +154,7 @@ function VerificationSection(){
         <h2 style={{font:'var(--type-title)',fontSize:'var(--text-3xl)',margin:0,maxWidth:'18ch'}}>The evidence travels with the claim.</h2>
         <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',margin:0,maxWidth:'42ch'}}>Every report links the exact bundle. A reader can verify its manifest, evidence, signatures, matrix, report, and claim consistency in one command.</p>
       </div>
-      <pre style={{margin:0,padding:'var(--space-8)',background:'var(--surface-card)',border:'var(--border-hair) solid var(--rule-strong)',font:'var(--type-code)',overflowX:'auto'}}><code>npx @colophon-claims/verify@0.1 ./bundle</code></pre>
+      <CopyCommand value="npx @colophon-claims/verify@0.1 ./bundle"/>
     </div>
   </section>;
 }

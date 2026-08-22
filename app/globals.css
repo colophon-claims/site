@@ -396,6 +396,45 @@ main {
 .verification-copy > a {
   font: var(--type-ui-strong);
 }
+.copy-command {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  justify-self: start;
+  align-items: stretch;
+  overflow: hidden;
+  background: var(--surface-inset);
+  color: var(--text-secondary);
+  border: var(--border-hair) solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  font: var(--type-code);
+}
+.copy-command__code {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--space-5) var(--space-6);
+  overflow-x: auto;
+  font: inherit;
+  white-space: nowrap;
+}
+.copy-command__button {
+  flex: 0 0 auto;
+  min-width: var(--space-13);
+  min-height: 44px;
+  padding: var(--space-4) var(--space-5);
+  border: 0;
+  border-left: var(--border-hair) solid var(--rule-strong);
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  font: var(--type-ui-strong);
+  cursor: pointer;
+  transition: var(--transition-ui);
+}
+.copy-command__button:hover {
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+}
 @media (min-width: 800px) {
   .verification-grid {
     grid-template-columns: minmax(0, 0.88fr) minmax(22rem, 1.12fr);

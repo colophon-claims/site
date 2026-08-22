@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { LinkButton } from "@/components/link-button";
 import { ReportSummaryCard } from "@/components/report-summary-card";
+import { CopyCommand } from "@/components/copy-command";
 import { listReports } from "@/lib/reports";
 
 // v4 (2026-08-13): same arc as v3, plainer register. Short sentences,
@@ -153,9 +154,7 @@ export default function Home() {
               </p>
               <Link href="/docs/#verification">How checking works</Link>
             </div>
-            <pre className="codeblock">
-              <code>npx @colophon-claims/verify@0.1 ./bundle</code>
-            </pre>
+            <CopyCommand value="npx @colophon-claims/verify@0.1 ./bundle" />
           </div>
         </section>
 
