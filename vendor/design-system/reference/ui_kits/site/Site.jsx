@@ -93,7 +93,7 @@ function Deliverables(){
 
 function SuiteSection(){
   return <section style={{background:'var(--surface-inset)',borderBottom:'var(--border-hair) solid var(--rule)'}}>
-    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-13) var(--gutter-lg)',display:'grid',gridTemplateColumns:'1fr .82fr',gap:'var(--space-12)',alignItems:'end',borderTop:'var(--border-slab) solid var(--rule-accent)'}}>
+    <div style={{maxWidth:'var(--page-max)',margin:'0 auto',padding:'var(--space-13) var(--gutter-lg)',display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'var(--space-9)',borderTop:'var(--border-slab) solid var(--rule-accent)'}}>
       <div style={{display:'flex',flexDirection:'column',gap:'var(--space-7)'}}>
         <h2 style={{font:'var(--type-title)',fontSize:'var(--text-4xl)',color:'var(--text-primary)',margin:0,maxWidth:'22ch'}}>Turn a benchmark run into a claim others can verify.</h2>
         <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',margin:0,maxWidth:'56ch'}}>Run on <strong style={{color:'var(--text-primary)'}}>APEX-Agents</strong>, <strong style={{color:'var(--text-primary)'}}>SWE-bench Verified</strong>, <strong style={{color:'var(--text-primary)'}}>Terminal-Bench 3.0</strong>, or another established suite. Or use a benchmark built for your claim.</p>

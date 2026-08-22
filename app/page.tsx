@@ -122,7 +122,7 @@ export default function Home() {
 
         {/* 4. Managed suite breadth */}
         <section className="suite-section" id="benchmark-methods">
-          <div className="container suite-grid">
+          <div className="container suite-layout">
             <div className="suite-copy">
               <h2>Turn a benchmark run into a claim others can verify.</h2>
               <p>

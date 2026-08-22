@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Source | `packages/benchmark-product/design-system/reference/` in the Jinn mono |
-| Source commit | `c8e6f20e79ca3679b5e8f334160faeadbb14c900` (proof-led Colophon public surfaces, distilled report presentation) |
+| Source commit | `73658c9e96e332fc86190e2d5f15ae10fe39df2d` (proof-led Colophon public surfaces, stacked benchmark proposition) |
 | Vendored | 2026-08-22 |
 
 The canonical copy lives in the Jinn mono; update by re-vendoring, never by
