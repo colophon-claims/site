@@ -136,7 +136,6 @@ export default function Home() {
               </p>
             </div>
             <div className="suite-action">
-              <p>We lock the method, account for every result, and publish the evidence.</p>
               <div className="button-row">
                 <LinkButton href="#contact" variant="primary" size="lg">
                   Bring us your claim

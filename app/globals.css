@@ -328,8 +328,7 @@ main {
   font-size: var(--text-3xl);
   text-wrap: balance;
 }
-.suite-copy p,
-.suite-action > p {
+.suite-copy p {
   margin: 0;
   font: var(--type-body);
   font-size: var(--text-lg);
@@ -340,12 +339,6 @@ main {
 }
 .suite-copy strong {
   color: var(--text-primary);
-}
-.suite-action {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-7);
-  align-items: flex-start;
 }
 .suite-action .button-row > a:last-child {
   font: var(--type-ui-strong);

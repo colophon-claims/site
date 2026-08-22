@@ -99,8 +99,7 @@ function SuiteSection(){
         <h2 style={{font:'var(--type-title)',fontSize:'var(--text-4xl)',color:'var(--text-primary)',margin:0,maxWidth:'22ch'}}>Turn a benchmark run into a claim others can verify.</h2>
         <p style={{font:'var(--type-body)',fontSize:'var(--text-lg)',color:'var(--text-secondary)',margin:0,maxWidth:'56ch'}}>Run on <strong style={{color:'var(--text-primary)'}}>APEX-Agents</strong>, <strong style={{color:'var(--text-primary)'}}>SWE-bench Verified</strong>, <strong style={{color:'var(--text-primary)'}}>Terminal-Bench 3.0</strong>, or another established suite. Or use a benchmark built for your claim.</p>
       </div>
-      <div style={{display:'flex',flexDirection:'column',gap:'var(--space-6)',alignItems:'flex-start'}}>
-        <p style={{font:'var(--type-body)',color:'var(--text-secondary)',margin:0}}>We lock the method, account for every result, and publish the evidence.</p>
+      <div style={{display:'flex',alignItems:'flex-start'}}>
         <Button variant="primary" size="lg">Bring us your claim</Button>
       </div>
     </div>
