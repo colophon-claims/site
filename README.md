@@ -63,6 +63,18 @@ Commit the emitted data and copied bundle. The report appears at
 the complete manifest; every manifest-bound path remains served under the
 report's `/bundle/` directory.
 
+The LoCoMo judge report is one run with three independently sealed analyses.
+Ingest those bundles as one permanent reader page with:
+
+```bash
+npm run ingest:grouped -- <binary-bundle> <pairwise-bundle> <paired-delta-bundle> --slug <slug> --title "LoCoMo judge report" --reported-at <RFC3339-UTC>
+```
+
+Grouped ingest requires one binary-instrument, one pairwise-disagreement, and
+one paired-majority-delta bundle. It refuses unless all three carry the same
+`runSha256` and `matrixSha256`, all three `reportSha256` values are distinct,
+and every copied member matches its manifest byte-for-byte.
+
 ## Append-only URL policy
 
 Report URLs are immutable. The ingest script refuses to overwrite an existing

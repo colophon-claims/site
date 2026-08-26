@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EvidenceReportPage } from "@/components/evidence-report-page";
+import { GroupedReportPage } from "@/components/grouped-report-page";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import {
@@ -18,6 +19,7 @@ import {
   formatUtc,
   getReport,
   isEvidenceReport,
+  isGroupedReport,
   listReports,
   type LegacyReportData,
 } from "@/lib/reports";
@@ -62,6 +64,7 @@ function formatBytes(bytes: number): string {
 export default async function ReportPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const report = getReport(slug);
+  if (isGroupedReport(report)) return <GroupedReportPage report={report} />;
   if (isEvidenceReport(report)) return <EvidenceReportPage report={report} />;
   return <LegacyReportPage report={report} slug={slug} />;
 }

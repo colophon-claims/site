@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 export const LEGACY_BUNDLE_FORMAT = "benchmark-product-public-bundle/1" as const;
 export const EVIDENCE_BUNDLE_FORMAT = "benchmark-product-public-bundle/5" as const;
+export const GROUPED_REPORT_FORMAT = "colophon-grouped-report/1" as const;
 
 export interface BundleFile {
   path: string;
@@ -161,7 +162,128 @@ export interface EvidenceReportData extends ReportDataBase {
   };
 }
 
-export type ReportData = LegacyReportData | EvidenceReportData;
+export interface BinaryRate {
+  numerator: number;
+  denominator: number;
+  estimate: string | null;
+  wilsonInterval: { low: string; high: string } | null;
+  withheldReason?: string;
+}
+
+export interface BinaryProjection {
+  item: { expected: number; complete: number; excluded: number; unstable: number };
+  call: { expected: number; evaluated: number; parseInvalid: number };
+  confusion: {
+    correctAccepted: number;
+    correctRejected: number;
+    wrongAccepted: number;
+    wrongRejected: number;
+  };
+  agreement: BinaryRate;
+  falseAccept: BinaryRate;
+  falseReject: BinaryRate;
+  instability: BinaryRate;
+  parserInvalid: BinaryRate;
+}
+
+export interface BinaryQualification {
+  configuration: {
+    candidateClasses: string[];
+    strata: string[];
+    k: number;
+    measurementProfile: string;
+    parserInvalidPolicy: string;
+    truthAdmission: string;
+    [key: string]: unknown;
+  };
+  arms: Record<string, BinaryProjection & {
+    instrumentSha256: string;
+    byCandidateClass: Record<string, BinaryProjection>;
+    byStratum: Record<string, BinaryProjection>;
+  }>;
+  excluded: { count: number; items: unknown[] };
+  conflicted: { count: number; cellKeys: string[] };
+}
+
+export interface PairwiseDisagreement {
+  pairs: Array<{
+    armA: string;
+    armB: string;
+    n: number;
+    disagreements: number;
+    rate: string | null;
+    interval: { lower: string; upper: string; alpha: string } | null;
+    byCandidateClass: Array<{ candidateClass: string; n: number; disagreements: number; rate: string | null }>;
+    byStratum: Array<{ stratum: string; n: number; disagreements: number; rate: string | null }>;
+    exclusions: unknown[];
+  }>;
+  conflicted: { count: number; cellKeys: string[] };
+}
+
+export interface PairedMajorityDelta {
+  baseline: string;
+  candidate: string;
+  n: number;
+  delta: string | null;
+  interval: { lower: string; upper: string; alpha: string } | null;
+  reasons: string[];
+  clusters: { count: number; manifest?: unknown };
+  byCandidateClass: Array<{
+    candidateClass: string;
+    n: number;
+    delta: string | null;
+    interval: { lower: string; upper: string; alpha: string } | null;
+    reasons: string[];
+  }>;
+  byStratum: Array<{
+    stratum: string;
+    n: number;
+    delta: string | null;
+    interval: { lower: string; upper: string; alpha: string } | null;
+    reasons: string[];
+  }>;
+  exclusions: unknown[];
+  conflicted: { count: number; cellKeys: string[] };
+}
+
+interface GroupedBundleBase {
+  key: string;
+  label: string;
+  bundleFormat: string;
+  bundleIdentity: string;
+  method: { id: string; version: string; parameters: Record<string, unknown>; preregistered: boolean };
+  reportSha256: string;
+  verification: { command: string; compatibleCommand?: string; checks: string[]; trustRoot: string };
+  limitations: string[];
+  files: BundleFile[];
+}
+
+export interface GroupedReportData {
+  format: typeof GROUPED_REPORT_FORMAT;
+  slug: string;
+  fixture: boolean;
+  title: string;
+  summary: string | null;
+  reportedAt: string | null;
+  lockedAt: string | null;
+  socialCardPath: null;
+  scope: {
+    benchmarkSha256: string;
+    taskCount: number;
+    arms: Array<{ armId: string; pinning: Record<string, unknown> }>;
+    replicates: number;
+    venue: string;
+  };
+  digests: { runSha256: string; matrixSha256: string };
+  bundles: Array<GroupedBundleBase & { result: BinaryQualification | PairwiseDisagreement | PairedMajorityDelta }>;
+  licenseRegisterUrl: string;
+}
+
+export type ReportData = LegacyReportData | EvidenceReportData | GroupedReportData;
+
+export function isGroupedReport(report: ReportData): report is GroupedReportData {
+  return report.format === GROUPED_REPORT_FORMAT;
+}
 
 export function isEvidenceReport(report: ReportData): report is EvidenceReportData {
   return report.format === EVIDENCE_BUNDLE_FORMAT;
