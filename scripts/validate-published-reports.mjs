@@ -85,6 +85,19 @@ for (const dataName of readdirSync(reportsDir).filter((name) => name.endsWith(".
         || claim.records?.reportSha256 !== bundle.reportSha256) {
         fail(`${report.slug}/${bundle.key} record identities differ from its read model`);
       }
+      for (const [recordKey, path] of [
+        ["benchmarkSha256", "benchmark.json"],
+        ["matrixSha256", "matrix.json"],
+        ["reportSha256", "report.json"],
+        ["runSha256", "run.json"],
+      ]) {
+        const absolute = join(bundleDir, path);
+        if (!existsSync(absolute)) fail(`${report.slug}/${bundle.key} is missing ${path}`);
+        const actual = sha256(readFileSync(absolute));
+        if (claim.records?.[recordKey] !== actual) {
+          fail(`${report.slug}/${bundle.key}/${path} does not match claim.records.${recordKey}`);
+        }
+      }
       fileCount += validated.fileCount;
     }
     console.log(`validated ${report.slug} (3 bundles, ${fileCount} files, run sha256:${report.digests.runSha256})`);

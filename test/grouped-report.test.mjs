@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { buildGroupedReport, ingestGroupedReport } from "../scripts/ingest-grouped-report.mjs";
+import { buildGroupedReport, ingestGroupedReport, parseCli } from "../scripts/ingest-grouped-report.mjs";
 
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const digest = (value) => sha256(Buffer.from(value));
@@ -66,7 +66,9 @@ function methodResult(key) {
       pairs: [{
         armA: "arm-0", armB: "arm-1", n: 238, disagreements: 12, rate: "0.05042016806722689",
         interval: { lower: "0.029", upper: "0.085", alpha: "0.05" },
-        byCandidateClass: [], byStratum: [], exclusions: [],
+        byCandidateClass: [{ candidateClass: "correct", n: 79, disagreements: 3, rate: "0.0379746835443038" }],
+        byStratum: [{ stratum: "category-1", n: 60, disagreements: 4, rate: "0.06666666666666667" }],
+        exclusions: [],
       }],
       conflicted: { count: 0, cellKeys: [] },
     };
@@ -91,19 +93,26 @@ function writeJson(path, value) {
 }
 
 export function makeBundles(root, overrides = {}) {
-  const runSha256 = overrides.runSha256 ?? digest("run");
-  const matrixSha256 = overrides.matrixSha256 ?? digest("matrix");
   return methods.map(([key, methodId, resultKey], index) => {
     const directory = join(root, key);
     mkdirSync(directory, { recursive: true });
-    const reportSha256 = overrides.reportSha256?.[index] ?? digest(`report-${index}`);
+    writeJson(join(directory, "benchmark.json"), overrides.benchmarkContentAt?.[index] ?? { format: "fixture-benchmark/1" });
+    writeJson(join(directory, "matrix.json"), overrides.matrixContentAt?.[index] ?? { format: "fixture-matrix/1" });
+    writeJson(join(directory, "report.json"), overrides.reportContentAt?.[index] ?? { method: key, reportedAt: "2026-08-26T12:00:00.000Z" });
+    writeJson(join(directory, "run.json"), overrides.runContentAt?.[index] ?? { lockedAt: "2026-08-26T11:00:00.000Z" });
+    const actualRecords = {
+      runSha256: sha256(readFileSync(join(directory, "run.json"))),
+      matrixSha256: sha256(readFileSync(join(directory, "matrix.json"))),
+      reportSha256: sha256(readFileSync(join(directory, "report.json"))),
+      benchmarkSha256: sha256(readFileSync(join(directory, "benchmark.json"))),
+    };
     const claim = {
       method: { id: methodId, version: "1", parameters: {}, preregistered: true },
       records: {
-        runSha256: overrides.runSha256At?.[index] ?? runSha256,
-        matrixSha256,
-        reportSha256,
-        benchmarkSha256: digest("benchmark"),
+        runSha256: overrides.runSha256At?.[index] ?? actualRecords.runSha256,
+        matrixSha256: overrides.matrixSha256At?.[index] ?? actualRecords.matrixSha256,
+        reportSha256: overrides.reportSha256At?.[index] ?? actualRecords.reportSha256,
+        benchmarkSha256: overrides.benchmarkSha256At?.[index] ?? actualRecords.benchmarkSha256,
       },
       scope: {
         taskCount: 240,
@@ -116,11 +125,8 @@ export function makeBundles(root, overrides = {}) {
       [resultKey]: methodResult(key),
     };
     writeJson(join(directory, "claim-package.json"), claim);
-    writeJson(join(directory, "matrix.json"), { format: "fixture-matrix/1" });
-    writeJson(join(directory, "report.json"), { reportedAt: "2026-08-26T12:00:00.000Z" });
-    writeJson(join(directory, "run.json"), { lockedAt: "2026-08-26T11:00:00.000Z" });
 
-    const files = ["claim-package.json", "matrix.json", "report.json", "run.json"].map((path) => {
+    const files = ["benchmark.json", "claim-package.json", "matrix.json", "report.json", "run.json"].map((path) => {
       const bytes = readFileSync(join(directory, path));
       return { path, bytes: bytes.length, sha256: sha256(bytes) };
     });
@@ -137,7 +143,7 @@ test("groups and ingests exactly three byte-exact judge-report bundles", (contex
   context.after(() => rmSync(root, { recursive: true, force: true }));
   const bundles = makeBundles(join(root, "source"));
   const report = buildGroupedReport(bundles, { slug: "fixture-group", fixture: true, reportedAt: "2026-08-26T12:00:00Z" });
-  assert.equal(report.digests.runSha256, digest("run"));
+  assert.equal(report.digests.runSha256, sha256(readFileSync(join(bundles[0], "run.json"))));
   assert.deepEqual(report.bundles.map((bundle) => bundle.key), methods.map(([key]) => key));
   assert.equal(new Set(report.bundles.map((bundle) => bundle.reportSha256)).size, 3);
 
@@ -160,12 +166,16 @@ test("refuses a run mismatch, duplicate report digest, and manifest tamper", (co
   const root = mkdtempSync(join(tmpdir(), "colophon-grouped-report-refusal-"));
   context.after(() => rmSync(root, { recursive: true, force: true }));
 
-  const mismatch = makeBundles(join(root, "run-mismatch"), { runSha256At: [digest("run"), digest("other-run"), digest("run")] });
+  const defaultRun = { lockedAt: "2026-08-26T11:00:00.000Z" };
+  const mismatch = makeBundles(join(root, "run-mismatch"), { runContentAt: [defaultRun, { lockedAt: "2026-08-26T11:00:01.000Z" }, defaultRun] });
   assert.throws(() => buildGroupedReport(mismatch, { slug: "mismatch" }), /do not share one runSha256/u);
 
-  const sameReport = digest("same-report");
-  const duplicate = makeBundles(join(root, "report-duplicate"), { reportSha256: [sameReport, sameReport, digest("third-report")] });
+  const sameReport = { reportedAt: "2026-08-26T12:00:00.000Z" };
+  const duplicate = makeBundles(join(root, "report-duplicate"), { reportContentAt: [sameReport, sameReport, { reportedAt: "2026-08-26T12:00:01.000Z" }] });
   assert.throws(() => buildGroupedReport(duplicate, { slug: "duplicate" }), /distinct reportSha256/u);
+
+  const falseCommitment = makeBundles(join(root, "false-commitment"), { runSha256At: ["0".repeat(64)] });
+  assert.throws(() => buildGroupedReport(falseCommitment, { slug: "false-commitment" }), /run.json digest does not match claim.records.runSha256/u);
 
   const tampered = makeBundles(join(root, "tampered"));
   writeFileSync(join(tampered[0], "matrix.json"), "tampered\n");
@@ -174,4 +184,10 @@ test("refuses a run mismatch, duplicate report digest, and manifest tamper", (co
     slug: "bad-date",
     reportedAt: "2026-08-26 12:00:00",
   }), /reported-at must be an RFC 3339 UTC timestamp/u);
+});
+
+test("maps the documented --reported-at CLI option to the report field", () => {
+  const parsed = parseCli(["a", "b", "c", "--slug", "fixture", "--reported-at", "2026-08-26T12:00:00Z"]);
+  assert.equal(parsed.options.reportedAt, "2026-08-26T12:00:00Z");
+  assert.equal(parsed.options["reported-at"], undefined);
 });

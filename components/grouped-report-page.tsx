@@ -122,6 +122,24 @@ export function GroupedReportPage({ report }: { report: GroupedReportData }) {
               </tbody>
             </table>
           </div>
+          <h3>Class and category strata</h3>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead><tr><th>Pair</th><th>Slice</th><th className="num">Items</th><th className="num">Disagreements</th><th className="num">Rate</th></tr></thead>
+              <tbody>
+                {pairwise.pairs.flatMap((pair) => [
+                  ...pair.byCandidateClass.map((slice) => ({ pair, label: `Class · ${slice.candidateClass}`, slice })),
+                  ...pair.byStratum.map((slice) => ({ pair, label: `Category · ${slice.stratum}`, slice })),
+                ]).map(({ pair, label, slice }) => (
+                  <tr key={`${pair.armA}/${pair.armB}/${label}`}>
+                    <td className="mono">{pair.armA} / {pair.armB}</td><td>{label}</td>
+                    <td className="num mono">{slice.n}</td><td className="num mono">{slice.disagreements}</td>
+                    <td className="num mono">{percent(slice.rate)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section id="pairwise" className="report-section">

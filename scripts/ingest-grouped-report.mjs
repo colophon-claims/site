@@ -116,7 +116,7 @@ export function validateGroupedBundle(bundleArgument) {
   if (unexpected !== undefined) refuse(`bundle carries an unmanifested file: ${unexpected}`);
   const missing = [...paths].find((path) => !actualPaths.includes(path));
   if (missing !== undefined) refuse(`bundle is missing ${missing}`);
-  for (const required of ["claim-package.json", "matrix.json", "report.json", "run.json"]) {
+  for (const required of ["benchmark.json", "claim-package.json", "matrix.json", "report.json", "run.json"]) {
     if (!paths.has(required)) refuse(`bundle is missing required member ${required}`);
   }
 
@@ -130,6 +130,17 @@ export function validateGroupedBundle(bundleArgument) {
   const records = claim.records;
   if (![records?.runSha256, records?.matrixSha256, records?.reportSha256, records?.benchmarkSha256].every((digest) => SHA256.test(digest))) {
     refuse(`${method.key} claim carries an invalid record digest`);
+  }
+  for (const [recordKey, path] of [
+    ["benchmarkSha256", "benchmark.json"],
+    ["matrixSha256", "matrix.json"],
+    ["reportSha256", "report.json"],
+    ["runSha256", "run.json"],
+  ]) {
+    const actual = sha256(readFileSync(join(directory, path)));
+    if (records[recordKey] !== actual) {
+      refuse(`${method.key} ${path} digest does not match claim.records.${recordKey}`);
+    }
   }
   if (claim[method.resultKey] === undefined || typeof claim[method.resultKey] !== "object") {
     refuse(`${method.key} claim does not carry ${method.resultKey}`);
@@ -260,13 +271,14 @@ export function ingestGroupedReport(bundleArguments, options, siteRoot = fileURL
   return data;
 }
 
-function parseCli(argv) {
+export function parseCli(argv) {
   const bundleArguments = [];
   const options = { fixture: false };
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
     if (value === "--slug" || value === "--title" || value === "--reported-at") {
-      options[value.slice(2)] = argv[index + 1];
+      const key = value === "--reported-at" ? "reportedAt" : value.slice(2);
+      options[key] = argv[index + 1];
       index += 1;
     } else if (value === "--fixture") {
       options.fixture = true;
