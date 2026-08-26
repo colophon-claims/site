@@ -3,6 +3,7 @@ import {
   formatRewardPpm,
   formatUtc,
   isEvidenceReport,
+  isGroupedReport,
   shortDigest,
   type ReportData,
 } from "@/lib/reports";
@@ -14,6 +15,24 @@ export function ReportSummaryCard({
   report: ReportData;
   label?: string;
 }) {
+  if (isGroupedReport(report)) {
+    return (
+      <article className="featured-report-card">
+        <div className="featured-report-head">
+          <div className="featured-report-eyebrow"><Mark size={12} /> {label}</div>
+          <h3>{report.title}</h3>
+          <p>{report.scope.taskCount} items · {report.scope.arms.length} arms · three analyses</p>
+        </div>
+        <div className="featured-result featured-result-legacy">
+          <span>One run and matrix, three distinct report digests</span>
+          <span>{report.fixture ? "Synthetic rehearsal" : "Independently verifiable bundles"}</span>
+        </div>
+        <div className="featured-report-foot">
+          <span>Self-run venue</span><span>{shortDigest(report.digests.runSha256)}</span>
+        </div>
+      </article>
+    );
+  }
   if (isEvidenceReport(report)) {
     return (
       <article className="featured-report-card">

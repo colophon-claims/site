@@ -16,6 +16,7 @@ export function SiteHeader() {
         <nav className="site-nav">
           <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
+          <Link href="/offer/">Standing offer</Link>
           <span className="site-nav-cta">
             <LinkButton href="/#contact" variant="primary">Bring a claim</LinkButton>
           </span>

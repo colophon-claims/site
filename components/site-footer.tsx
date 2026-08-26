@@ -24,6 +24,7 @@ export function SiteFooter() {
           <span className="site-footer-head">Product</span>
           <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
+          <Link href="/offer/">Standing offer</Link>
           <a href="/#contact">Bring a claim</a>
         </div>
         <div className="site-footer-col">

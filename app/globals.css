@@ -1493,6 +1493,21 @@ main {
   color: var(--text-muted);
 }
 
+.grouped-result-card {
+  border: var(--border-hair) solid var(--rule);
+  background: var(--surface-card);
+  padding: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.grouped-result-card strong {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 500;
+}
+
 /* Public pages use the night edition on screen; paper output returns to the
    light token profile without changing report content or hierarchy. */
 @media print {
