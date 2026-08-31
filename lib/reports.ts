@@ -3,6 +3,8 @@ import { join } from "node:path";
 
 export const LEGACY_BUNDLE_FORMAT = "benchmark-product-public-bundle/1" as const;
 export const EVIDENCE_BUNDLE_FORMAT = "benchmark-product-public-bundle/5" as const;
+export const QUALIFIED_BUNDLE_FORMAT = "benchmark-product-public-bundle/7" as const;
+export const DISCLOSED_BUNDLE_FORMAT = "benchmark-product-public-bundle/8" as const;
 export const GROUPED_REPORT_FORMAT = "colophon-grouped-report/1" as const;
 
 export interface BundleFile {
@@ -162,6 +164,179 @@ export interface EvidenceReportData extends ReportDataBase {
   };
 }
 
+/* ---------- anchored binary-qualification bundles (/7 and /8) ---------- */
+
+/**
+ * One carried third-party time proof, verbatim from the claim package. `facts`
+ * holds only what is embedded in the proof's own bytes: `pending` for a
+ * calendar-only OpenTimestamps proof, `blockHeight` once it is attested, and
+ * the RFC 3161 fields for an authority token. The site reads that state and
+ * evaluates nothing: trust material is the reader's, never the bundle's.
+ */
+export interface IntegrityAnchor {
+  subject: string;
+  kind: string;
+  provider: string;
+  recordSha256: string;
+  facts: {
+    pending?: boolean;
+    blockHeight?: number;
+    genTime?: string;
+    policyOid?: string;
+    serialNumber?: string;
+    signerCertificateSha256?: string;
+  };
+}
+
+export type DisclosureVariableKey =
+  | "ingestion-model"
+  | "retrieval-config"
+  | "answer-model"
+  | "answer-prompt"
+  | "judge-model"
+  | "judge-prompt";
+
+export type DisclosureVariableStatus =
+  | "measured-here"
+  | "disclosed-by-publisher"
+  | "undisclosed";
+
+export type DisclosureUndisclosedReason =
+  | "not-stated"
+  | "stated-without-identifiers"
+  | "outside-this-experiment";
+
+/**
+ * The status is a statement about who did the work and where the bytes are. It
+ * is not a tier and not a confidence score, and it is the only field a renderer
+ * may use to decide how a variable is presented.
+ */
+export type DisclosureVariableEntry =
+  | {
+    status: "measured-here";
+    statement: string;
+    evidence: { role: "pinned-configuration" | "execution-observation"; digest: { sha256: string } }[];
+  }
+  | { status: "disclosed-by-publisher"; statement: string; sources?: { uri: string }[] }
+  | { status: "undisclosed"; reason: DisclosureUndisclosedReason };
+
+export interface DisclosureSpecification {
+  recordSha256: string;
+  recordPath: string;
+  specification: string;
+  subjectSha256: string;
+  subjectKind: string;
+  author: string;
+  variables: Record<DisclosureVariableKey, DisclosureVariableEntry>;
+}
+
+/** A proportion as the sealed Report carries it: counts as numbers, the rate
+ * and its interval bounds as fixed-precision decimal strings. */
+export interface Proportion {
+  numerator: number;
+  denominator: number;
+  estimate: string;
+  wilsonInterval: { low: string; high: string };
+}
+
+export interface QualifiedReportData {
+  format: typeof QUALIFIED_BUNDLE_FORMAT | typeof DISCLOSED_BUNDLE_FORMAT;
+  slug: string;
+  fixture: false;
+  title: string;
+  summary: string;
+  reportedAt: string;
+  socialCardPath: string;
+  subject: {
+    judgeModel: string;
+    harness: { id: string; version: string };
+    benchmark: { name: string; description: string; sha256: string };
+    arms: { id: string; label: string; instrumentSha256: string }[];
+  };
+  question: {
+    designUrl: string;
+    postedOn: string;
+    preRegistered: { id: string; question: string; answer: string; provenBy: string }[];
+  };
+  execution: {
+    judgePrompts: { count: number; provenance: string };
+    modelSnapshot: { id: string; temperature: string; profile: string };
+    replicates: number;
+    reduction: string;
+    abstainPolicy: { parserInvalid: string; description: string };
+    intervals: string;
+    truthAdmission: string;
+    venue: string;
+  };
+  result: {
+    primary: string;
+    perArm: {
+      armId: string;
+      agreement: Proportion;
+      acceptsSpecificWrong: Proportion;
+      acceptsVagueTopicalWrong: Proportion;
+      rejectsCorrect: Proportion;
+    }[];
+    spread: { lowestArmId: string; highestArmId: string; pointsBetween: string };
+    interpretation: string;
+    methodStatement: string;
+  };
+  population: {
+    items: number;
+    perCandidateClass: { candidateClass: string; items: number }[];
+    perStratum: { stratum: string; items: number }[];
+    labels: string;
+  };
+  accounting: {
+    cells: { expected: number; judged: number; lost: number };
+    parserNeutral: { calls: number; denominator: number; policy: string; note: string };
+    excludedItems: { count: number; byArm: { armId: string; items: number }[] };
+    completenessFloor: string;
+    runOutcome: string;
+  };
+  manipulationCheck: {
+    replicateInstability: { unstableItems: number; gradedItems: number };
+    conflictedCells: number;
+    companionChecks: { name: string; finding: string; provenBy: string }[];
+  };
+  limitations: string[];
+  selfRunDisclosure: string;
+  verification: {
+    bundleFormat: typeof QUALIFIED_BUNDLE_FORMAT | typeof DISCLOSED_BUNDLE_FORMAT;
+    checks: string[];
+    command: string;
+    compatibleCommand: string;
+    readerAvailability: "available";
+    reportEnvelopeSha256: string;
+    reportSha256: string;
+  };
+  provenance: {
+    runSha256: string;
+    benchmarkSha256: string;
+    matrixSha256: string;
+    reportSha256: string;
+    reportEnvelopeSha256: string;
+    anchors: { subject: string; provider: string; recordSha256: string }[];
+    siblingAnalyses: { method: string; version: string; reportSha256: string }[];
+    companionBundles: { name: string; runSha256: string; matrixSha256: string; bundleIdentity: string }[];
+  };
+  anchors: IntegrityAnchor[];
+  /** Present only on the disclosed closure; `/7` carries no sealed declaration. */
+  disclosure: DisclosureSpecification | null;
+  digests: {
+    bundleIdentity: string;
+    reportEnvelopeSha256: string;
+    benchmarkSha256: string;
+    runSha256: string;
+    matrixSha256: string;
+    reportSha256: string;
+  };
+  /** The fixed members only. These bundles carry tens of thousands of evidence
+   * records; the complete manifest is `bundle.json`, served under the report. */
+  canonicalFiles: BundleFile[];
+  memberCounts: { total: number; records: number; anchors: number; native: number };
+}
+
 export interface BinaryRate {
   numerator: number;
   denominator: number;
@@ -279,7 +454,11 @@ export interface GroupedReportData {
   licenseRegisterUrl: string;
 }
 
-export type ReportData = LegacyReportData | EvidenceReportData | GroupedReportData;
+export type ReportData =
+  | LegacyReportData
+  | EvidenceReportData
+  | QualifiedReportData
+  | GroupedReportData;
 
 export function isGroupedReport(report: ReportData): report is GroupedReportData {
   return report.format === GROUPED_REPORT_FORMAT;
@@ -287,6 +466,37 @@ export function isGroupedReport(report: ReportData): report is GroupedReportData
 
 export function isEvidenceReport(report: ReportData): report is EvidenceReportData {
   return report.format === EVIDENCE_BUNDLE_FORMAT;
+}
+
+export function isQualifiedReport(report: ReportData): report is QualifiedReportData {
+  return report.format === QUALIFIED_BUNDLE_FORMAT || report.format === DISCLOSED_BUNDLE_FORMAT;
+}
+
+export function isDisclosedReport(report: ReportData): boolean {
+  return report.format === DISCLOSED_BUNDLE_FORMAT;
+}
+
+const DISCLOSURE_VARIABLE_LABELS: Record<DisclosureVariableKey, string> = {
+  "ingestion-model": "Ingestion model",
+  "retrieval-config": "Retrieval config",
+  "answer-model": "Answer model",
+  "answer-prompt": "Answer prompt",
+  "judge-model": "Judge model",
+  "judge-prompt": "Judge prompt",
+};
+
+/** The frozen order the standard states the six variables in. */
+export const DISCLOSURE_VARIABLE_KEYS: DisclosureVariableKey[] = [
+  "ingestion-model",
+  "retrieval-config",
+  "answer-model",
+  "answer-prompt",
+  "judge-model",
+  "judge-prompt",
+];
+
+export function disclosureVariableLabel(key: DisclosureVariableKey): string {
+  return DISCLOSURE_VARIABLE_LABELS[key];
 }
 
 const dataDir = join(process.cwd(), "data", "reports");

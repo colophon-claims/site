@@ -7,6 +7,9 @@
  * Supported formats:
  *   - benchmark-product-public-bundle/1 (legacy application bundle)
  *   - benchmark-product-public-bundle/5 (evidence-native claim bundle)
+ *   - benchmark-product-public-bundle/7 (anchored binary-qualification bundle)
+ *   - benchmark-product-public-bundle/8 (the same, plus a sealed six-variable
+ *     disclosure-specification record)
  *
  * The bundle is validated against its own manifest, copied byte-exact, and
  * projected into a small site read model. Existing slugs are never replaced.
@@ -26,6 +29,12 @@ import { fileURLToPath } from "node:url";
 
 const LEGACY_FORMAT = "benchmark-product-public-bundle/1";
 const EVIDENCE_FORMAT = "benchmark-product-public-bundle/5";
+/** The anchored binary-qualification closure: the legacy member list plus
+ * `qualification.json`, plus one `anchors/<sha256>.bin` per carried anchor. */
+const QUALIFIED_FORMAT = "benchmark-product-public-bundle/7";
+/** The same closure carrying a sealed six-variable disclosure-specification
+ * record at `records/<sha256>.bin`, plus the `disclosure` claim section. */
+const DISCLOSED_FORMAT = "benchmark-product-public-bundle/8";
 
 const LEGACY_FIXED_FILES = [
   "static-bundle.json",
@@ -59,9 +68,108 @@ const EVIDENCE_REQUIRED_FILES = [
   "report.json",
 ];
 
+/**
+ * The /7 and /8 member list: the legacy sixteen with `qualification.json` added,
+ * plus the sealed public reading record. `presentation.json` is not part of the
+ * producer's own closure list; the site requires it because a report page whose
+ * public copy was assembled here rather than sealed upstream would be the site
+ * transforming a bundle.
+ */
+const QUALIFIED_FIXED_FILES = [
+  "static-bundle.json",
+  "benchmark.json",
+  "run.json",
+  "matrix.json",
+  "report.json",
+  "report-envelope.json",
+  "claim-package.json",
+  "qualification.json",
+  "verdicts.json",
+  "evidence.json",
+  "verification/assembly.jsonl",
+  "trust/public-keys.json",
+  "index.html",
+  "badge.svg",
+  "social-card.svg",
+  "README.md",
+  "share.txt",
+  "presentation.json",
+];
+
+const PRESENTATION_SCHEMA = "colophon.report-presentation/2";
+const QUALIFIED_CLAIM_SCHEMA = "benchmark-product.claim-package/5";
+const DISCLOSED_CLAIM_SCHEMA = "benchmark-product.claim-package/6";
+/** `qualification.json` names the projection shape its graph was built for. It
+ * stays pinned at /2 on every closure and never co-varies with the claim id. */
+const QUALIFICATION_CLAIM_SCHEMA = "benchmark-product.claim-package/2";
+
+const ANCHORED_CHECKS = [
+  "manifest",
+  "evidence-closure",
+  "trust",
+  "matrix-rederivation",
+  "report-verification",
+  "claim-consistency",
+  "integrity-anchors",
+];
+const DISCLOSED_CHECKS = [...ANCHORED_CHECKS, "disclosure-specification"];
+
+const DISCLOSURE_RECORD_KIND = "https://spec.jinn.network/records/disclosure-specification/v1";
+const SIX_VARIABLE_SPECIFICATION = "https://spec.jinn.network/disclosure/six-variable/v1";
+/** Frozen and closed. A seventh variable is a conformance failure, not an extra. */
+const DISCLOSURE_VARIABLE_KEYS = [
+  "ingestion-model",
+  "retrieval-config",
+  "answer-model",
+  "answer-prompt",
+  "judge-model",
+  "judge-prompt",
+];
+const DISCLOSURE_EVIDENCE_ROLES = ["pinned-configuration", "execution-observation"];
+const DISCLOSURE_UNDISCLOSED_REASONS = [
+  "not-stated",
+  "stated-without-identifiers",
+  "outside-this-experiment",
+];
+
+/** Every top-level section a sealed reading record carries. The site refuses a
+ * record with a section it does not project, rather than dropping it silently. */
+const PRESENTATION_SECTIONS = [
+  "schema",
+  "slug",
+  "title",
+  "summary",
+  "sealedAt",
+  "subject",
+  "question",
+  "execution",
+  "result",
+  "population",
+  "accounting",
+  "manipulationCheck",
+  "limitations",
+  "selfRunDisclosure",
+  "verification",
+  "provenance",
+];
+
+const SHA256_HEX = /^[a-f0-9]{64}$/;
+
 function fail(message) {
   console.error(`ingest-report: ${message}`);
   process.exit(1);
+}
+
+/** Key-sorted JSON, so two carriages of one sealed section compare as values. */
+function canonical(value) {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
+  if (value !== null && typeof value === "object") {
+    return `{${Object.keys(value)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
 }
 
 const args = process.argv.slice(2);
@@ -116,9 +224,11 @@ const manifestPath = join(bundleDir, "bundle.json");
 if (!existsSync(manifestPath)) fail(`no bundle.json manifest in ${bundleDir}`);
 const manifestBytes = readFileSync(manifestPath);
 const manifest = readJson("bundle.json");
-if (manifest.format !== LEGACY_FORMAT && manifest.format !== EVIDENCE_FORMAT) {
+const SUPPORTED_FORMATS = [LEGACY_FORMAT, EVIDENCE_FORMAT, QUALIFIED_FORMAT, DISCLOSED_FORMAT];
+if (!SUPPORTED_FORMATS.includes(manifest.format)) {
   fail(`unknown bundle format: ${manifest.format}`);
 }
+const isQualified = manifest.format === QUALIFIED_FORMAT || manifest.format === DISCLOSED_FORMAT;
 if (!Array.isArray(manifest.files) || manifest.files.length === 0) {
   fail("bundle.json carries no file entries");
 }
@@ -166,6 +276,30 @@ if (manifest.format === LEGACY_FORMAT) {
     const isFixed = LEGACY_FIXED_FILES.includes(path) || LEGACY_OPTIONAL_FILES.includes(path);
     const isRecord = /^records\/[a-f0-9]{64}\.bin$/.test(path);
     if (!isFixed && !isRecord) fail(`manifest carries a member outside the legacy format: ${path}`);
+  }
+} else if (isQualified) {
+  for (const fixed of QUALIFIED_FIXED_FILES) {
+    if (manifestPaths.has(fixed)) continue;
+    if (fixed === "presentation.json") {
+      fail(
+        `${manifest.format} bundle carries no presentation.json. The site renders a report from its`
+        + " sealed public reading record and never assembles one here; publish a bundle whose"
+        + " manifest binds presentation.json and ingest that.",
+      );
+    }
+    fail(`fixed member missing from manifest: ${fixed}`);
+  }
+  if (![...manifestPaths].some((path) => /^records\/[a-f0-9]{64}\.bin$/.test(path))) {
+    fail("bundle carries no records/<sha256>.bin evidence members");
+  }
+  for (const path of manifestPaths) {
+    const isFixed = QUALIFIED_FIXED_FILES.includes(path) || LEGACY_OPTIONAL_FILES.includes(path);
+    const isRecord = /^records\/[a-f0-9]{64}\.bin$/.test(path);
+    const isAnchor = /^anchors\/[a-f0-9]{64}\.bin$/.test(path);
+    const isNative = /^native\/inspect\/[a-f0-9]{64}\.eval$/.test(path);
+    if (!isFixed && !isRecord && !isAnchor && !isNative) {
+      fail(`manifest carries a member outside ${manifest.format}: ${path}`);
+    }
   }
 } else {
   for (const required of EVIDENCE_REQUIRED_FILES) {
@@ -313,7 +447,305 @@ function extractEvidenceNative() {
   };
 }
 
-const data = manifest.format === LEGACY_FORMAT ? extractLegacy() : extractEvidenceNative();
+/**
+ * Reads and checks the sealed disclosure-specification record the `/8` claim
+ * names, and re-derives the claim's `disclosure` section from the record's own
+ * bytes. The site is not a verifier and does not replace one; this is the
+ * narrow part it can check on its own, so a page never renders a declaration
+ * the carried record does not make.
+ */
+function readDisclosureRecord(section) {
+  if (canonical(Object.keys(section).sort()) !== canonical([
+    "recordSha256",
+    "specification",
+    "subjectSha256",
+    "variables",
+  ])) {
+    fail("claim disclosure section does not carry exactly the four projected keys");
+  }
+  if (!SHA256_HEX.test(section.recordSha256) || !SHA256_HEX.test(section.subjectSha256)) {
+    fail("claim disclosure section carries an invalid digest");
+  }
+  if (section.specification !== SIX_VARIABLE_SPECIFICATION) {
+    fail(`claim disclosure section names an unknown specification: ${section.specification}`);
+  }
+  const recordPath = `records/${section.recordSha256}.bin`;
+  if (!manifestPaths.has(recordPath)) {
+    fail(`claim names disclosure record ${section.recordSha256} but the bundle carries no ${recordPath}`);
+  }
+  const record = readJson(recordPath);
+  if (record.kind !== DISCLOSURE_RECORD_KIND) {
+    fail(`${recordPath} is not a disclosure-specification record`);
+  }
+  if (record.specification !== SIX_VARIABLE_SPECIFICATION) {
+    fail(`${recordPath} names an unknown specification: ${record.specification}`);
+  }
+  if (typeof record.author !== "string" || record.author === "") {
+    fail(`${recordPath} carries no author`);
+  }
+  if (record.subject?.digest?.sha256 !== section.subjectSha256) {
+    fail("disclosure record subject digest does not match the claim disclosure section");
+  }
+  if (typeof record.subject?.kind !== "string" || record.subject.kind === "") {
+    fail(`${recordPath} carries no subject kind`);
+  }
+  const variableKeys = Object.keys(record.variables ?? {}).sort();
+  if (canonical(variableKeys) !== canonical([...DISCLOSURE_VARIABLE_KEYS].sort())) {
+    fail("disclosure record does not carry exactly the six frozen variables");
+  }
+  for (const key of DISCLOSURE_VARIABLE_KEYS) {
+    const entry = record.variables[key];
+    if (entry === null || typeof entry !== "object") fail(`disclosure variable ${key} is not an entry`);
+    if (entry.status === "measured-here") {
+      if (typeof entry.statement !== "string" || entry.statement === "") {
+        fail(`disclosure variable ${key} is measured-here with no statement`);
+      }
+      if (!Array.isArray(entry.evidence) || entry.evidence.length === 0) {
+        fail(`disclosure variable ${key} is measured-here with no evidence`);
+      }
+      let pinned = false;
+      for (const citation of entry.evidence) {
+        if (!DISCLOSURE_EVIDENCE_ROLES.includes(citation?.role)) {
+          fail(`disclosure variable ${key} cites an unknown evidence role: ${citation?.role}`);
+        }
+        if (!SHA256_HEX.test(citation?.digest?.sha256 ?? "")) {
+          fail(`disclosure variable ${key} cites an invalid digest`);
+        }
+        if (!manifestPaths.has(`records/${citation.digest.sha256}.bin`)) {
+          fail(
+            `disclosure variable ${key} cites record ${citation.digest.sha256}, which this bundle`
+            + " does not carry",
+          );
+        }
+        if (citation.role === "pinned-configuration") pinned = true;
+      }
+      if (!pinned) {
+        fail(`disclosure variable ${key} is measured-here but cites no pinned-configuration`);
+      }
+    } else if (entry.status === "disclosed-by-publisher") {
+      if (typeof entry.statement !== "string" || entry.statement === "") {
+        fail(`disclosure variable ${key} is disclosed-by-publisher with no statement`);
+      }
+      if (entry.evidence !== undefined) {
+        fail(`disclosure variable ${key} is an assertion carrying evidence`);
+      }
+      if (entry.sources !== undefined) {
+        if (!Array.isArray(entry.sources) || entry.sources.length === 0) {
+          fail(`disclosure variable ${key} carries an empty sources list`);
+        }
+        for (const source of entry.sources) {
+          if (typeof source?.uri !== "string" || source.uri === "") {
+            fail(`disclosure variable ${key} carries a source with no uri`);
+          }
+        }
+      }
+    } else if (entry.status === "undisclosed") {
+      if (!DISCLOSURE_UNDISCLOSED_REASONS.includes(entry.reason)) {
+        fail(`disclosure variable ${key} is undisclosed for an unknown reason: ${entry.reason}`);
+      }
+      if (entry.statement !== undefined || entry.evidence !== undefined || entry.sources !== undefined) {
+        fail(`disclosure variable ${key} is undisclosed but carries a statement, evidence, or sources`);
+      }
+    } else {
+      fail(`disclosure variable ${key} carries an unknown status: ${entry.status}`);
+    }
+  }
+  if (canonical(record.variables) !== canonical(section.variables)) {
+    fail("claim disclosure section is not the sealed record's projection");
+  }
+  return {
+    recordSha256: section.recordSha256,
+    recordPath,
+    specification: section.specification,
+    subjectSha256: section.subjectSha256,
+    subjectKind: record.subject.kind,
+    author: record.author,
+    variables: Object.fromEntries(
+      DISCLOSURE_VARIABLE_KEYS.map((key) => [key, record.variables[key]]),
+    ),
+  };
+}
+
+function extractQualified() {
+  if (fixture) fail("--fixture is only valid for legacy test bundles");
+  const disclosed = manifest.format === DISCLOSED_FORMAT;
+  const claim = readJson("claim-package.json");
+  const presentation = readJson("presentation.json");
+  const qualification = readJson("qualification.json");
+
+  const expectedClaimSchema = disclosed ? DISCLOSED_CLAIM_SCHEMA : QUALIFIED_CLAIM_SCHEMA;
+  if (claim.claimSchema !== expectedClaimSchema) {
+    fail(`${manifest.format} requires ${expectedClaimSchema}, found ${claim.claimSchema}`);
+  }
+  if (qualification.claimSchema !== QUALIFICATION_CLAIM_SCHEMA) {
+    fail(
+      `qualification.json must declare ${QUALIFICATION_CLAIM_SCHEMA}, found ${qualification.claimSchema}`,
+    );
+  }
+
+  const expectedChecks = disclosed ? DISCLOSED_CHECKS : ANCHORED_CHECKS;
+  if (canonical(claim.verification?.checks) !== canonical(expectedChecks)) {
+    fail(`claim verification checks are not the ${manifest.format} list, in order`);
+  }
+
+  // Every digest the claim names, checked against the bytes this bundle carries.
+  const digestOf = (path) => sha256(readFileSync(join(bundleDir, ...path.split("/"))));
+  const reportEnvelopeSha256 = digestOf("report-envelope.json");
+  for (const [key, path] of [
+    ["benchmarkSha256", "benchmark.json"],
+    ["matrixSha256", "matrix.json"],
+    ["reportSha256", "report.json"],
+    ["runSha256", "run.json"],
+    ["reportEnvelopeSha256", "report-envelope.json"],
+  ]) {
+    const actual = digestOf(path);
+    if (claim.records?.[key] !== actual) {
+      fail(`${path} does not match claim.records.${key}`);
+    }
+  }
+
+  if (presentation.schema !== PRESENTATION_SCHEMA) {
+    fail(`unknown public presentation schema: ${presentation.schema}`);
+  }
+  const sections = Object.keys(presentation).sort();
+  if (canonical(sections) !== canonical([...PRESENTATION_SECTIONS].sort())) {
+    fail("public presentation does not carry exactly the sections this site projects");
+  }
+  if (presentation.slug !== slug) {
+    fail(`presentation slug ${presentation.slug} does not match requested slug ${slug}`);
+  }
+  if (presentation.verification?.bundleFormat !== manifest.format) {
+    fail(`presentation names bundle format ${presentation.verification?.bundleFormat}, not ${manifest.format}`);
+  }
+  if (presentation.verification.readerAvailability !== "available") {
+    fail("presentation does not identify the public reader as available");
+  }
+  if (presentation.verification.reportEnvelopeSha256 !== reportEnvelopeSha256) {
+    fail("presentation report-envelope digest does not match report-envelope.json");
+  }
+  if (canonical(presentation.verification.checks) !== canonical(expectedChecks)) {
+    fail(`presentation verification checks are not the ${manifest.format} list, in order`);
+  }
+  if (typeof presentation.title !== "string" || presentation.title === "") {
+    fail("public report title is missing");
+  }
+  if (/\b(demo[- ]?1|canary|rehearsal|fixture)\b/i.test(presentation.title)) {
+    fail("public report title exposes an internal run label");
+  }
+  if (typeof presentation.summary !== "string" || presentation.summary === "") {
+    fail("public report summary is missing");
+  }
+  if (typeof presentation.sealedAt !== "string" || presentation.sealedAt === "") {
+    fail("public presentation carries no seal time");
+  }
+  if (!Array.isArray(presentation.limitations) || presentation.limitations.length === 0) {
+    fail("public presentation carries no limitations");
+  }
+  if (typeof presentation.selfRunDisclosure !== "string" || presentation.selfRunDisclosure === "") {
+    fail("public presentation carries no self-run disclosure");
+  }
+  for (const [key, path] of [
+    ["runSha256", "run.json"],
+    ["benchmarkSha256", "benchmark.json"],
+    ["matrixSha256", "matrix.json"],
+    ["reportSha256", "report.json"],
+    ["reportEnvelopeSha256", "report-envelope.json"],
+  ]) {
+    if (presentation.provenance?.[key] !== digestOf(path)) {
+      fail(`presentation provenance.${key} does not match ${path}`);
+    }
+  }
+
+  // Anchors. Each carried proof is one `anchors/<sha256>.bin` member, and the
+  // correspondence runs both ways so neither an unclaimed proof nor a claimed
+  // one the bundle does not carry can pass.
+  if (!Array.isArray(claim.anchors)) fail("claim package carries no anchors section");
+  const anchorMembers = [...manifestPaths].filter((path) => path.startsWith("anchors/"));
+  const claimedAnchors = new Set();
+  for (const anchor of claim.anchors) {
+    if (!SHA256_HEX.test(anchor?.recordSha256 ?? "")) fail("an anchor carries an invalid record digest");
+    if (typeof anchor.subject !== "string" || anchor.subject === "") fail("an anchor names no subject");
+    if (typeof anchor.provider !== "string" || anchor.provider === "") fail("an anchor names no provider");
+    if (anchor.facts === null || typeof anchor.facts !== "object") fail("an anchor carries no facts");
+    const path = `anchors/${anchor.recordSha256}.bin`;
+    if (!manifestPaths.has(path)) fail(`claim names anchor ${anchor.recordSha256} but the bundle carries no ${path}`);
+    if (claimedAnchors.has(path)) fail(`claim names anchor ${anchor.recordSha256} twice`);
+    claimedAnchors.add(path);
+  }
+  for (const path of anchorMembers) {
+    if (!claimedAnchors.has(path)) fail(`bundle carries ${path}, which the claim does not name`);
+  }
+  const presentedAnchors = presentation.provenance.anchors;
+  if (!Array.isArray(presentedAnchors)) fail("presentation provenance carries no anchors list");
+  const anchorIdentity = (list) => canonical(
+    list
+      .map(({ subject, provider, recordSha256 }) => ({ subject, provider, recordSha256 }))
+      .sort((left, right) => left.recordSha256.localeCompare(right.recordSha256)),
+  );
+  if (anchorIdentity(presentedAnchors) !== anchorIdentity(claim.anchors)) {
+    fail("presentation anchors do not match the claim's anchors");
+  }
+
+  if (disclosed && claim.disclosure === undefined) {
+    fail(`${DISCLOSED_FORMAT} carries no disclosure section in its claim package`);
+  }
+  if (!disclosed && claim.disclosure !== undefined) {
+    fail(`${QUALIFIED_FORMAT} must not carry a disclosure section; publish it as ${DISCLOSED_FORMAT}`);
+  }
+  const disclosure = disclosed ? readDisclosureRecord(claim.disclosure) : null;
+
+  const countMembers = (prefix) => [...manifestPaths].filter((path) => path.startsWith(prefix)).length;
+  const canonicalFiles = files.filter(
+    (file) => file.path === "bundle.json" || QUALIFIED_FIXED_FILES.includes(file.path),
+  );
+
+  return {
+    format: manifest.format,
+    slug,
+    fixture: false,
+    title: presentation.title,
+    summary: presentation.summary,
+    reportedAt: presentation.sealedAt,
+    subject: presentation.subject,
+    question: presentation.question,
+    execution: presentation.execution,
+    result: presentation.result,
+    population: presentation.population,
+    accounting: presentation.accounting,
+    manipulationCheck: presentation.manipulationCheck,
+    limitations: presentation.limitations,
+    selfRunDisclosure: presentation.selfRunDisclosure,
+    verification: presentation.verification,
+    provenance: presentation.provenance,
+    anchors: claim.anchors,
+    disclosure,
+    digests: {
+      bundleIdentity,
+      reportEnvelopeSha256,
+      benchmarkSha256: claim.records.benchmarkSha256,
+      runSha256: claim.records.runSha256,
+      matrixSha256: claim.records.matrixSha256,
+      reportSha256: claim.records.reportSha256,
+    },
+    socialCardPath: "social-card.svg",
+    // The complete manifest is `bundle.json`, served byte-exact under the
+    // report. Listing every member here would put tens of thousands of rows in
+    // the read model and on the page; the fixed members are what the page links.
+    canonicalFiles,
+    memberCounts: {
+      total: files.length,
+      records: countMembers("records/"),
+      anchors: countMembers("anchors/"),
+      native: countMembers("native/"),
+    },
+  };
+}
+
+const data = manifest.format === LEGACY_FORMAT
+  ? extractLegacy()
+  : isQualified
+    ? extractQualified()
+    : extractEvidenceNative();
 
 for (const path of ["bundle.json", ...manifestPaths]) {
   const from = join(bundleDir, ...path.split("/"));

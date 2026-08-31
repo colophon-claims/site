@@ -14,8 +14,150 @@ const groupedMethods = new Map([
   ["paired-majority-delta", "jinn.benchmarking.method/paired-majority-delta"],
 ]);
 
+const QUALIFIED_FORMAT = "benchmark-product-public-bundle/7";
+const DISCLOSED_FORMAT = "benchmark-product-public-bundle/8";
+const SIX_VARIABLE_SPECIFICATION = "https://spec.jinn.network/disclosure/six-variable/v1";
+const DISCLOSURE_RECORD_KIND = "https://spec.jinn.network/records/disclosure-specification/v1";
+const DISCLOSURE_VARIABLE_KEYS = [
+  "ingestion-model",
+  "retrieval-config",
+  "answer-model",
+  "answer-prompt",
+  "judge-model",
+  "judge-prompt",
+];
+const DISCLOSURE_STATUSES = ["measured-here", "disclosed-by-publisher", "undisclosed"];
+const ANCHORED_CHECKS = [
+  "manifest",
+  "evidence-closure",
+  "trust",
+  "matrix-rederivation",
+  "report-verification",
+  "claim-consistency",
+  "integrity-anchors",
+];
+const DISCLOSED_CHECKS = [...ANCHORED_CHECKS, "disclosure-specification"];
+
 function fail(message) {
   throw new Error(`validate-published-reports: ${message}`);
+}
+
+/** Key-sorted JSON, so two carriages of one sealed section compare as values. */
+function canonical(value) {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
+  if (value !== null && typeof value === "object") {
+    return `{${Object.keys(value)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+/**
+ * Re-checks what the anchored closures add, against the copied bundle rather
+ * than against the read model that claims it: the anchors and their carried
+ * proofs, and the sealed six-variable declaration the disclosed closure names.
+ */
+function validateQualified(report, bundleDir) {
+  const disclosed = report.format === DISCLOSED_FORMAT;
+  const claim = JSON.parse(readFileSync(join(bundleDir, "claim-package.json"), "utf8"));
+  const presentation = JSON.parse(readFileSync(join(bundleDir, "presentation.json"), "utf8"));
+  const expectedChecks = disclosed ? DISCLOSED_CHECKS : ANCHORED_CHECKS;
+
+  if (presentation.verification?.bundleFormat !== report.format) {
+    fail(`${report.slug} presentation names a bundle format other than ${report.format}`);
+  }
+  if (canonical(report.verification?.checks) !== canonical(expectedChecks)) {
+    fail(`${report.slug} read model does not carry the ${report.format} check list, in order`);
+  }
+  for (const [key, path] of [
+    ["benchmarkSha256", "benchmark.json"],
+    ["matrixSha256", "matrix.json"],
+    ["reportSha256", "report.json"],
+    ["runSha256", "run.json"],
+    ["reportEnvelopeSha256", "report-envelope.json"],
+  ]) {
+    const actual = sha256(readFileSync(join(bundleDir, path)));
+    if (report.digests?.[key] !== actual) fail(`${report.slug} read model ${key} does not match ${path}`);
+    if (claim.records?.[key] !== actual) fail(`${report.slug} claim ${key} does not match ${path}`);
+  }
+
+  if (!Array.isArray(report.anchors)) fail(`${report.slug} read model carries no anchors`);
+  if (canonical(report.anchors) !== canonical(claim.anchors)) {
+    fail(`${report.slug} read model anchors are not the claim's anchors`);
+  }
+  const anchorDir = join(bundleDir, "anchors");
+  const anchorMembers = new Set(
+    existsSync(anchorDir)
+      ? readdirSync(anchorDir, { withFileTypes: true })
+        .filter((entry) => entry.isFile())
+        .map((entry) => entry.name)
+      : [],
+  );
+  for (const anchor of report.anchors) {
+    const name = `${anchor.recordSha256}.bin`;
+    if (!anchorMembers.delete(name)) fail(`${report.slug} names anchor ${name}, which is not carried`);
+    const bytes = readFileSync(join(bundleDir, "anchors", name));
+    if (sha256(bytes) !== anchor.recordSha256) fail(`${report.slug} anchor ${name} does not match its name`);
+  }
+  if (anchorMembers.size > 0) {
+    fail(`${report.slug} carries unclaimed anchor proofs: ${[...anchorMembers].join(", ")}`);
+  }
+
+  if (!disclosed) {
+    if (report.disclosure !== null) fail(`${report.slug} is ${QUALIFIED_FORMAT} but carries a disclosure`);
+    return { anchors: report.anchors.length, disclosed: 0 };
+  }
+
+  const disclosure = report.disclosure;
+  if (disclosure === null) fail(`${report.slug} is ${DISCLOSED_FORMAT} but carries no disclosure`);
+  if (disclosure.specification !== SIX_VARIABLE_SPECIFICATION) {
+    fail(`${report.slug} disclosure names an unknown specification`);
+  }
+  if (disclosure.subjectSha256 !== sha256(readFileSync(join(bundleDir, "matrix.json")))) {
+    fail(`${report.slug} disclosure subject is not this bundle's result matrix`);
+  }
+  const recordBytes = readFileSync(join(bundleDir, ...disclosure.recordPath.split("/")));
+  if (sha256(recordBytes) !== disclosure.recordSha256) {
+    fail(`${report.slug} disclosure record does not match its digest`);
+  }
+  const record = JSON.parse(recordBytes.toString("utf8"));
+  if (record.kind !== DISCLOSURE_RECORD_KIND) {
+    fail(`${report.slug} disclosure record is not a disclosure-specification record`);
+  }
+  if (record.author !== disclosure.author || record.subject?.kind !== disclosure.subjectKind) {
+    fail(`${report.slug} read model disagrees with the sealed disclosure record`);
+  }
+  if (canonical(record.variables) !== canonical(disclosure.variables)) {
+    fail(`${report.slug} read model variables are not the sealed record's variables`);
+  }
+  if (canonical(claim.disclosure?.variables) !== canonical(record.variables)) {
+    fail(`${report.slug} claim disclosure section is not the sealed record's projection`);
+  }
+  let measured = 0;
+  for (const key of DISCLOSURE_VARIABLE_KEYS) {
+    const entry = disclosure.variables[key];
+    if (entry === undefined) fail(`${report.slug} disclosure omits ${key}`);
+    if (!DISCLOSURE_STATUSES.includes(entry.status)) {
+      fail(`${report.slug} disclosure variable ${key} carries an unknown status`);
+    }
+    if (entry.status !== "measured-here") {
+      if (entry.evidence !== undefined) fail(`${report.slug} ${key} asserts and carries evidence`);
+      continue;
+    }
+    measured += 1;
+    for (const citation of entry.evidence) {
+      const cited = join(bundleDir, "records", `${citation.digest.sha256}.bin`);
+      if (!existsSync(cited)) {
+        fail(`${report.slug} ${key} cites record ${citation.digest.sha256}, which is not carried`);
+      }
+    }
+  }
+  if (Object.keys(disclosure.variables).length !== DISCLOSURE_VARIABLE_KEYS.length) {
+    fail(`${report.slug} disclosure carries a variable outside the frozen six`);
+  }
+  return { anchors: report.anchors.length, disclosed: measured };
 }
 
 function walk(directory, bundleDir) {
@@ -104,10 +246,15 @@ for (const dataName of readdirSync(reportsDir).filter((name) => name.endsWith(".
     continue;
   }
 
-  const validated = validateBundle(
-    report.slug,
-    join(publicReportsDir, report.slug, "bundle"),
-    report.digests?.bundleIdentity,
-  );
+  const bundleDir = join(publicReportsDir, report.slug, "bundle");
+  const validated = validateBundle(report.slug, bundleDir, report.digests?.bundleIdentity);
+  if (report.format === QUALIFIED_FORMAT || report.format === DISCLOSED_FORMAT) {
+    const extra = validateQualified(report, bundleDir);
+    console.log(
+      `validated ${report.slug} (${validated.fileCount} files, ${extra.anchors} anchors,`
+      + ` ${extra.disclosed} variables measured here, sha256:${validated.identity})`,
+    );
+    continue;
+  }
   console.log(`validated ${report.slug} (${validated.fileCount} files, sha256:${validated.identity})`);
 }

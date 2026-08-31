@@ -39,10 +39,17 @@ editing here. Source commit, date, and the re-vendor command are in
 ## Publishing a report
 
 A report starts as an immutable public bundle emitted locally by Colophon.
-The site accepts the legacy application bundle
-(`benchmark-product-public-bundle/1`) and the evidence-native claim bundle
-(`benchmark-product-public-bundle/5`). The latter carries its public reading
-record in `presentation.json`. To put either format on the site:
+The site accepts four formats:
+
+| Format | What it is |
+|---|---|
+| `benchmark-product-public-bundle/1` | Legacy application bundle |
+| `benchmark-product-public-bundle/5` | Evidence-native claim bundle |
+| `benchmark-product-public-bundle/7` | Anchored binary-qualification bundle |
+| `benchmark-product-public-bundle/8` | The same, carrying a sealed six-variable disclosure-specification record |
+
+Every format except `/1` carries its public reading record in
+`presentation.json`. To put any of them on the site:
 
 ```bash
 node scripts/ingest-report.mjs <bundle-dir> --slug <slug>
@@ -62,6 +69,43 @@ Commit the emitted data and copied bundle. The report appears at
 `/reports/<slug>/`. Evidence-native pages link the canonical report files and
 the complete manifest; every manifest-bound path remains served under the
 report's `/bundle/` directory.
+
+### The anchored closures, `/7` and `/8`
+
+`/7` is the legacy member list plus `qualification.json`, plus one
+`anchors/<sha256>.bin` per carried integrity anchor. `/8` is `/7` plus a sealed
+six-variable disclosure-specification record, travelling as an ordinary
+`records/<sha256>.bin` member and projected into the claim package's
+`disclosure` section.
+
+Ingest refuses a `/7` or `/8` bundle whose manifest does not bind
+`presentation.json`. The site renders a report from its sealed public reading
+record and never assembles one here, so a bundle without that member has no
+ingestable public copy; publish one that carries it. The reading record for
+these formats is `colophon.report-presentation/2`, and the ingester refuses a
+record carrying a section the site does not project rather than dropping it.
+
+Beyond the manifest, ingest checks what these formats add:
+
+- the claim id pairing, `/5` on `/7` and `/6` on `/8`, with `qualification.json`
+  pinned at `benchmark-product.claim-package/2` on both;
+- the verification check list for the format, in order, on both the claim and
+  the reading record;
+- every anchor the claim names against a carried `anchors/<sha256>.bin`, and
+  every carried proof against a claim entry, in both directions;
+- on `/8`, that the claim's `disclosure` section is the sealed record's own
+  projection, that its subject is this bundle's result matrix, and that every
+  `measured-here` citation resolves to a record the bundle carries.
+
+The report page renders the six variables with their statuses as its opening
+section, and the anchors with the state embedded in each proof's own bytes.
+This site supplies no trust material and evaluates none, so an anchor reads as
+carried, never as verified.
+
+The read model for these formats lists the fixed members only. The complete
+manifest is `bundle.json`, served byte-exact under the report; these bundles
+carry tens of thousands of evidence records, and listing them all in the read
+model would put them on the page.
 
 The LoCoMo judge report is one run with three independently sealed analyses.
 Ingest those bundles as one permanent reader page with:
