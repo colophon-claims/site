@@ -207,8 +207,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                 bundle actually carries. <strong>Disclosed by publisher</strong> is an assertion:
                 the reader confirms it is well formed and checks nothing else, performing no lookup
                 and no cross-check. <strong>Undisclosed</strong> carries a reason and nothing else.
-                No score is computed over the six; counting statuses would reward six vague
-                assertions over two proofs.
+                No score is computed over the six. One of those reasons marks a variable that is
+                structurally inapplicable, so six is not a target every experiment can reach, and a
+                count would rank experiment shape rather than disclosure.
               </Callout>
               <Footnote marker="1" href={`${bundleBase}/${disclosure.recordPath}`}>
                 The declaration is a sealed record in the bundle, {shortDigest(disclosure.recordSha256)},
