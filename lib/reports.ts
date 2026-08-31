@@ -320,6 +320,15 @@ export interface QualifiedReportData {
     siblingAnalyses: { method: string; version: string; reportSha256: string }[];
     companionBundles: { name: string; runSha256: string; matrixSha256: string; bundleIdentity: string }[];
   };
+  /** How the public reading record reached the page. `sealed-bundle-member`
+   * means the bundle's own manifest binds it; `supplied-at-ingest` means it was
+   * handed to the ingester and published beside this read model, leaving the
+   * bundle byte-for-byte the artifact its run produced. */
+  presentationSource: {
+    carriage: "sealed-bundle-member" | "supplied-at-ingest";
+    sha256: string;
+    path: string;
+  };
   anchors: IntegrityAnchor[];
   /** Present only on the disclosed closure; `/7` carries no sealed declaration. */
   disclosure: DisclosureSpecification | null;
@@ -504,7 +513,9 @@ const dataDir = join(process.cwd(), "data", "reports");
 export function listReports(): ReportData[] {
   if (!existsSync(dataDir)) return [];
   return readdirSync(dataDir)
-    .filter((name) => name.endsWith(".json"))
+    // `<slug>.presentation.json` is a report's reading record, published beside
+    // its read model. It is not itself a report.
+    .filter((name) => name.endsWith(".json") && !name.endsWith(".presentation.json"))
     .map((name) => JSON.parse(readFileSync(join(dataDir, name), "utf8")) as ReportData)
     .sort((left, right) => (right.reportedAt ?? "").localeCompare(left.reportedAt ?? ""));
 }

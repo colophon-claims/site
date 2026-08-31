@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a time in June 2022, but it does not specify the exact weekend of June 24, 2022, making it too vague and not directly matching the gold answer.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer states a duration of six months, which does not match the gold answer of four months, and therefore contains no correct items.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a time period in July 2023 but does not specify the exact date of the adoption meeting, which is required to match the gold answer.",
+  "label": "WRONG"
+}
+```

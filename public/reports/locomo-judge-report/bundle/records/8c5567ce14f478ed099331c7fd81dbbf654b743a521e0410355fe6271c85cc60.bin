@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer matches the gold answer in both date and format, indicating they refer to the same event.",
+  "label": "CORRECT"
+}
+```

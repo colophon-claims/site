@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer confirms that not all of Dave's car restoration projects go smoothly, aligning with the gold answer's 'No'.",
+  "label": "CORRECT"
+}
+```

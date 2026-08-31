@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions a different language than the gold answer, which is not acceptable.",
+  "label": "WRONG"
+}
+```

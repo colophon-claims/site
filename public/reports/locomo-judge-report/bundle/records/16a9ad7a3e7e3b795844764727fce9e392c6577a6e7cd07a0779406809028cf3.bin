@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to 'oil painting' instead of 'watercolor painting,' which are two different types of painting, making it incorrect.",
+  "label": "WRONG"
+}
+```

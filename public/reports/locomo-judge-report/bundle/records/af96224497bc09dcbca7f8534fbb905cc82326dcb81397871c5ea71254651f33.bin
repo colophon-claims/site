@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is too vague and does not specifically mention the activities listed in the gold answer, making it not a match.",
+  "label": "WRONG"
+}
+```

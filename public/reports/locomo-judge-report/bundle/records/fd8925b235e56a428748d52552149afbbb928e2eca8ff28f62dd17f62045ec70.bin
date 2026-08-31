@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not mention any specific classes from the gold answer, thus it contains zero correct items.",
+  "label": "WRONG"
+}
+```

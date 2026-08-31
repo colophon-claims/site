@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes all the activities mentioned in the gold answer, such as taking them for walks, feeding them, and giving them baths, while also adding some additional activities that do not contradict the gold answer.",
+  "label": "CORRECT"
+}
+```

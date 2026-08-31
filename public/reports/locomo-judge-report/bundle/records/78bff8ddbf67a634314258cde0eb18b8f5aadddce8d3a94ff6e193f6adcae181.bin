@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer states that Jolene did not teach herself but was taught by her brother, which contradicts the gold answer of 'yes'.",
+  "label": "WRONG"
+}
+```

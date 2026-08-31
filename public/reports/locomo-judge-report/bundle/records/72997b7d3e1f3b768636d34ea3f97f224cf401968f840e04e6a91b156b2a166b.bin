@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer contradicts the gold answer by stating that James seemed content and fulfilled, which implies he was not feeling lonely, while the gold answer suggests he was likely feeling lonely.",
+  "label": "WRONG"
+}
+```

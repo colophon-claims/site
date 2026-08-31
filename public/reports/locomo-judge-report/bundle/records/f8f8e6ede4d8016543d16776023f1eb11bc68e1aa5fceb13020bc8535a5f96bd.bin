@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer matches the gold answer exactly in content and meaning, thus it is considered correct.",
+  "label": "CORRECT"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to attending a vintage car auction, which is different from attending a car modification workshop, thus it does not match the gold answer.",
+  "label": "WRONG"
+}
+```

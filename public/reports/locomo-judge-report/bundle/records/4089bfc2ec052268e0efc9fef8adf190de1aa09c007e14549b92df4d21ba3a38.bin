@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the titles of the movies that Joanna and Nate have seen, which are required to match the gold answer.",
+  "label": "WRONG"
+}
+```

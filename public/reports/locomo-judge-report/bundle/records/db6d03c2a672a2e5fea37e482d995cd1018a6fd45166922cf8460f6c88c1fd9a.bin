@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer correctly identifies the instrument Tim is learning to play as 'violin', matching the gold answer.",
+  "label": "CORRECT"
+}
+```

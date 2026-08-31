@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer directly states 'Three turtles', which matches the gold answer 'Three' in content and meaning.",
+  "label": "CORRECT"
+}
+```

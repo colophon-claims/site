@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer lists different names for Andrew's dogs than the gold answer, indicating it does not match the expected response.",
+  "label": "WRONG"
+}
+```

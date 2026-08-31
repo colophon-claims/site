@@ -25,6 +25,7 @@ const ANCHORED_CHECKS = [
   "integrity-anchors",
 ];
 const DISCLOSED_CHECKS = [...ANCHORED_CHECKS, "disclosure-specification"];
+const PRESENTATION_CHECK = "report-presentation";
 
 /** A site root carrying only the scripts, so an ingest writes nowhere real. */
 function scratchSite(context) {
@@ -160,6 +161,16 @@ export function makeQualifiedBundle(directory, options = {}) {
       : "benchmark-product.claim-package/5"),
     records: { benchmarkSha256, runSha256, matrixSha256, reportSha256, reportEnvelopeSha256 },
     method: { id: "jinn.benchmarking.method/binary-instrument", version: "1", parameters: {}, preregistered: true },
+    // Three graded items, one of them unstable across replicates. The validator
+    // recomputes the published figure from these rather than trusting it.
+    qualification: {
+      itemDecisions: [
+        { taskDigest: "a".repeat(64), armId: "audited", unstable: false },
+        { taskDigest: "a".repeat(64), armId: "mem0", unstable: true },
+        { taskDigest: "b".repeat(64), armId: "audited", unstable: false },
+        { taskDigest: "c".repeat(64), armId: "audited", unstable: false },
+      ],
+    },
     anchors,
     ...(options.claimDisclosure === null ? {} : { disclosure: options.claimDisclosure ?? disclosure }),
     verification: {
@@ -171,8 +182,7 @@ export function makeQualifiedBundle(directory, options = {}) {
     limitations: ["This is a local, self-run venue."],
   }));
 
-  if (options.omitPresentation !== true) {
-    write(directory, "presentation.json", json({
+  const presentation = json({
       schema: options.presentationSchema ?? "colophon.report-presentation/2",
       slug,
       title: options.title ?? "Six judge prompts, one item set",
@@ -240,7 +250,7 @@ export function makeQualifiedBundle(directory, options = {}) {
         runOutcome: "complete",
       },
       manipulationCheck: {
-        replicateInstability: { unstableItems: 6, gradedItems: 240 },
+        replicateInstability: options.replicateInstability ?? { unstableItems: 1, gradedItems: 3 },
         conflictedCells: 0,
         companionChecks: [{ name: "corrupt-key", finding: "Verification refused.", provenBy: "companion-bundle" }],
       },
@@ -248,7 +258,10 @@ export function makeQualifiedBundle(directory, options = {}) {
       selfRunDisclosure: "One operator designed, ran, graded, and sealed this comparison.",
       verification: {
         bundleFormat: options.presentationBundleFormat ?? (disclosed ? DISCLOSED_FORMAT : QUALIFIED_FORMAT),
-        checks,
+        // The reading record's own list: the format's checks plus the one the
+        // reader runs because this bundle carries a reading record.
+        checks: options.presentationChecks
+          ?? (options.suppliedPresentation === true ? checks : [...checks, PRESENTATION_CHECK]),
         command: "npx @colophon-claims/verify@0.2.1 <bundle-dir>",
         compatibleCommand: "npx @colophon-claims/verify@0.2 <bundle-dir>",
         readerAvailability: "available",
@@ -269,7 +282,12 @@ export function makeQualifiedBundle(directory, options = {}) {
           { name: "corrupt-key", runSha256: sha256("companion-run"), matrixSha256: sha256("companion-matrix"), bundleIdentity: sha256("companion") },
         ],
       },
-    }));
+  });
+  if (options.omitPresentation !== true && options.suppliedPresentation !== true) {
+    write(directory, "presentation.json", presentation);
+  }
+  if (options.suppliedPresentation === true) {
+    writeFileSync(join(directory, "..", `${slug}.presentation.json`), presentation);
   }
 
   if (options.strayMember === true) write(directory, "notes/scratch.txt", "stray\n");
@@ -316,7 +334,8 @@ test("ingests an anchored binary-qualification bundle and carries its anchors", 
   assert.equal(data.anchors[0].facts.pending, true);
   assert.equal(data.socialCardPath, "social-card.svg");
   assert.equal(data.title, "Six judge prompts, one item set");
-  assert.equal(data.verification.checks.length, 7);
+  // Seven for the closure, plus the check earned by carrying a reading record.
+  assert.deepEqual(data.verification.checks, [...ANCHORED_CHECKS, PRESENTATION_CHECK]);
   assert.equal(data.memberCounts.anchors, 1);
   assert.equal(data.memberCounts.records, 2);
   // The complete manifest travels as bundle.json; the read model links the fixed members.
@@ -343,7 +362,7 @@ test("ingests a disclosed bundle and projects the six variables from the sealed 
 
   const data = JSON.parse(readFileSync(join(root, "data", "reports", "judge-8.json"), "utf8"));
   assert.equal(data.format, DISCLOSED_FORMAT);
-  assert.equal(data.verification.checks.at(-1), "disclosure-specification");
+  assert.deepEqual(data.verification.checks, [...DISCLOSED_CHECKS, PRESENTATION_CHECK]);
   assert.equal(data.disclosure.specification, SIX_VARIABLE_SPECIFICATION);
   assert.equal(data.disclosure.subjectSha256, sha256(readFileSync(join(bundle, "matrix.json"))));
   assert.deepEqual(Object.keys(data.disclosure.variables), [
@@ -369,7 +388,7 @@ test("refuses an anchored bundle that carries no sealed public reading record", 
   const bundle = makeQualifiedBundle(join(root, "source"), { slug: "no-presentation", omitPresentation: true });
   const result = run(root, "ingest-report.mjs", [bundle, "--slug", "no-presentation"]);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /carries no presentation\.json/u);
+  assert.match(result.stderr, /seals no presentation\.json and no --presentation/u);
   assert.match(result.stderr, /never assembles one here/u);
 });
 
@@ -482,6 +501,15 @@ test("refuses a wrong claim id, a wrong check list, and a stray member", (contex
   assert.equal(checksResult.status, 1);
   assert.match(checksResult.stderr, /checks are not the benchmark-product-public-bundle\/7 list/u);
 
+  // The reading record must own the extra check, not echo the claim's list.
+  const echoedChecks = makeQualifiedBundle(join(root, "echoed"), {
+    slug: "echoed",
+    presentationChecks: ANCHORED_CHECKS,
+  });
+  const echoedResult = run(root, "ingest-report.mjs", [echoedChecks, "--slug", "echoed"]);
+  assert.equal(echoedResult.status, 1);
+  assert.match(echoedResult.stderr, /plus report-presentation, in order/u);
+
   const stray = makeQualifiedBundle(join(root, "stray"), { slug: "stray", strayMember: true });
   const strayResult = run(root, "ingest-report.mjs", [stray, "--slug", "stray"]);
   assert.equal(strayResult.status, 1);
@@ -530,4 +558,53 @@ test("refuses a presentation whose sections this site does not project", (contex
   const result = run(root, "ingest-report.mjs", [bundle, "--slug", "extra"]);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /does not carry exactly the sections this site projects/u);
+});
+
+test("takes a reading record supplied at ingest and leaves the bundle untouched", (context) => {
+  const root = scratchSite(context);
+  const bundle = makeQualifiedBundle(join(root, "supplied", "bundle"), {
+    slug: "supplied",
+    suppliedPresentation: true,
+  });
+  const record = join(root, "supplied", "supplied.presentation.json");
+  const result = run(root, "ingest-report.mjs", [bundle, "--slug", "supplied", "--presentation", record]);
+  assert.equal(result.status, 0, result.stderr);
+
+  const data = JSON.parse(readFileSync(join(root, "data", "reports", "supplied.json"), "utf8"));
+  assert.equal(data.presentationSource.carriage, "supplied-at-ingest");
+  assert.equal(data.presentationSource.sha256, sha256(readFileSync(record)));
+  // Read with the format's own list: the extra check is earned by sealing.
+  assert.deepEqual(data.verification.checks, ANCHORED_CHECKS);
+
+  // The record is published beside the read model, never inside the bundle.
+  const copied = join(root, "public", "reports", "supplied", "bundle");
+  assert.ok(!walk(copied).includes("presentation.json"));
+  assert.deepEqual(
+    readFileSync(join(root, "data", "reports", "supplied.presentation.json")),
+    readFileSync(record),
+  );
+
+  const validated = run(root, "validate-published-reports.mjs", []);
+  assert.equal(validated.status, 0, validated.stderr);
+});
+
+test("refuses a report carrying both a sealed and a supplied reading record", (context) => {
+  const root = scratchSite(context);
+  const bundle = makeQualifiedBundle(join(root, "both", "bundle"), { slug: "both" });
+  const record = join(root, "both", "bundle", "presentation.json");
+  const result = run(root, "ingest-report.mjs", [bundle, "--slug", "both", "--presentation", record]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /one report has one public reading record/u);
+});
+
+test("recomputes the published replicate-instability figure rather than trusting it", (context) => {
+  const root = scratchSite(context);
+  const bundle = makeQualifiedBundle(join(root, "drifted"), {
+    slug: "drifted",
+    replicateInstability: { unstableItems: 0, gradedItems: 3 },
+  });
+  assert.equal(run(root, "ingest-report.mjs", [bundle, "--slug", "drifted"]).status, 0);
+  const validated = run(root, "validate-published-reports.mjs", []);
+  assert.equal(validated.status, 1);
+  assert.match(validated.stderr, /replicate instability says 0\/3, recomputed 1\/3/u);
 });

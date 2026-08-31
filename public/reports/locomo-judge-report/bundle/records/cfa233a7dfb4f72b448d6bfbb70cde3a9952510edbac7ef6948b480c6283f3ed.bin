@@ -1,0 +1,5 @@
+The generated answer lists foods that are different from those mentioned in the gold answer, and does not include any of the specific foods Audrey likes, making it incorrect. 
+
+```json
+{"label": "WRONG"}
+```

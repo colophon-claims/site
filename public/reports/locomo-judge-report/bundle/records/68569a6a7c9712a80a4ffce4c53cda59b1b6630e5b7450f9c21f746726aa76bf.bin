@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes both activities mentioned in the gold answer, making it a correct response.",
+  "label": "CORRECT"
+}
+```

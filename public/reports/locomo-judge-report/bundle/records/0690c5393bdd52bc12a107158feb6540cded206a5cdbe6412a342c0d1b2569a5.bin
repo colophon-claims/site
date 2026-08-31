@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer expresses a contrasting emotional state (frustrated but hopeful) compared to the gold answer (discouraged but determined), which indicates a different sentiment about the search for a pet-friendly place.",
+  "label": "WRONG"
+}
+```

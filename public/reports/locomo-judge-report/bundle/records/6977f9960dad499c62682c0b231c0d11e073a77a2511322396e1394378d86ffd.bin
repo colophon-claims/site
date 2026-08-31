@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer provides a date that is within the acceptable range of the gold answer, as early November is close to December.",
+  "label": "CORRECT"
+}
+```

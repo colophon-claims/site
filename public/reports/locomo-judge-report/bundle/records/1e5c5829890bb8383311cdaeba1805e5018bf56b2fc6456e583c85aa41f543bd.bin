@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is within the 14-day tolerance of the gold answer's date.",
+  "label": "CORRECT"
+}
+```

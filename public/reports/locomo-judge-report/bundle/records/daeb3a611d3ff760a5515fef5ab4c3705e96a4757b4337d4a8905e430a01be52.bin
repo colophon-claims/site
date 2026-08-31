@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not mention warmth and happiness, which are the key concepts in the gold answer, so it does not align with the topic.",
+  "label": "WRONG"
+}
+```

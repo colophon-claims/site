@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions different activities (pilates, swimming) that do not match the gold answer (yoga, running), indicating a lack of alignment with the question.",
+  "label": "WRONG"
+}
+```

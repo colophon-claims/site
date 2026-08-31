@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions Max, which is the same as the gold answer, and adds that Max is a dog, thus it is still relevant and correct.",
+  "label": "CORRECT"
+}
+```

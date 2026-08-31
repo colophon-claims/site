@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a different weekend than the one indicated in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

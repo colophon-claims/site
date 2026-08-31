@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes all the items from the gold answer and adds an additional item, which does not change the primary focus on the types of food mentioned.",
+  "label": "CORRECT"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specifically mention a bookmark, which is the key detail in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

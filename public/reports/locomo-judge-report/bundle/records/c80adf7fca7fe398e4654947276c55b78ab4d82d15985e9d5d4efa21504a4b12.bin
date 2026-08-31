@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is too vague and does not specifically mention the beach, mountains, or forest, which are the specific locations indicated in the gold answer.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a time frame that is within the same week as the gold answer, thus capturing the core idea.",
+  "label": "CORRECT"
+}
+```

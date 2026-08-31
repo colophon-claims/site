@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions a different game than the gold answer, which does not match the question's requirement.",
+  "label": "WRONG"
+}
+```

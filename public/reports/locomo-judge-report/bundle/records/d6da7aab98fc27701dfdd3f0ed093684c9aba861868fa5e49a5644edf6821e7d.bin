@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer states 'three', which does not match the gold answer of 'two', indicating an incorrect recall of the number of charity tournaments organized by John.",
+  "label": "WRONG"
+}
+```

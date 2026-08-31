@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not acknowledge the presence of teammates on Nate's video game team, which is a direct contradiction to the gold answer that suggests he has friends besides Joanna.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'Paris' does not match the gold answer 'Rome', as they refer to different cities.",
+  "label": "WRONG"
+}
+```

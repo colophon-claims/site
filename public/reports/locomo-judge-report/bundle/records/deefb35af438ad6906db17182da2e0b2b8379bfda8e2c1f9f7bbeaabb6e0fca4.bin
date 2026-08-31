@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions both 'journal' and 'creative writing', which are the same activities as the gold answer, thus it is considered correct.",
+  "label": "CORRECT"
+}
+```

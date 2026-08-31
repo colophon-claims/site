@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "While 'children' and 'family' are related concepts, they are not synonymous, and the generated answer does not match the gold answer directly.",
+  "label": "WRONG"
+}
+```

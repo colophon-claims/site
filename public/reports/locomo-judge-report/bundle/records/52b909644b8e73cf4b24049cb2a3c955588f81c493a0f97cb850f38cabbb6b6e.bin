@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer confirms the same idea as the gold answer, stating that the friend is no longer alive, which aligns with 'likely yes'.",
+  "label": "CORRECT"
+}
+```

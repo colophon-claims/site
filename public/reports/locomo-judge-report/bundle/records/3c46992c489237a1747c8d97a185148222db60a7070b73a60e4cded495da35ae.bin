@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'the dog park,' which is the same location type as the gold answer, thus it is considered correct.",
+  "label": "CORRECT"
+}
+```

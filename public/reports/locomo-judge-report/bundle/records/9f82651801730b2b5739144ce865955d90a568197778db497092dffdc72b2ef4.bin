@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is too vague and does not specifically mention the game design course or cooking classes, which are key details in the gold answer.",
+  "label": "WRONG"
+}
+```

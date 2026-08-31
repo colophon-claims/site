@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is too vague and does not specifically mention the activities of hiking, picnic, or volunteer work as stated in the gold answer.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes both names of John's children in the correct order, thus matching the gold answer.",
+  "label": "CORRECT"
+}
+```

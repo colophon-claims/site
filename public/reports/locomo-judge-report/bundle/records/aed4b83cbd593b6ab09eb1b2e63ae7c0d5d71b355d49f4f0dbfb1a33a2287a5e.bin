@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies a date (14 July 2023) that is one day before the date referenced in the gold answer (the Friday before 15 July 2023), which is also 14 July 2023, making it a match.",
+  "label": "CORRECT"
+}
+```

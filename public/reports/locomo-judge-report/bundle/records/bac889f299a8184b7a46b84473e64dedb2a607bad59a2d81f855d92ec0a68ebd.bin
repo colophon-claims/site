@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'United Kingdom' is a paraphrase of the gold answer 'UK', referring to the same country.",
+  "label": "CORRECT"
+}
+```

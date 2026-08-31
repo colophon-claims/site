@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'grow his personal brand' which aligns with 'build his brand' from the gold answer, and 'give back to the community' relates to 'do charity work', thus both goals are covered.",
+  "label": "CORRECT"
+}
+```

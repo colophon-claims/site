@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer lists the same individuals as the gold answer, just in a different order, which matches the primary focus.",
+  "label": "CORRECT"
+}
+```

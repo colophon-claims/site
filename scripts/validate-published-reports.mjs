@@ -37,6 +37,9 @@ const ANCHORED_CHECKS = [
   "integrity-anchors",
 ];
 const DISCLOSED_CHECKS = [...ANCHORED_CHECKS, "disclosure-specification"];
+/** Present because the bundle carries a sealed reading record, not because of
+ * its format, so the claim's list and the record's differ by exactly this. */
+const PRESENTATION_CHECK = "report-presentation";
 
 function fail(message) {
   throw new Error(`validate-published-reports: ${message}`);
@@ -62,14 +65,43 @@ function canonical(value) {
 function validateQualified(report, bundleDir) {
   const disclosed = report.format === DISCLOSED_FORMAT;
   const claim = JSON.parse(readFileSync(join(bundleDir, "claim-package.json"), "utf8"));
-  const presentation = JSON.parse(readFileSync(join(bundleDir, "presentation.json"), "utf8"));
   const expectedChecks = disclosed ? DISCLOSED_CHECKS : ANCHORED_CHECKS;
+
+  // The reading record lives in exactly one of two places, and the read model
+  // says which. A record supplied at ingest must NOT also be inside the bundle:
+  // that would mean the published artifact was edited to carry it.
+  const source = report.presentationSource;
+  const sealed = source?.carriage === "sealed-bundle-member";
+  if (source === undefined || (!sealed && source.carriage !== "supplied-at-ingest")) {
+    fail(`${report.slug} read model does not say how its reading record was carried`);
+  }
+  const sealedPath = join(bundleDir, "presentation.json");
+  if (sealed !== existsSync(sealedPath)) {
+    fail(
+      sealed
+        ? `${report.slug} claims a sealed reading record but the bundle carries none`
+        : `${report.slug} supplied a reading record at ingest, yet the bundle also carries one`,
+    );
+  }
+  const presentationBytes = sealed
+    ? readFileSync(sealedPath)
+    : readFileSync(join(reportsDir, source.path));
+  if (sha256(presentationBytes) !== source.sha256) {
+    fail(`${report.slug} reading record does not match the digest its read model names`);
+  }
+  const presentation = JSON.parse(presentationBytes.toString("utf8"));
 
   if (presentation.verification?.bundleFormat !== report.format) {
     fail(`${report.slug} presentation names a bundle format other than ${report.format}`);
   }
-  if (canonical(report.verification?.checks) !== canonical(expectedChecks)) {
-    fail(`${report.slug} read model does not carry the ${report.format} check list, in order`);
+  // The read model carries the reading record's list, which is the format's
+  // list plus the one check a bundle earns by carrying a reading record at all.
+  const expectedRecordChecks = sealed ? [...expectedChecks, PRESENTATION_CHECK] : expectedChecks;
+  if (canonical(report.verification?.checks) !== canonical(expectedRecordChecks)) {
+    fail(`${report.slug} read model does not carry the reading record's ${report.format} check list, in order`);
+  }
+  if (canonical(claim.verification?.checks) !== canonical(expectedChecks)) {
+    fail(`${report.slug} claim does not carry the ${report.format} check list, in order`);
   }
   for (const [key, path] of [
     ["benchmarkSha256", "benchmark.json"],
@@ -81,6 +113,20 @@ function validateQualified(report, bundleDir) {
     const actual = sha256(readFileSync(join(bundleDir, path)));
     if (report.digests?.[key] !== actual) fail(`${report.slug} read model ${key} does not match ${path}`);
     if (claim.records?.[key] !== actual) fail(`${report.slug} claim ${key} does not match ${path}`);
+  }
+
+  // Recomputed, not trusted: the one figure on the page that is arithmetic over
+  // sealed records rather than a value the Report states outright.
+  const decisions = claim.qualification?.itemDecisions;
+  if (!Array.isArray(decisions)) fail(`${report.slug} claim carries no item decisions`);
+  const graded = new Set(decisions.map((item) => item.taskDigest));
+  const unstable = new Set(decisions.filter((item) => item.unstable === true).map((item) => item.taskDigest));
+  const stated = report.manipulationCheck?.replicateInstability;
+  if (stated?.gradedItems !== graded.size || stated?.unstableItems !== unstable.size) {
+    fail(
+      `${report.slug} replicate instability says ${stated?.unstableItems}/${stated?.gradedItems},`
+      + ` recomputed ${unstable.size}/${graded.size}`,
+    );
   }
 
   if (!Array.isArray(report.anchors)) fail(`${report.slug} read model carries no anchors`);
@@ -199,7 +245,9 @@ function validateBundle(label, bundleDir, expectedIdentity) {
   return { identity, fileCount: actualPaths.length };
 }
 
-for (const dataName of readdirSync(reportsDir).filter((name) => name.endsWith(".json")).sort()) {
+const REPORT_DATA = (name) => name.endsWith(".json") && !name.endsWith(".presentation.json");
+
+for (const dataName of readdirSync(reportsDir).filter(REPORT_DATA).sort()) {
   const report = JSON.parse(readFileSync(join(reportsDir, dataName), "utf8"));
   if (report.format === "colophon-grouped-report/1") {
     if (!Array.isArray(report.bundles) || report.bundles.length !== 3) fail(`${report.slug} does not carry three grouped bundles`);

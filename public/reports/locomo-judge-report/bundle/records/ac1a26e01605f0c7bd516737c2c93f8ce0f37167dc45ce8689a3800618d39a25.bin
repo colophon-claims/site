@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions Thai food, which is different from the gold answer of sushi, indicating a lack of recall about Andrew's recent experience.",
+  "label": "WRONG"
+}
+```

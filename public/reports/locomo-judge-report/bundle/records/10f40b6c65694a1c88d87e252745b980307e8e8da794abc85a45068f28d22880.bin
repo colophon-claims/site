@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions different instruments than the gold answer, so it does not correctly reflect what instruments Melanie plays.",
+  "label": "WRONG"
+}
+```

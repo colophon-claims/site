@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes both artists mentioned in the gold answer.",
+  "label": "CORRECT"
+}
+```

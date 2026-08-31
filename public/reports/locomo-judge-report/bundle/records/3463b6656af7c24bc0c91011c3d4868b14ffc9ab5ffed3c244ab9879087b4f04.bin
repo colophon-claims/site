@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies a broader region (North America) that includes the United States, but it does not directly mention the country itself, making it insufficiently specific.",
+  "label": "WRONG"
+}
+```

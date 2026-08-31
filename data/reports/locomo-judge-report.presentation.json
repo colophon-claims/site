@@ -1,0 +1,478 @@
+{
+  "schema": "colophon.report-presentation/2",
+  "slug": "locomo-judge-report",
+  "title": "Judging the LoCoMo judges",
+  "summary": "A controlled benchmark of the grading prompts behind published LoCoMo scores. Six grading configurations judged the same 240 answers on the same model snapshot.",
+  "sealedAt": "2026-08-29T16:30:51Z",
+  "subject": {
+    "judgeModel": "gpt-4o-mini-2024-07-18",
+    "harness": {
+      "id": "inspect-ai-judge",
+      "version": "1"
+    },
+    "benchmark": {
+      "name": "LoCoMo",
+      "description": "A benchmark for long-term conversational memory, whose published scores are often produced with an LLM judge. This measures the graders, not the memory systems.",
+      "sha256": "9ae50617f9112b750518c04309b96648207f6d0e17ba044a077d0d5185b84c9e"
+    },
+    "arms": [
+      {
+        "id": "audited",
+        "label": "The EverMemOS-derived prompt reconstructed in the community audit",
+        "instrumentSha256": "sha256:1956c8fe0a7a10b6301e111fe83a6446c612d7371953302b8c77b2d025fc25b5"
+      },
+      {
+        "id": "backboard",
+        "label": "Backboard's posted prompt",
+        "instrumentSha256": "sha256:4771a07e88e8acb4a084255bf2ba8cbe62e36004601a0a00856d6f0fb0dfee8b"
+      },
+      {
+        "id": "mem0",
+        "label": "Mem0's posted prompt",
+        "instrumentSha256": "sha256:ed91e8559bc259142a22b26d36126334b97704b48e9711e41ddd3866f6fa4f0f"
+      },
+      {
+        "id": "mem0-evidence",
+        "label": "The Mem0 prompt with the dataset's source evidence added",
+        "instrumentSha256": "sha256:47473dfe08a02038ba35192fb8a430c0c3cf3680545e20c478bd1197d3e04b1a"
+      },
+      {
+        "id": "revised",
+        "label": "The successor rubric from mem0ai/memory-benchmarks",
+        "instrumentSha256": "sha256:8b8ae208c62dd4afe0c8cceb58a18b11511158324d106dd7bfac60863ae29476"
+      },
+      {
+        "id": "strict-dial",
+        "label": "The stricter community variant posted by @dial481",
+        "instrumentSha256": "sha256:d7f663de1795438f28c7f7c8a2aa3288d12ad6a3e41186321ce3b1c8ffd417e2"
+      }
+    ]
+  },
+  "question": {
+    "designUrl": "https://github.com/snap-research/locomo/issues/23#issuecomment-5334425775",
+    "postedOn": "2026-08-18",
+    "preRegistered": [
+      {
+        "id": "q1",
+        "question": "How often does each judge accept a known-wrong answer, and does the type of wrong answer matter?",
+        "answer": "A great deal. Acceptance ranged from 2.5% to 28.8% for specific wrong answers and from 32.5% to 88.8% for vague, on-topic wrong answers. Every judge was substantially more forgiving of vagueness.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q2",
+        "question": "What does a stricter judge cost in rejected right answers?",
+        "answer": "Very little when the reference answer is correct. Across 479 scored right answers, there was one rejection. The tradeoff appears when the reference answer itself is wrong.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q3",
+        "question": "Is \"the LoCoMo score\" one stable instrument or several?",
+        "answer": "Several. On identical answers, agreement with the labels ranged from 60.8% to 87.9% depending only on the grader.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q4",
+        "question": "Does showing the judge the source evidence matter?",
+        "answer": "Yes. In this setup, evidence made the judge more permissive, not more accurate. The evidence-fed configuration accepted 7.7 percentage points more answers overall, with nearly all of the increase coming from vague wrong answers. Its overall agreement was lower, not higher.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q5",
+        "question": "When the answer key is wrong, does the judge follow the key or the truth?",
+        "answer": "It depends on the grader. Against a true answer, broken-key following ranged from 10% to 70%. Every grader accepted all 20 true answers once the key was corrected.",
+        "provenBy": "this-bundle"
+      }
+    ]
+  },
+  "execution": {
+    "judgePrompts": {
+      "count": 6,
+      "provenance": "already present in the LoCoMo ecosystem or community discussion"
+    },
+    "modelSnapshot": {
+      "id": "gpt-4o-mini-2024-07-18",
+      "temperature": "0.0",
+      "profile": "dated-snapshot-sampling"
+    },
+    "replicates": 3,
+    "reduction": "strict-majority",
+    "abstainPolicy": {
+      "parserInvalid": "abstain",
+      "description": "Unparseable responses were recorded as neutral rather than converted into rejections."
+    },
+    "intervals": "Wilson, alpha 0.05",
+    "truthAdmission": "screened-operator-sampled",
+    "venue": "self-run"
+  },
+  "result": {
+    "primary": "Changing only the grader moved agreement with the same screened labels from 60.8% to 87.9%. Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer.",
+    "perArm": [
+      {
+        "armId": "audited",
+        "agreement": {
+          "numerator": 197,
+          "denominator": 240,
+          "estimate": "0.8208",
+          "wilsonInterval": {
+            "low": "0.7674",
+            "high": "0.8642"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 9,
+          "denominator": 80,
+          "estimate": "0.1125",
+          "wilsonInterval": {
+            "low": "0.0603",
+            "high": "0.2002"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 34,
+          "denominator": 80,
+          "estimate": "0.4250",
+          "wilsonInterval": {
+            "low": "0.3226",
+            "high": "0.5343"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "backboard",
+        "agreement": {
+          "numerator": 164,
+          "denominator": 240,
+          "estimate": "0.6833",
+          "wilsonInterval": {
+            "low": "0.6220",
+            "high": "0.7389"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 14,
+          "denominator": 80,
+          "estimate": "0.1750",
+          "wilsonInterval": {
+            "low": "0.1072",
+            "high": "0.2726"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 62,
+          "denominator": 80,
+          "estimate": "0.7750",
+          "wilsonInterval": {
+            "low": "0.6721",
+            "high": "0.8527"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "mem0",
+        "agreement": {
+          "numerator": 188,
+          "denominator": 240,
+          "estimate": "0.7833",
+          "wilsonInterval": {
+            "low": "0.7270",
+            "high": "0.8308"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 10,
+          "denominator": 80,
+          "estimate": "0.1250",
+          "wilsonInterval": {
+            "low": "0.0693",
+            "high": "0.2150"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 42,
+          "denominator": 80,
+          "estimate": "0.5250",
+          "wilsonInterval": {
+            "low": "0.4170",
+            "high": "0.6308"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "mem0-evidence",
+        "agreement": {
+          "numerator": 163,
+          "denominator": 233,
+          "estimate": "0.6996",
+          "wilsonInterval": {
+            "low": "0.6379",
+            "high": "0.7548"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 11,
+          "denominator": 76,
+          "estimate": "0.1447",
+          "wilsonInterval": {
+            "low": "0.0828",
+            "high": "0.2409"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 59,
+          "denominator": 78,
+          "estimate": "0.7564",
+          "wilsonInterval": {
+            "low": "0.6506",
+            "high": "0.8381"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 79,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0464"
+          }
+        }
+      },
+      {
+        "armId": "revised",
+        "agreement": {
+          "numerator": 146,
+          "denominator": 240,
+          "estimate": "0.6083",
+          "wilsonInterval": {
+            "low": "0.5453",
+            "high": "0.6679"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 23,
+          "denominator": 80,
+          "estimate": "0.2875",
+          "wilsonInterval": {
+            "low": "0.1999",
+            "high": "0.3946"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 71,
+          "denominator": 80,
+          "estimate": "0.8875",
+          "wilsonInterval": {
+            "low": "0.7998",
+            "high": "0.9397"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "strict-dial",
+        "agreement": {
+          "numerator": 211,
+          "denominator": 240,
+          "estimate": "0.8792",
+          "wilsonInterval": {
+            "low": "0.8318",
+            "high": "0.9145"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 2,
+          "denominator": 80,
+          "estimate": "0.0250",
+          "wilsonInterval": {
+            "low": "0.0069",
+            "high": "0.0866"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 26,
+          "denominator": 80,
+          "estimate": "0.3250",
+          "wilsonInterval": {
+            "low": "0.2324",
+            "high": "0.4336"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 1,
+          "denominator": 80,
+          "estimate": "0.0125",
+          "wilsonInterval": {
+            "low": "0.0022",
+            "high": "0.0675"
+          }
+        }
+      }
+    ],
+    "spread": {
+      "lowestArmId": "revised",
+      "highestArmId": "strict-dial",
+      "pointsBetween": "27.1"
+    },
+    "interpretation": "This is a benchmark of graders, not memory systems. It does not rank or re-score any memory product, and it cannot establish which published system is better.",
+    "methodStatement": "Per-arm agreement with screened labels over the same items, three judge calls per item-arm cell reduced by strict majority, with 95% Wilson intervals."
+  },
+  "population": {
+    "items": 240,
+    "perCandidateClass": [
+      {
+        "candidateClass": "correct",
+        "items": 80
+      },
+      {
+        "candidateClass": "specific-wrong",
+        "items": 80
+      },
+      {
+        "candidateClass": "vague-topical-wrong",
+        "items": 80
+      }
+    ],
+    "perStratum": [
+      {
+        "stratum": "category-1",
+        "items": 60
+      },
+      {
+        "stratum": "category-2",
+        "items": 60
+      },
+      {
+        "stratum": "category-3",
+        "items": 60
+      },
+      {
+        "stratum": "category-4",
+        "items": 60
+      }
+    ],
+    "labels": "Screened against the question, reference answer, and dataset evidence, then hand-reviewed by the operator on flagged cases and a preselected sample. Screened and sampled, not equivalent to independent annotation by two human raters."
+  },
+  "accounting": {
+    "cells": {
+      "expected": 4320,
+      "judged": 4320,
+      "lost": 0
+    },
+    "parserNeutral": {
+      "calls": 22,
+      "denominator": 4320,
+      "policy": "abstain",
+      "note": "Unparseable calls were recorded as neutral, all of them in the evidence-fed configuration. The items left without a valid majority appear as explicit exclusions rather than as rejections."
+    },
+    "excludedItems": {
+      "count": 7,
+      "byArm": [
+        {
+          "armId": "mem0-evidence",
+          "items": 7
+        }
+      ]
+    },
+    "completenessFloor": "0.995",
+    "runOutcome": "complete"
+  },
+  "manipulationCheck": {
+    "replicateInstability": {
+      "unstableItems": 21,
+      "gradedItems": 240
+    },
+    "conflictedCells": 0,
+    "companionChecks": [
+      {
+        "name": "Consistency gate",
+        "finding": "Three of five applicable graders did not treat equivalent set-answer operations consistently.",
+        "provenBy": "companion-bundle"
+      },
+      {
+        "name": "Corrupt answer key",
+        "finding": "Against a true answer, broken-key following ranged from 10% to 70%. Every grader accepted all 20 true answers once the key was corrected.",
+        "provenBy": "companion-bundle"
+      }
+    ]
+  },
+  "limitations": [
+    "This is a local, self-run venue: the same operator controls task dispatch, execution, and evaluation.",
+    "Pre-registration here is a discipline enforced by this tool, not a proof against the run's own owner — nothing prevents the owner from having altered the record before publishing it.",
+    "Run pinning on the harness, model, and loadout axes is enforced by an admission gate at dispatch time. The isolation axis is unverifiable: this configured venue admits both unrestricted and OCI-container execution, so its multi-policy inventory cannot establish containment from admission alone.",
+    "Cost figures, where present, are self-reported by this venue and were never independently settled.",
+    "Distinct solver and evaluator identities prove agent-distinctness only — each evaluator identity is backed by its own workspace-minted signing key, whose verdict signature this product verifies — not that they are independent real-world parties.",
+    "Truth uses screened-operator-sampled admission: a pinned model screens every item and the operator hand-checks the flagged set plus a random sample; this proves screen-hand agreement on that sample, not independent two-human truth.",
+    "prompt-compliance-not-machine-verified",
+    "provider-execution-not-machine-verified",
+    "transcript-provenance-not-machine-verified",
+    "mutable-model-alias-weights-not-machine-verified"
+  ],
+  "selfRunDisclosure": "Distinct evaluator identities are workspace-minted keys; they prove agent-distinctness, not party-independence, on this self-run venue.",
+  "verification": {
+    "bundleFormat": "benchmark-product-public-bundle/7",
+    "checks": [
+      "manifest",
+      "evidence-closure",
+      "trust",
+      "matrix-rederivation",
+      "report-verification",
+      "claim-consistency",
+      "integrity-anchors"
+    ],
+    "command": "npx @colophon-claims/verify@0.2.1 <bundle-dir>",
+    "compatibleCommand": "npx @colophon-claims/verify@0.2 <bundle-dir>",
+    "readerAvailability": "available",
+    "reportEnvelopeSha256": "4b16846a5ca64585867c55ce853afc0cdaafaaa947de7b6c15cb4de130396fe1",
+    "reportSha256": "7869bab3a30defb29f171d7f572e68020edca789cfa7695ebe0a4621a9be5edd"
+  },
+  "provenance": {
+    "runSha256": "481c9680e005eb7814f7120a56ef2242ba8167802571416ec363f6a743a6730e",
+    "benchmarkSha256": "9ae50617f9112b750518c04309b96648207f6d0e17ba044a077d0d5185b84c9e",
+    "matrixSha256": "04de526b99dfa7180c875108101eaacbdfabe9a50a90ef317eca4c879ce1eb35",
+    "reportSha256": "7869bab3a30defb29f171d7f572e68020edca789cfa7695ebe0a4621a9be5edd",
+    "reportEnvelopeSha256": "4b16846a5ca64585867c55ce853afc0cdaafaaa947de7b6c15cb4de130396fe1",
+    "anchors": [
+      {
+        "subject": "lock",
+        "provider": "https://spec.jinn.network/trust/anchor-profiles/opentimestamps/v1",
+        "recordSha256": "18a34061bb1d7dce5ef8eab9e69371e9db4318909d065a955154f5115190d54d"
+      }
+    ],
+    "siblingAnalyses": [],
+    "companionBundles": []
+  }
+}

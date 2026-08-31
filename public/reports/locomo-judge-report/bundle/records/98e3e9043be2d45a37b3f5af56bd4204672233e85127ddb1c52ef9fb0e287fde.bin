@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer matches the gold answer's date exactly, indicating correct recall.",
+  "label": "CORRECT"
+}
+```

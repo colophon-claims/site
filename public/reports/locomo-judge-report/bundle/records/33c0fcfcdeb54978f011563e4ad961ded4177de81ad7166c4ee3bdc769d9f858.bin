@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'Vinyasa Yoga', which is different from the 'Hatha Yoga' specified in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

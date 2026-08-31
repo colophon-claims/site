@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer matches the gold answer in both content and context, referring to the same map of Middle-earth from LOTR.",
+  "label": "CORRECT"
+}
+```

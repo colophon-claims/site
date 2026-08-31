@@ -549,6 +549,15 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             <code>{report.verification.compatibleCommand}</code>. Protocol identifiers under{" "}
             <code>https://spec.jinn.network/</code> are names; that origin is not hosted yet.
           </p>
+          <Footnote marker="6" href={`/reports/${report.slug}/`}>
+            {report.presentationSource.carriage === "sealed-bundle-member"
+              ? <>The public reading record this page is written from is sealed into the bundle as{" "}
+                <code>presentation.json</code>, covered by the bundle identity below.</>
+              : <>The public reading record this page is written from was supplied at publication
+                rather than sealed into the bundle, and is published beside this page as{" "}
+                {shortDigest(report.presentationSource.sha256)}. The bundle below is the artifact
+                the run produced, byte for byte, with nothing added to it.</>}
+          </Footnote>
           <div className="bundle-identity">
             <span>Bundle identity</span>
             <code>sha256:{report.digests.bundleIdentity}</code>

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'shortbread cookies,' which is different from the gold answer 'ginger snaps,' indicating a mismatch in Evan's favorite food.",
+  "label": "WRONG"
+}
+```

@@ -69,11 +69,14 @@ const EVIDENCE_REQUIRED_FILES = [
 ];
 
 /**
- * The /7 and /8 member list: the legacy sixteen with `qualification.json` added,
- * plus the sealed public reading record. `presentation.json` is not part of the
- * producer's own closure list; the site requires it because a report page whose
- * public copy was assembled here rather than sealed upstream would be the site
- * transforming a bundle.
+ * The /7 and /8 member list: the legacy sixteen with `qualification.json` added.
+ *
+ * The public reading record is NOT in this list. It reaches the site one of two
+ * ways: sealed into the bundle as a `presentation.json` member, on a closure
+ * that allows one, or supplied at ingest with `--presentation` and stored beside
+ * the read model. The second exists because no current closure carries the
+ * member, and inserting one into a published bundle would break the very digest
+ * an auditor checks. Either way the site assembles no public copy of its own.
  */
 const QUALIFIED_FIXED_FILES = [
   "static-bundle.json",
@@ -93,6 +96,11 @@ const QUALIFIED_FIXED_FILES = [
   "social-card.svg",
   "README.md",
   "share.txt",
+];
+
+/** Allowed but never required on these closures. */
+const QUALIFIED_OPTIONAL_FILES = [
+  "verification/cancel-requested.json",
   "presentation.json",
 ];
 
@@ -113,6 +121,15 @@ const ANCHORED_CHECKS = [
   "integrity-anchors",
 ];
 const DISCLOSED_CHECKS = [...ANCHORED_CHECKS, "disclosure-specification"];
+/**
+ * The one check whose presence is a property of the bundle rather than of its
+ * format: a closure that carries a sealed reading record runs it, and one that
+ * does not never lists it. So the claim carries the format's list and the
+ * reading record carries that list plus this, and the two legitimately differ
+ * by exactly one entry. A page promising the claim's count while the reader
+ * runs one more would be wrong in the place a reader is most entitled to check.
+ */
+const PRESENTATION_CHECK = "report-presentation";
 
 const DISCLOSURE_RECORD_KIND = "https://spec.jinn.network/records/disclosure-specification/v1";
 const SIX_VARIABLE_SPECIFICATION = "https://spec.jinn.network/disclosure/six-variable/v1";
@@ -175,10 +192,14 @@ function canonical(value) {
 const args = process.argv.slice(2);
 let bundleArg;
 let slug;
+let presentationArg;
 let fixture = false;
 for (let index = 0; index < args.length; index += 1) {
   if (args[index] === "--slug") {
     slug = args[index + 1];
+    index += 1;
+  } else if (args[index] === "--presentation") {
+    presentationArg = args[index + 1];
     index += 1;
   } else if (args[index] === "--fixture") {
     fixture = true;
@@ -189,7 +210,7 @@ for (let index = 0; index < args.length; index += 1) {
   }
 }
 if (bundleArg === undefined || slug === undefined) {
-  fail("usage: node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--fixture]");
+  fail("usage: node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--presentation <file>] [--fixture]");
 }
 if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) {
   fail(`slug must be lowercase [a-z0-9-], got: ${slug}`);
@@ -212,6 +233,14 @@ if (existsSync(dataFile)) {
 }
 
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+let presentationInput;
+if (presentationArg !== undefined) {
+  const presentationPath = resolve(presentationArg);
+  if (!existsSync(presentationPath) || !lstatSync(presentationPath).isFile()) {
+    fail(`--presentation names no readable file: ${presentationArg}`);
+  }
+  presentationInput = readFileSync(presentationPath);
+}
 const readJson = (name) => {
   try {
     return JSON.parse(readFileSync(join(bundleDir, ...name.split("/")), "utf8"));
@@ -279,21 +308,13 @@ if (manifest.format === LEGACY_FORMAT) {
   }
 } else if (isQualified) {
   for (const fixed of QUALIFIED_FIXED_FILES) {
-    if (manifestPaths.has(fixed)) continue;
-    if (fixed === "presentation.json") {
-      fail(
-        `${manifest.format} bundle carries no presentation.json. The site renders a report from its`
-        + " sealed public reading record and never assembles one here; publish a bundle whose"
-        + " manifest binds presentation.json and ingest that.",
-      );
-    }
-    fail(`fixed member missing from manifest: ${fixed}`);
+    if (!manifestPaths.has(fixed)) fail(`fixed member missing from manifest: ${fixed}`);
   }
   if (![...manifestPaths].some((path) => /^records\/[a-f0-9]{64}\.bin$/.test(path))) {
     fail("bundle carries no records/<sha256>.bin evidence members");
   }
   for (const path of manifestPaths) {
-    const isFixed = QUALIFIED_FIXED_FILES.includes(path) || LEGACY_OPTIONAL_FILES.includes(path);
+    const isFixed = QUALIFIED_FIXED_FILES.includes(path) || QUALIFIED_OPTIONAL_FILES.includes(path);
     const isRecord = /^records\/[a-f0-9]{64}\.bin$/.test(path);
     const isAnchor = /^anchors\/[a-f0-9]{64}\.bin$/.test(path);
     const isNative = /^native\/inspect\/[a-f0-9]{64}\.eval$/.test(path);
@@ -570,8 +591,36 @@ function extractQualified() {
   if (fixture) fail("--fixture is only valid for legacy test bundles");
   const disclosed = manifest.format === DISCLOSED_FORMAT;
   const claim = readJson("claim-package.json");
-  const presentation = readJson("presentation.json");
   const qualification = readJson("qualification.json");
+
+  // Two carriages, exactly one of them. Sealed: the bundle binds the record in
+  // its own manifest, and the reader runs one extra check for it. Supplied: the
+  // record arrives beside the bundle and the bundle stays byte-for-byte the
+  // artifact its run produced, which is the digest an auditor checks.
+  const sealedPresentation = manifestPaths.has("presentation.json");
+  if (sealedPresentation && presentationArg !== undefined) {
+    fail(
+      "bundle seals a presentation.json and --presentation was also supplied;"
+      + " one report has one public reading record",
+    );
+  }
+  if (!sealedPresentation && presentationArg === undefined) {
+    fail(
+      `${manifest.format} bundle seals no presentation.json and no --presentation <file> was`
+      + " supplied. The site renders a report from a public reading record and never assembles"
+      + " one here; pass the sealed record with --presentation, or ingest a bundle that binds it.",
+    );
+  }
+  const presentationBytes = sealedPresentation
+    ? readFileSync(join(bundleDir, "presentation.json"))
+    : presentationInput;
+  let presentation;
+  try {
+    presentation = JSON.parse(presentationBytes.toString("utf8"));
+  } catch {
+    fail("the public reading record is not valid JSON");
+  }
+  const presentationSha256 = sha256(presentationBytes);
 
   const expectedClaimSchema = disclosed ? DISCLOSED_CLAIM_SCHEMA : QUALIFIED_CLAIM_SCHEMA;
   if (claim.claimSchema !== expectedClaimSchema) {
@@ -623,8 +672,16 @@ function extractQualified() {
   if (presentation.verification.reportEnvelopeSha256 !== reportEnvelopeSha256) {
     fail("presentation report-envelope digest does not match report-envelope.json");
   }
-  if (canonical(presentation.verification.checks) !== canonical(expectedChecks)) {
-    fail(`presentation verification checks are not the ${manifest.format} list, in order`);
+  // The extra check is earned by SEALING the record, not by having one. A
+  // bundle that carries no member is read with the format's own list.
+  const expectedRecordChecks = sealedPresentation
+    ? [...expectedChecks, PRESENTATION_CHECK]
+    : expectedChecks;
+  if (canonical(presentation.verification.checks) !== canonical(expectedRecordChecks)) {
+    fail(
+      `presentation verification checks are not the ${manifest.format} list`
+      + `${sealedPresentation ? ` plus ${PRESENTATION_CHECK}` : ""}, in order`,
+    );
   }
   if (typeof presentation.title !== "string" || presentation.title === "") {
     fail("public report title is missing");
@@ -695,9 +752,11 @@ function extractQualified() {
   const disclosure = disclosed ? readDisclosureRecord(claim.disclosure) : null;
 
   const countMembers = (prefix) => [...manifestPaths].filter((path) => path.startsWith(prefix)).length;
-  const canonicalFiles = files.filter(
-    (file) => file.path === "bundle.json" || QUALIFIED_FIXED_FILES.includes(file.path),
-  );
+  // The fixed members, plus whichever optional ones this bundle carries, so a
+  // sealed reading record is linked from the page like any other member.
+  const canonicalFiles = files.filter((file) => file.path === "bundle.json"
+    || QUALIFIED_FIXED_FILES.includes(file.path)
+    || QUALIFIED_OPTIONAL_FILES.includes(file.path));
 
   return {
     format: manifest.format,
@@ -726,6 +785,14 @@ function extractQualified() {
       runSha256: claim.records.runSha256,
       matrixSha256: claim.records.matrixSha256,
       reportSha256: claim.records.reportSha256,
+    },
+    // How the public reading record reached this page. Stated because a record
+    // supplied at ingest is not covered by the bundle's own digest, and a
+    // reader is entitled to know which of the two they are looking at.
+    presentationSource: {
+      carriage: sealedPresentation ? "sealed-bundle-member" : "supplied-at-ingest",
+      sha256: presentationSha256,
+      path: sealedPresentation ? "presentation.json" : `${slug}.presentation.json`,
     },
     socialCardPath: "social-card.svg",
     // The complete manifest is `bundle.json`, served byte-exact under the
@@ -756,10 +823,18 @@ for (const path of ["bundle.json", ...manifestPaths]) {
 
 mkdirSync(dirname(dataFile), { recursive: true });
 writeFileSync(dataFile, `${JSON.stringify(data, null, 2)}\n`);
+// A record supplied at ingest is published beside the read model, byte for
+// byte as it was handed over, never inside the bundle directory.
+if (data.presentationSource?.carriage === "supplied-at-ingest") {
+  writeFileSync(join(root, "data", "reports", data.presentationSource.path), presentationInput);
+}
 
 console.log(`ingested ${relative(root, bundleDir) || bundleDir}`);
 console.log(`  format:   ${manifest.format}`);
 console.log(`  bundle:   public/reports/${slug}/bundle/ (${manifestPaths.size + 1} files, byte-exact)`);
 console.log(`  data:     data/reports/${slug}.json`);
 console.log(`  identity: ${bundleIdentity}`);
+if (data.presentationSource !== undefined) {
+  console.log(`  reading:  ${data.presentationSource.carriage} (sha256:${data.presentationSource.sha256})`);
+}
 if (data.fixture) console.log("  marked as FIXTURE");

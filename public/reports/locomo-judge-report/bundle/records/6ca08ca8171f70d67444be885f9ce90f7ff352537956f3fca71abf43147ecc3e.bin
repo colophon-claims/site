@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer suggests degrees that are unrelated to the gold answer, which specifically mentions political science, public administration, and public affairs.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes hiking and walks, which are part of the activities mentioned in the gold answer, making it relevant despite the additional details.",
+  "label": "CORRECT"
+}
+```

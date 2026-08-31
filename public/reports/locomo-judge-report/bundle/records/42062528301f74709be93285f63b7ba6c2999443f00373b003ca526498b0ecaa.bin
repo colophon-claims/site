@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not mention interning at an engineering firm, which is the specific activity referenced in the gold answer.",
+  "label": "WRONG"
+}
+```

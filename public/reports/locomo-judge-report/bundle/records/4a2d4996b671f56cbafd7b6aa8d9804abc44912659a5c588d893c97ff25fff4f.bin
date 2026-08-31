@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies a type of jewelry made from specific materials (sea glass and driftwood), which does not match the broader category of 'jewelry made from recycled objects' in the gold answer.",
+  "label": "WRONG"
+}
+```

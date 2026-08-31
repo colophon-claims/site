@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer closely matches the gold answer, only omitting the article 'a' before 'homeless shelter', which does not change the meaning.",
+  "label": "CORRECT"
+}
+```

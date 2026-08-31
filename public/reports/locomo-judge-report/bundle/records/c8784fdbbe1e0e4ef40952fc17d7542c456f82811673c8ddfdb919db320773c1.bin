@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies a broader region (North America) rather than the specific country (United States) mentioned in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

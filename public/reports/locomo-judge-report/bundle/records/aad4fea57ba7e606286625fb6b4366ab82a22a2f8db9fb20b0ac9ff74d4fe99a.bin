@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer contains none of the names from the gold answer's list.",
+  "label": "WRONG"
+}
+```

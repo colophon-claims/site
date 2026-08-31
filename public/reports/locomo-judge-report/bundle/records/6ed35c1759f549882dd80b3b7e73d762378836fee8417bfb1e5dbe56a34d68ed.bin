@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'Cooking show' matches the gold answer 'a cooking show' in meaning and context, despite the slight difference in phrasing.",
+  "label": "CORRECT"
+}
+```

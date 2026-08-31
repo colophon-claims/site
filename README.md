@@ -78,12 +78,17 @@ six-variable disclosure-specification record, travelling as an ordinary
 `records/<sha256>.bin` member and projected into the claim package's
 `disclosure` section.
 
-Ingest refuses a `/7` or `/8` bundle whose manifest does not bind
-`presentation.json`. The site renders a report from its sealed public reading
-record and never assembles one here, so a bundle without that member has no
-ingestable public copy; publish one that carries it. The reading record for
-these formats is `colophon.report-presentation/2`, and the ingester refuses a
-record carrying a section the site does not project rather than dropping it.
+The public reading record, `colophon.report-presentation/2`, reaches the site
+one of two ways: sealed into the bundle as a `presentation.json` member, on a
+closure that carries one, or supplied at ingest with
+`--presentation <file>` and published beside the read model as
+`data/reports/<slug>.presentation.json`. The second mode exists because no
+current closure binds the member, and inserting one into a published bundle
+would change the very digest an auditor checks; a bundle ingested that way is
+copied byte for byte with nothing added. Either way the site assembles no
+public copy of its own: ingest refuses a `/7` or `/8` bundle that has neither,
+and refuses a record carrying a section the site does not project rather than
+dropping it.
 
 Beyond the manifest, ingest checks what these formats add:
 
@@ -96,6 +101,10 @@ Beyond the manifest, ingest checks what these formats add:
 - on `/8`, that the claim's `disclosure` section is the sealed record's own
   projection, that its subject is this bundle's result matrix, and that every
   `measured-here` citation resolves to a record the bundle carries.
+
+`validate:reports` re-checks all of that against the copied bundle rather than
+the read model that claims it, and recomputes the published replicate-instability
+figure from the sealed item decisions instead of trusting it.
 
 The report page renders the six variables with their statuses as its opening
 section, and the anchors with the state embedded in each proof's own bytes.

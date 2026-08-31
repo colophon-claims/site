@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer indicates that the cats are of different ages, which aligns with the gold answer's implication of age differences, even though specific ages are not provided.",
+  "label": "CORRECT"
+}
+```

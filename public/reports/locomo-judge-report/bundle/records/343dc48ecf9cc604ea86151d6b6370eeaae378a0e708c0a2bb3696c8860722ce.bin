@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not include any correct items from the gold answer's list, as it states a different duration for the dating period.",
+  "label": "WRONG"
+}
+```

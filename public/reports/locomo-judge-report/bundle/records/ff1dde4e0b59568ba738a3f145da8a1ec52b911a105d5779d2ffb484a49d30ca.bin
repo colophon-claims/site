@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer addresses different goals related to basketball, but does not include any of the goals mentioned in the gold answer.",
+  "label": "WRONG"
+}
+```

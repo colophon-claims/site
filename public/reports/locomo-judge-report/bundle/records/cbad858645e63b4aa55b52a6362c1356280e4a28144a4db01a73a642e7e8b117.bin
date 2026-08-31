@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer conveys a similar sentiment about resilience and teamwork, but it does not explicitly mention backing each other up or not quitting, which are key elements of the gold answer.",
+  "label": "WRONG"
+}
+```

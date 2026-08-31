@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer lists locations that are iconic but does not include any of the specific Star Wars filming locations mentioned in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

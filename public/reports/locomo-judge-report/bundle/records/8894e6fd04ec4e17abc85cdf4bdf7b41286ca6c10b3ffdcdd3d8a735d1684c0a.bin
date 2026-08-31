@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a time frame that aligns with the gold answer, as both indicate a time in the past without specifying an exact date.",
+  "label": "CORRECT"
+}
+```

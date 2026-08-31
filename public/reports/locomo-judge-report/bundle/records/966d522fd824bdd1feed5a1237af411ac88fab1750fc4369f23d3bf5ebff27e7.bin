@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the name of the national park, which is essential to match the gold answer, so it is considered WRONG.",
+  "label": "WRONG"
+}
+```

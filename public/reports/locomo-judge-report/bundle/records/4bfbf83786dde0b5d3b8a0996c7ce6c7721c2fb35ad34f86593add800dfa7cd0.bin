@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a time period (early November 2022) that is before the date in the gold answer (21 December 2022), but it does not specifically mention the date of the donation, making it not directly relevant.",
+  "label": "WRONG"
+}
+```

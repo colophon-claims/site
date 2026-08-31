@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to the same day as the gold answer, just using a relative time reference, which aligns with the specified date.",
+  "label": "CORRECT"
+}
+```

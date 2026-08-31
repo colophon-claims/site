@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies a dog park, which matches the gold answer's focus on a place for dogs to run and socialize, making it correct despite the additional detail.",
+  "label": "CORRECT"
+}
+```

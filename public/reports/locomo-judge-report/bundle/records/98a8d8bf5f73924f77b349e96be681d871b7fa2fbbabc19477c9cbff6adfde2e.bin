@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to 'their dads', which aligns with the gold answer of 'Dad', thus it is considered correct.",
+  "label": "CORRECT"
+}
+```

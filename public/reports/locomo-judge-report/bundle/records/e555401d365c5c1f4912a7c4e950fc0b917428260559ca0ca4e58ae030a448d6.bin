@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is too vague and does not specifically mention the roles of 'shelter coordinator' or 'counselor' as indicated in the gold answer.",
+  "label": "WRONG"
+}
+```

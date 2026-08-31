@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions different artists than the gold answer, so it does not touch on the same topic.",
+  "label": "WRONG"
+}
+```

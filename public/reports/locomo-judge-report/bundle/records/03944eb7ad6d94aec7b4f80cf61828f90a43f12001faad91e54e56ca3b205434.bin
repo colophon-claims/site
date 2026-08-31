@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer identifies a relationship to John but incorrectly states it as sister instead of partner.",
+  "label": "WRONG"
+}
+```

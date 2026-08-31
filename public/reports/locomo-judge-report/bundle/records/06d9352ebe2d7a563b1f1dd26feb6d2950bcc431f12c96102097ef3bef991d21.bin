@@ -1,0 +1,4 @@
+{
+  "reasoning": "The generated answer states 2020, which is not the same as the gold answer of 2018, making it incorrect.",
+  "label": "WRONG"
+}

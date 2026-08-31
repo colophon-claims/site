@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer states 'French', which does not match the gold answer 'German', indicating a different language.",
+  "label": "WRONG"
+}
+```

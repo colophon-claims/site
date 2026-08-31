@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions a variety of activities, which aligns with the general idea of hobbies, but it does not specifically list the hobbies mentioned in the gold answer.",
+  "label": "WRONG"
+}
+```

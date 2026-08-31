@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a deal with a major sports apparel brand, which is a different type of company than the renowned outdoor gear company mentioned in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

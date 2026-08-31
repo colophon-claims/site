@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies 'Saturday' instead of 'Sunday', which is a different day, making it incorrect.",
+  "label": "WRONG"
+}
+```

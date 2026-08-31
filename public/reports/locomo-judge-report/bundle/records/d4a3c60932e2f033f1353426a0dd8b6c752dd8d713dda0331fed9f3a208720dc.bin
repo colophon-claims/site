@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer lists foods that are entirely different from those mentioned in the gold answer, indicating that it does not match the preferences stated.",
+  "label": "WRONG"
+}
+```

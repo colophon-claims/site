@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not mention Nate's teammates on his video game team, which is a key item from the gold answer, leading to a lack of correct items.",
+  "label": "WRONG"
+}
+```

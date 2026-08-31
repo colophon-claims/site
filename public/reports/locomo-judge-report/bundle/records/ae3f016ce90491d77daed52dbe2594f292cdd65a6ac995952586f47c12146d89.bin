@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify Phuket, which is the exact location mentioned in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

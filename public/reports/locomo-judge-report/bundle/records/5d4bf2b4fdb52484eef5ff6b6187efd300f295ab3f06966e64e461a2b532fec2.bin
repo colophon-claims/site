@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'hiking', which does not match the gold answer of 'painting', indicating a different activity.",
+  "label": "WRONG"
+}
+```

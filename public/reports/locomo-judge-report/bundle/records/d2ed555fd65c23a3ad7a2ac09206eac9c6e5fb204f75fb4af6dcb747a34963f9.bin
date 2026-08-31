@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes multiple correct items from the gold answer's list, such as 'fair' and 'dance competition'.",
+  "label": "CORRECT"
+}
+```

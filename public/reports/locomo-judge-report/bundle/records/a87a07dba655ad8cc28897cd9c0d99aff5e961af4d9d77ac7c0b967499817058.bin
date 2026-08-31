@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'United Kingdom' is the full name of the country referred to in the gold answer 'UK', making it a correct match.",
+  "label": "CORRECT"
+}
+```
