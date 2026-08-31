@@ -385,7 +385,7 @@
         "items": 60
       }
     ],
-    "labels": "Screened against the question, reference answer, and dataset evidence, then hand-reviewed by the operator on flagged cases and a preselected sample. Screened and sampled, not equivalent to independent annotation by two human raters."
+    "labels": "The candidate pool contained 664 items, screened against the question, reference answer, and dataset evidence. The operator hand-reviewed 255 items selected from flagged cases and a preselected sample. The process excluded 137 candidates, including 52 from the initial main-bank selection, and replaced them while preserving the final 80/80/80 class balance and equal category balance. Labels are therefore screened and sampled, not equivalent to independent annotation by two human raters."
   },
   "accounting": {
     "cells": {
@@ -397,7 +397,7 @@
       "calls": 22,
       "denominator": 4320,
       "policy": "abstain",
-      "note": "Unparseable calls were recorded as neutral, all of them in the evidence-fed configuration. The items left without a valid majority appear as explicit exclusions rather than as rejections."
+      "note": "Unparseable responses were recorded as neutral rather than converted into rejections, all of them in the evidence-fed configuration. The evidence-fed items consequently left without a valid majority appear as explicit exclusions."
     },
     "excludedItems": {
       "count": 7,
@@ -498,7 +498,7 @@
   },
   "presentationSource": {
     "carriage": "supplied-at-ingest",
-    "sha256": "2583870b39a6969b6aa899c47a1dfff465c5289ed0af20b648ce45dc4ad82b69",
+    "sha256": "7f9430806d4a5ca450e87a88fae056cd1fbe18cb97e4fde63f8e023649fd9a41",
     "path": "locomo-judge-report.presentation.json"
   },
   "socialCardPath": "social-card.svg",
