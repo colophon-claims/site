@@ -1596,3 +1596,33 @@ main {
     padding-bottom: 0;
   }
 }
+
+/* ---------- carried report prose ---------- */
+.report-opening {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  border-top: var(--border-hair) solid var(--rule);
+  padding-top: var(--space-8);
+}
+.narrative-heading {
+  font: var(--type-section);
+  font-size: var(--text-md);
+  margin: var(--space-8) 0 0;
+  max-width: var(--measure);
+}
+.narrative-heading:first-child {
+  margin-top: 0;
+}
+.narrative-lead {
+  font: var(--type-body);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  max-width: var(--measure);
+  margin: 0;
+  text-wrap: pretty;
+}
+.narrative-list {
+  margin: 0;
+}

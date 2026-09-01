@@ -268,6 +268,7 @@ export function makeQualifiedBundle(directory, options = {}) {
         reportEnvelopeSha256,
         reportSha256,
       },
+      ...(options.narrative === undefined ? {} : { narrative: options.narrative }),
       provenance: {
         runSha256,
         benchmarkSha256,
@@ -557,7 +558,7 @@ test("refuses a presentation whose sections this site does not project", (contex
 
   const result = run(root, "ingest-report.mjs", [bundle, "--slug", "extra"]);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /does not carry exactly the sections this site projects/u);
+  assert.match(result.stderr, /carries a section this site does not project: practiceGuidance/u);
 });
 
 test("takes a reading record supplied at ingest and leaves the bundle untouched", (context) => {
@@ -607,4 +608,42 @@ test("recomputes the published replicate-instability figure rather than trusting
   const validated = run(root, "validate-published-reports.mjs", []);
   assert.equal(validated.status, 1);
   assert.match(validated.stderr, /replicate instability says 0\/3, recomputed 1\/3/u);
+});
+
+test("carries the report's own prose and refuses a block the page cannot render", (context) => {
+  const root = scratchSite(context);
+  const narrative = [{
+    slot: "why-this-matters",
+    heading: "Why this matters",
+    blocks: [
+      { kind: "heading", text: "Graders differ" },
+      { kind: "paragraph", text: "Changing only the grader moved agreement.", strong: true },
+      { kind: "list", items: ["Ask for the judge prompt."] },
+      { kind: "table", columns: ["Variable", "Meaning"], rows: [["Judge model", "What grades the answer"]] },
+    ],
+  }];
+  const good = makeQualifiedBundle(join(root, "prose"), { slug: "prose", narrative });
+  assert.equal(run(root, "ingest-report.mjs", [good, "--slug", "prose"]).status, 0);
+  const data = JSON.parse(readFileSync(join(root, "data", "reports", "prose.json"), "utf8"));
+  assert.deepEqual(data.narrative, narrative);
+
+  const broken = makeQualifiedBundle(join(root, "broken"), {
+    slug: "broken",
+    narrative: [{ slot: "why", heading: null, blocks: [{ kind: "diagram", src: "x.svg" }] }],
+  });
+  const result = run(root, "ingest-report.mjs", [broken, "--slug", "broken"]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /unknown block kind: diagram/u);
+
+  const ragged = makeQualifiedBundle(join(root, "ragged"), {
+    slug: "ragged",
+    narrative: [{
+      slot: "why",
+      heading: null,
+      blocks: [{ kind: "table", columns: ["A", "B"], rows: [["only one cell"]] }],
+    }],
+  });
+  const raggedResult = run(root, "ingest-report.mjs", [ragged, "--slug", "ragged"]);
+  assert.equal(raggedResult.status, 1);
+  assert.match(raggedResult.stderr, /table row of the wrong width/u);
 });

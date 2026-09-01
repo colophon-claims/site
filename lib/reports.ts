@@ -239,6 +239,32 @@ export interface Proportion {
   wilsonInterval: { low: string; high: string };
 }
 
+export type NarrativeBlock =
+  | { kind: "paragraph"; text: string; strong?: boolean }
+  | { kind: "heading"; text: string }
+  | { kind: "list"; items: string[] }
+  | { kind: "table"; columns: string[]; rows: string[][] };
+
+export interface NarrativeSection {
+  /** Where the page places this section among the instrument sections. */
+  slot: string;
+  heading: string | null;
+  blocks: NarrativeBlock[];
+}
+
+export interface DerivedFigures {
+  agreementLow: string;
+  agreementHigh: string;
+  agreementSpreadPoints: string;
+  vagueWrongAcceptLow: string;
+  vagueWrongAcceptHigh: string;
+  rightAnswersScored: number;
+  rightAnswersRejected: number;
+  pairedItems: number;
+  plainPromptAgreement: string;
+  evidencePromptAgreement: string;
+}
+
 export interface QualifiedReportData {
   format: typeof QUALIFIED_BUNDLE_FORMAT | typeof DISCLOSED_BUNDLE_FORMAT;
   slug: string;
@@ -320,6 +346,13 @@ export interface QualifiedReportData {
     siblingAnalyses: { method: string; version: string; reportSha256: string }[];
     companionBundles: { name: string; runSha256: string; matrixSha256: string; bundleIdentity: string }[];
   };
+  /** The report's own prose, carried verbatim from the canonical text and
+   * rendered in reading order around the instrument sections. Null when the
+   * reading record carries only the instrument reading. */
+  narrative: NarrativeSection[] | null;
+  /** Figures the prose states that this bundle's sealed records re-derive. The
+   * validator recomputes each and checks it against the carried prose. */
+  derivedFigures: DerivedFigures | null;
   /** How the public reading record reached the page. `sealed-bundle-member`
    * means the bundle's own manifest binds it; `supplied-at-ingest` means it was
    * handed to the ingester and published beside this read model, leaving the

@@ -170,6 +170,16 @@ const PRESENTATION_SECTIONS = [
   "provenance",
 ];
 
+/**
+ * Sections a reading record MAY carry. Optional rather than required so a record
+ * emitted upstream with the core sixteen still validates: the site renders the
+ * report's own prose when it is carried and the instrument reading when it is
+ * not. Unknown sections outside both lists still refuse.
+ */
+const PRESENTATION_OPTIONAL_SECTIONS = ["narrative", "derivedFigures"];
+
+const NARRATIVE_BLOCK_KINDS = ["paragraph", "heading", "list", "table"];
+
 const SHA256_HEX = /^[a-f0-9]{64}$/;
 
 function fail(message) {
@@ -657,8 +667,61 @@ function extractQualified() {
     fail(`unknown public presentation schema: ${presentation.schema}`);
   }
   const sections = Object.keys(presentation).sort();
-  if (canonical(sections) !== canonical([...PRESENTATION_SECTIONS].sort())) {
-    fail("public presentation does not carry exactly the sections this site projects");
+  const known = new Set([...PRESENTATION_SECTIONS, ...PRESENTATION_OPTIONAL_SECTIONS]);
+  for (const section of sections) {
+    if (!known.has(section)) {
+      fail(`public presentation carries a section this site does not project: ${section}`);
+    }
+  }
+  for (const required of PRESENTATION_SECTIONS) {
+    if (!sections.includes(required)) {
+      fail(`public presentation is missing the ${required} section`);
+    }
+  }
+
+  // The report's own prose, carried verbatim. Structure is checked here so a
+  // block the page cannot render refuses at ingest rather than at build.
+  if (presentation.narrative !== undefined) {
+    if (!Array.isArray(presentation.narrative) || presentation.narrative.length === 0) {
+      fail("narrative is present but carries no sections");
+    }
+    const slugs = new Set();
+    for (const section of presentation.narrative) {
+      if (typeof section?.slot !== "string" || section.slot === "") fail("a narrative section names no slot");
+      if (slugs.has(section.slot)) fail(`narrative lists slot ${section.slot} twice`);
+      slugs.add(section.slot);
+      if (section.heading !== null && typeof section.heading !== "string") {
+        fail(`narrative slot ${section.slot} carries an invalid heading`);
+      }
+      if (!Array.isArray(section.blocks) || section.blocks.length === 0) {
+        fail(`narrative slot ${section.slot} carries no blocks`);
+      }
+      for (const block of section.blocks) {
+        if (!NARRATIVE_BLOCK_KINDS.includes(block?.kind)) {
+          fail(`narrative slot ${section.slot} carries an unknown block kind: ${block?.kind}`);
+        }
+        if ((block.kind === "paragraph" || block.kind === "heading")
+          && (typeof block.text !== "string" || block.text === "")) {
+          fail(`narrative slot ${section.slot} carries an empty ${block.kind}`);
+        }
+        if (block.kind === "list" && (!Array.isArray(block.items) || block.items.length === 0)) {
+          fail(`narrative slot ${section.slot} carries an empty list`);
+        }
+        if (block.kind === "table") {
+          if (!Array.isArray(block.columns) || block.columns.length === 0) {
+            fail(`narrative slot ${section.slot} carries a table with no columns`);
+          }
+          if (!Array.isArray(block.rows) || block.rows.length === 0) {
+            fail(`narrative slot ${section.slot} carries a table with no rows`);
+          }
+          for (const row of block.rows) {
+            if (!Array.isArray(row) || row.length !== block.columns.length) {
+              fail(`narrative slot ${section.slot} carries a table row of the wrong width`);
+            }
+          }
+        }
+      }
+    }
   }
   if (presentation.slug !== slug) {
     fail(`presentation slug ${presentation.slug} does not match requested slug ${slug}`);
@@ -776,6 +839,8 @@ function extractQualified() {
     selfRunDisclosure: presentation.selfRunDisclosure,
     verification: presentation.verification,
     provenance: presentation.provenance,
+    narrative: presentation.narrative ?? null,
+    derivedFigures: presentation.derivedFigures ?? null,
     anchors: claim.anchors,
     disclosure,
     digests: {

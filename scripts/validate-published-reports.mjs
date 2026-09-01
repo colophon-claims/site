@@ -129,6 +129,63 @@ function validateQualified(report, bundleDir) {
     );
   }
 
+  // Figures the carried prose states that these sealed records re-derive. Each
+  // is recomputed here and then required to appear in the prose, so a number in
+  // the report's own text cannot drift from the records without failing.
+  if (report.derivedFigures !== null && report.derivedFigures !== undefined) {
+    const arms = claim.qualification?.arms;
+    if (arms === undefined) fail(`${report.slug} claim carries no per-arm qualification`);
+    const ids = Object.keys(arms).sort();
+    const pct = (x) => `${(Number(x) * 100).toFixed(1)}%`;
+    const agreement = ids.map((i) => Number(arms[i].agreement.estimate));
+    const vague = ids.map((i) => Number(arms[i].byCandidateClass["vague-topical-wrong"].falseAccept.estimate));
+    let rejected = 0;
+    let scored = 0;
+    for (const id of ids) {
+      const r = arms[id].byCandidateClass.correct.falseReject;
+      rejected += r.numerator;
+      scored += r.denominator;
+    }
+    const recomputed = {
+      agreementLow: pct(Math.min(...agreement)),
+      agreementHigh: pct(Math.max(...agreement)),
+      agreementSpreadPoints: ((Math.max(...agreement) - Math.min(...agreement)) * 100).toFixed(1),
+      vagueWrongAcceptLow: pct(Math.min(...vague)),
+      vagueWrongAcceptHigh: pct(Math.max(...vague)),
+      rightAnswersScored: scored,
+      rightAnswersRejected: rejected,
+      pairedItems: arms["mem0-evidence"].agreement.denominator,
+      plainPromptAgreement: pct(arms.mem0.agreement.estimate),
+      evidencePromptAgreement: pct(arms["mem0-evidence"].agreement.estimate),
+    };
+    if (canonical(recomputed) !== canonical(report.derivedFigures)) {
+      fail(
+        `${report.slug} derived figures do not match the sealed records:`
+        + ` carried ${canonical(report.derivedFigures)}, recomputed ${canonical(recomputed)}`,
+      );
+    }
+    // Every surface on the page that carries the operator's own words.
+    const prose = JSON.stringify([
+      report.narrative ?? [],
+      report.question?.preRegistered ?? [],
+      report.result?.primary,
+      report.result?.interpretation,
+      report.population?.labels,
+    ]);
+    // Every figure above is recomputed and compared. These are additionally
+    // required to appear in the carried prose, because the prose states them in
+    // words; the rest reach the page through the sealed per-arm table instead.
+    const STATED_IN_PROSE = [
+      "agreementLow", "agreementHigh", "agreementSpreadPoints",
+      "vagueWrongAcceptLow", "vagueWrongAcceptHigh", "rightAnswersScored", "pairedItems",
+    ];
+    for (const key of STATED_IN_PROSE) {
+      if (!prose.includes(String(recomputed[key]))) {
+        fail(`${report.slug} prose does not state the recomputed ${key} (${recomputed[key]})`);
+      }
+    }
+  }
+
   if (!Array.isArray(report.anchors)) fail(`${report.slug} read model carries no anchors`);
   if (canonical(report.anchors) !== canonical(claim.anchors)) {
     fail(`${report.slug} read model anchors are not the claim's anchors`);

@@ -476,6 +476,398 @@
     "siblingAnalyses": [],
     "companionBundles": []
   },
+  "narrative": [
+    {
+      "slot": "opening",
+      "heading": null,
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "LoCoMo is a benchmark for long-term conversational memory. Its published scores are often produced with an LLM judge: a model reads a question, a reference answer, and a candidate answer, then decides whether the candidate should count as correct."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The problem is that there is no single LoCoMo LLM judge. Different published results use different judge prompts, models, and inputs, then place the resulting scores next to one another as though the grading instrument had stayed fixed."
+        },
+        {
+          "kind": "paragraph",
+          "text": "This benchmark measures how much that choice matters. Six grading configurations judged the same 240 answers on the same model snapshot. The configurations varied the judge prompt; one paired configuration also varied whether the judge received source evidence. Two companion tests examined consistency and behavior when the official answer key is wrong."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The central finding is simple: changing only the grader moved agreement with the same screened labels from 60.8% to 87.9%.",
+          "strong": true
+        },
+        {
+          "kind": "paragraph",
+          "text": "Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer. Three of five graders were internally inconsistent on basic set-answer cases. When the answer key was wrong, graders followed the broken key against a true answer between 10% and 70% of the time."
+        },
+        {
+          "kind": "paragraph",
+          "text": "This is a benchmark of graders, not memory systems. It does not rank or re-score any memory product, and it cannot establish which published system is better."
+        }
+      ]
+    },
+    {
+      "slot": "why-this-matters",
+      "heading": "Why this matters",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "Published LoCoMo scores are not directly comparable without grader disclosure"
+        },
+        {
+          "kind": "paragraph",
+          "text": "The spread caused by changing the grader was 27.1 percentage points on the same answers. That is larger than many of the differences used to compare memory systems. A score without its judge model, judge prompt, and judge input shape is therefore not a complete measurement description."
+        },
+        {
+          "kind": "paragraph",
+          "text": "This does not mean that any particular published score is wrong. It means that two scores produced by different graders are measurements from different instruments. Their numerical difference cannot be attributed to the memory systems alone."
+        },
+        {
+          "kind": "heading",
+          "text": "Vague answers are a scoring advantage"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Every grader accepted vague wrong answers much more often than specific wrong answers. A system can therefore improve its apparent score by staying on topic while avoiding the fact the question asks for. Pooling the two kinds of wrong answer would hide this behavior and make the reported false-accept rate depend on their mixture."
+        },
+        {
+          "kind": "paragraph",
+          "text": "Benchmark reports should keep specific wrong and vague wrong answers separate."
+        },
+        {
+          "kind": "heading",
+          "text": "Stricter is not the same as more reliable"
+        },
+        {
+          "kind": "paragraph",
+          "text": "The strictest configuration had the highest agreement with the benchmark labels, but it also failed the consistency gate on both tested set operations and followed a broken answer key most often. Replacing a lenient prompt with the strictest available prompt does not solve the whole evaluation problem."
+        },
+        {
+          "kind": "paragraph",
+          "text": "Accuracy against a clean key, internal consistency, and resistance to a bad key are different properties. A useful default judge needs to be evaluated on all three."
+        },
+        {
+          "kind": "heading",
+          "text": "Evidence changes the instrument"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Adding source evidence to the Mem0 prompt changed decisions materially. On the 233 items that could be compared directly, the evidence-fed configuration accepted 7.7 percentage points more answers (95% interval 4.3 to 11.2). The change was concentrated in vague wrong answers, where acceptance rose by 21.8 points (95% interval 12.8 to 30.8). It did not change decisions on right answers."
+        },
+        {
+          "kind": "paragraph",
+          "text": "In this setup, evidence made the judge more permissive rather than more accurate. The result does not show that evidence is generally harmful. It shows that the information shown to the judge is part of the grading instrument and must be reported alongside the prompt."
+        },
+        {
+          "kind": "heading",
+          "text": "Bad answer keys do not fail safely"
+        },
+        {
+          "kind": "paragraph",
+          "text": "When a reference answer was wrong, some graders rejected a true candidate because it contradicted the key. Once the key was corrected, every grader accepted every true candidate. This demonstrates the mechanism by which an erroneous key can punish a correct system or make a benchmark result exceed an assumed ceiling."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The 20-item check demonstrates that the mechanism exists. It does not estimate how often bad keys affect any published score."
+        }
+      ]
+    },
+    {
+      "slot": "disclosure-standard",
+      "heading": "The disclosure standard this benchmark supports",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "A LoCoMo score is not fully specified by the memory system's name and final percentage. It is the product of an answer pipeline and a grading pipeline. A comparable result must disclose the six choices that define those pipelines."
+        },
+        {
+          "kind": "heading",
+          "text": "The six variables"
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Variable",
+            "What it describes"
+          ],
+          "rows": [
+            [
+              "Ingestion model",
+              "What reads the source conversation and builds the memory or index"
+            ],
+            [
+              "Retrieval configuration",
+              "How information is selected, including search strategy, depth, and limits"
+            ],
+            [
+              "Answer model",
+              "What produces the candidate answer"
+            ],
+            [
+              "Answer prompt",
+              "The instructions under which the candidate answer is produced"
+            ],
+            [
+              "Judge model",
+              "What grades the candidate against the reference answer"
+            ],
+            [
+              "Judge prompt",
+              "The grading instructions and the complete input shown to the judge"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Whether the judge receives source evidence belongs in the judge-prompt entry because it changes the judge's input. Parser behavior and repeated-call aggregation should be reported alongside the judge configuration."
+        },
+        {
+          "kind": "heading",
+          "text": "The three disclosure states"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Each of the six variables must have one of three states:"
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "State",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "`measured-here`",
+              "The experiment fixed and recorded the variable itself"
+            ],
+            [
+              "`disclosed-by-publisher`",
+              "The publisher stated the choice, but this experiment did not measure or independently establish it"
+            ],
+            [
+              "`undisclosed`",
+              "The choice is unknown, not stated, or not applicable"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Unknown information must be reported as `undisclosed`, not omitted or inferred from a repository name, model family, or surrounding context. Evidence belongs only with a `measured-here` entry. A publisher statement may be cited, but it should not be presented as an independent measurement."
+        },
+        {
+          "kind": "heading",
+          "text": "Why the benchmark supports this standard"
+        },
+        {
+          "kind": "paragraph",
+          "text": "This benchmark directly measures the importance of the grading variables. Holding the answer bank and judge model fixed while changing the judge prompt moved agreement from 60.8% to 87.9%. Holding the Mem0 prompt family fixed while adding source evidence changed acceptance by 7.7 percentage points. The judge prompt and the judge's input therefore change the meaning of the resulting score."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The experiment did not vary the first four variables. They still need disclosure because they determine which candidate answers reach the grader. Without them, a reader cannot distinguish a memory-system effect from a retrieval, generation, or answer-style effect. The benchmark establishes the grader side of the problem; the complete reporting standard covers the whole measurement pipeline."
+        },
+        {
+          "kind": "paragraph",
+          "text": "A LoCoMo score without all six entries is an incompletely described measurement. Scores produced under different disclosed configurations should not be treated as directly comparable.",
+          "strong": true
+        },
+        {
+          "kind": "heading",
+          "text": "This report's disclosure"
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Variable",
+            "State",
+            "Declaration"
+          ],
+          "rows": [
+            [
+              "Ingestion model",
+              "`undisclosed` (`not-stated`)",
+              "The published source materials do not identify what produced the upstream memories or indexes"
+            ],
+            [
+              "Retrieval configuration",
+              "`undisclosed` (`not-stated`)",
+              "The published source materials do not identify the retrieval settings used upstream"
+            ],
+            [
+              "Answer model",
+              "`undisclosed` (`not-stated`)",
+              "The candidate-answer files do not identify the model that wrote every answer"
+            ],
+            [
+              "Answer prompt",
+              "`undisclosed` (`not-stated`)",
+              "The candidate-answer files do not identify the complete answering instructions"
+            ],
+            [
+              "Judge model",
+              "`measured-here`",
+              "All grading calls used `gpt-4o-mini-2024-07-18` at temperature zero"
+            ],
+            [
+              "Judge prompt",
+              "`measured-here`",
+              "The six grading configurations and their input shapes were fixed and recorded by this benchmark"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Four undisclosed entries are not a defect hidden by the report. They are the honest description of a grader benchmark that used candidate answers produced elsewhere. This report makes no claim about upstream choices that its source materials cannot establish."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The evidence package carries the full machine-readable declaration and verification rules. The benchmark report states the human-readable standard, the result that supports it, and the report's own disclosure."
+        }
+      ]
+    },
+    {
+      "slot": "recommendations",
+      "heading": "Recommendations",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "For people comparing benchmark results"
+        },
+        {
+          "kind": "list",
+          "items": [
+            "Do not compare LoCoMo scores unless the grading configuration is the same or the difference is explicitly modeled.",
+            "Ask for the judge model, judge prompt, parser, aggregation rule, and whether the judge received source evidence.",
+            "Look for separate false-accept rates for specific wrong and vague wrong answers. A pooled rate conceals a major behavior difference.",
+            "Treat small score gaps cautiously when the grader effect can be much larger than the reported gap."
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "For people publishing LoCoMo results"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Use the disclosure standard above. If a choice is unknown, report it as undisclosed rather than omitting or inferring it. Also publish the parser behavior, repeated-call aggregation rule, and treatment of invalid or missing outputs."
+        },
+        {
+          "kind": "heading",
+          "text": "For benchmark maintainers"
+        },
+        {
+          "kind": "list",
+          "items": [
+            "Ship one reference grading specification with the benchmark instead of leaving every publisher to choose a different judge.",
+            "Test the reference grader for false acceptance, false rejection, repeat stability, set-answer consistency, and behavior under known-bad keys.",
+            "Audit answer keys. A bad key can turn a correct system answer into an apparent error.",
+            "Keep grader evaluations separate from system evaluations. Improving the judge does not retroactively make scores from different judges comparable."
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "does-not-establish",
+      "heading": "What this benchmark does not establish",
+      "blocks": [
+        {
+          "kind": "list",
+          "items": [
+            "It does not evaluate or rank memory systems.",
+            "It does not say which historical LoCoMo score is the correct one.",
+            "It does not reproduce any publisher's complete private harness. Prompts, parsers, judge models, and surrounding code may differ.",
+            "It tests one dated judge-model snapshot. Results may differ on another model or snapshot.",
+            "It measures behavior on a balanced diagnostic bank, not the prevalence of these answer types in ordinary benchmark runs.",
+            "The 20 corrupt-key items and 12 consistency probes demonstrate mechanisms; they do not estimate population prevalence.",
+            "Labels were model-screened and selectively hand-reviewed, not independently labelled by multiple human annotators.",
+            "Majority-of-three reduces but does not remove stochastic variation.",
+            "The run was locally operated. Artifact verification cannot establish organizational independence or the provider's internal execution conditions."
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "reproducibility",
+      "heading": "Reproducibility identifiers",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "SHA-256 identifiers for the machine-readable results follow. Bundle identifiers refer to the currently verified offline bundles and may be replaced only if publication packaging adds sealed presentation or disclosure members; such a packaging change does not alter the result matrix or any number in this report."
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Companion run",
+            "Record",
+            "SHA-256"
+          ],
+          "rows": [
+            [
+              "Consistency gate",
+              "Run",
+              "`06ae9e458b12562015296228297828e22f291ec0c73ec6833eec4288f0511be6`"
+            ],
+            [
+              "Consistency gate",
+              "Result matrix",
+              "`aaeddc612a8625d598ccce4ffa03318ed546cce3854912244baa4cce91a79d60`"
+            ],
+            [
+              "Consistency gate",
+              "Current bundle",
+              "`d1535f32bfa850f2e5ecedcae4be97e17e6dedff37aebe412f2ef6d36fc6a404`"
+            ],
+            [
+              "Corrupt-key test",
+              "Run",
+              "`bdc3b0e2ac4c22e9a859b5879118af7df3939ad4501ea3afd4c8ede0770e509d`"
+            ],
+            [
+              "Corrupt-key test",
+              "Result matrix",
+              "`2a788dc9cdcaa53260dac8b0f7728d3bfd62aac24ccfcbaddc213fa0729ea2d7`"
+            ],
+            [
+              "Corrupt-key test",
+              "Current bundle",
+              "`271f87db4e616992dea75483ec69e92624ab7fc84aeb32e6a0bc82674dc506ed`"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Each bundle was verified from outside the workspace that produced it, and every tested tamper variant was rejected."
+        }
+      ]
+    },
+    {
+      "slot": "materials",
+      "heading": "Materials, credit, and license",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "This benchmark builds on the published materials in [dial481/locomo-audit](https://github.com/dial481/locomo-audit), with the author's stated permission, and on judge prompts posted by Backboard, Mem0, and community contributors in the [LoCoMo discussion](https://github.com/snap-research/locomo/issues/23). The audited judge prompt derives from [EverMemOS](https://github.com/EverMind-AI/EverMemOS), and the revised rubric from [mem0ai/memory-benchmarks](https://github.com/mem0ai/memory-benchmarks), both under Apache-2.0. The consistency examples originated with @AnitaLeungxx, and the strict variant and audit materials with @dial481."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The underlying dataset is [LoCoMo](https://github.com/snap-research/locomo). LoCoMo and the audit annotations are CC BY-NC 4.0. This report and the selected derived materials are released under the same non-commercial license, with source pointers rather than full conversation data."
+        }
+      ]
+    }
+  ],
+  "derivedFigures": {
+    "agreementLow": "60.8%",
+    "agreementHigh": "87.9%",
+    "agreementSpreadPoints": "27.1",
+    "vagueWrongAcceptLow": "32.5%",
+    "vagueWrongAcceptHigh": "88.8%",
+    "rightAnswersScored": 479,
+    "rightAnswersRejected": 1,
+    "pairedItems": 233,
+    "plainPromptAgreement": "78.3%",
+    "evidencePromptAgreement": "70.0%"
+  },
   "anchors": [
     {
       "facts": {
@@ -498,7 +890,7 @@
   },
   "presentationSource": {
     "carriage": "supplied-at-ingest",
-    "sha256": "7f9430806d4a5ca450e87a88fae056cd1fbe18cb97e4fde63f8e023649fd9a41",
+    "sha256": "5eaaf4a162ee70a05dee391e4ad37735ddf1d127f9ef993e6ff911e3405f3a40",
     "path": "locomo-judge-report.presentation.json"
   },
   "socialCardPath": "social-card.svg",

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Callout, CompletenessBar, Footnote, Imprint, MethodLock, SectionHead, Tag } from "@/components/ds";
 import { CiteBlock } from "@/components/ds-client";
 import { SiteFooter } from "@/components/site-footer";
@@ -11,6 +12,8 @@ import {
   shortDigest,
   type DisclosureVariableEntry,
   type IntegrityAnchor,
+  type NarrativeBlock,
+  type NarrativeSection,
   type Proportion,
   type QualifiedReportData,
 } from "@/lib/reports";
@@ -107,9 +110,87 @@ function DisclosureDetail({
   );
 }
 
+/**
+ * Renders the report's own inline notation: `code` spans and [text](url) links.
+ * The prose is carried verbatim, so the markdown it was written in is resolved
+ * here rather than stripped out of the record.
+ */
+function Inline({ text }: { text: string }) {
+  const parts: ReactNode[] = [];
+  const pattern = /`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)/gu;
+  let last = 0;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > last) parts.push(text.slice(last, match.index));
+    if (match[1] !== undefined) {
+      parts.push(<code key={parts.length}>{match[1]}</code>);
+    } else {
+      parts.push(<a key={parts.length} href={match[3]}>{match[2]}</a>);
+    }
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return <>{parts}</>;
+}
+
+function NarrativeBlocks({ blocks }: { blocks: NarrativeBlock[] }) {
+  return (
+    <>
+      {blocks.map((block, index) => {
+        if (block.kind === "heading") {
+          return <h3 key={index} className="narrative-heading">{block.text}</h3>;
+        }
+        if (block.kind === "list") {
+          return (
+            <ul key={index} className="limits-list narrative-list">
+              {block.items.map((item) => <li key={item}><Inline text={item} /></li>)}
+            </ul>
+          );
+        }
+        if (block.kind === "table") {
+          return (
+            <div key={index} className="table-scroll">
+              <table className="data-table">
+                <thead>
+                  <tr>{block.columns.map((column) => <th key={column}>{column}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row) => (
+                    <tr key={row.join("|")}>
+                      {row.map((cell, cellIndex) => <td key={cellIndex}><Inline text={cell} /></td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+        return (
+          <p key={index} className={block.strong === true ? "narrative-lead" : "report-reading"}>
+            <Inline text={block.text} />
+          </p>
+        );
+      })}
+    </>
+  );
+}
+
 export function QualifiedReportPage({ report }: { report: QualifiedReportData }) {
   const bundleBase = `/reports/${report.slug}/bundle`;
   const disclosure = report.disclosure;
+  // Reading order, stated once. Section numbers follow this list, so inserting
+  // a narrative section cannot leave the page numbered out of sequence.
+  const ORDER = [
+    "result", "why-this-matters", "disclosure-standard", "recommendations",
+    "method", "accounting", "anchors", "does-not-establish", "bundle", "materials",
+  ];
+  const num = (id: string) => String(ORDER.indexOf(id) + 1).padStart(2, "0");
+  const narrative = new Map((report.narrative ?? []).map((s: NarrativeSection) => [s.slot, s]));
+  const prose = (slot: string) => {
+    const section = narrative.get(slot);
+    return section === undefined ? null : <NarrativeBlocks blocks={section.blocks} />;
+  };
+  const heading = (slot: string, fallback: string) => narrative.get(slot)?.heading ?? fallback;
   const cells = report.accounting.cells;
   const instability = report.manipulationCheck.replicateInstability;
 
@@ -158,12 +239,69 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           />
         </div>
 
+        {narrative.has("opening") && (
+          <section id="opening" className="report-section report-opening">
+            {prose("opening")}
+          </section>
+        )}
+
+        <section id="result" className="report-section">
+          <SectionHead
+            number={num("result")}
+            title="Result"
+            standfirst={report.result.methodStatement}
+          />
+          <p className="report-reading">{report.result.primary}</p>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Arm</th>
+                  <th className="num">Agreement</th>
+                  <th className="num">95% interval</th>
+                  <th className="num">Accepts specific-wrong</th>
+                  <th className="num">Accepts vague-topical-wrong</th>
+                  <th className="num">Rejects correct</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.result.perArm.map((arm) => (
+                  <tr key={arm.armId}>
+                    <td className="mono">{arm.armId}</td>
+                    <td className="num mono">{rate(arm.agreement)}</td>
+                    <td className="num mono muted">{interval(arm.agreement)}</td>
+                    <td className="num mono">{rate(arm.acceptsSpecificWrong)}</td>
+                    <td className="num mono">{rate(arm.acceptsVagueTopicalWrong)}</td>
+                    <td className="num mono">{rate(arm.rejectsCorrect)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Footnote marker="2" href="#accounting">
+            Spread runs from <code>{report.result.spread.lowestArmId}</code> to{" "}
+            <code>{report.result.spread.highestArmId}</code>, {report.result.spread.pointsBetween}{" "}
+            points apart on the same items.
+          </Footnote>
+          <p className="report-reading">{report.result.interpretation}</p>
+        </section>
+
+        <section id="why-this-matters" className="report-section">
+          <SectionHead
+            number={num("why-this-matters")}
+            title={heading("why-this-matters", "Why this matters")}
+          />
+          {prose("why-this-matters")}
+        </section>
+
         <section id="disclosure" className="report-section">
           <SectionHead
-            number="01"
-            title="The six variables behind this score"
-            standfirst="Every published score of this kind is fixed by six choices. Each one below is either measured in this bundle, stated by the publisher without evidence here, or not stated at all."
+            number={num("disclosure-standard")}
+            title={heading("disclosure-standard", "The six variables behind this score")}
+            standfirst="A score is the product of an answer pipeline and a grading pipeline. A comparable result must disclose the six choices that define them."
           />
+          {prose("disclosure-standard")}
+          <h3 className="narrative-heading">The declaration carried in the evidence package</h3>
           {disclosure === null ? (
             <Callout kind="note" title="No sealed declaration">
               This bundle predates the sealed disclosure record, so the six variables are not carried
@@ -221,50 +359,17 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           )}
         </section>
 
-        <section id="result" className="report-section">
+        <section id="recommendations" className="report-section">
           <SectionHead
-            number="02"
-            title="Result"
-            standfirst={report.result.methodStatement}
+            number={num("recommendations")}
+            title={heading("recommendations", "Recommendations")}
           />
-          <p className="report-reading">{report.result.primary}</p>
-          <div className="table-scroll">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Arm</th>
-                  <th className="num">Agreement</th>
-                  <th className="num">95% interval</th>
-                  <th className="num">Accepts specific-wrong</th>
-                  <th className="num">Accepts vague-topical-wrong</th>
-                  <th className="num">Rejects correct</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.result.perArm.map((arm) => (
-                  <tr key={arm.armId}>
-                    <td className="mono">{arm.armId}</td>
-                    <td className="num mono">{rate(arm.agreement)}</td>
-                    <td className="num mono muted">{interval(arm.agreement)}</td>
-                    <td className="num mono">{rate(arm.acceptsSpecificWrong)}</td>
-                    <td className="num mono">{rate(arm.acceptsVagueTopicalWrong)}</td>
-                    <td className="num mono">{rate(arm.rejectsCorrect)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Footnote marker="2" href="#accounting">
-            Spread runs from <code>{report.result.spread.lowestArmId}</code> to{" "}
-            <code>{report.result.spread.highestArmId}</code>, {report.result.spread.pointsBetween}{" "}
-            points apart on the same items.
-          </Footnote>
-          <p className="report-reading">{report.result.interpretation}</p>
+          {prose("recommendations")}
         </section>
 
         <section id="method" className="report-section">
           <SectionHead
-            number="03"
+            number={num("method")}
             title="Method"
             standfirst="The judge prompts under test, the questions fixed before the run, and the settings held constant across every arm."
           />
@@ -357,7 +462,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
 
         <section id="accounting" className="report-section">
           <SectionHead
-            number="04"
+            number={num("accounting")}
             title="Accounting"
             standfirst="Every judge call the locked method expected, and what became of it. Only judged cells enter a denominator."
           />
@@ -459,7 +564,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
 
         <section id="anchors" className="report-section">
           <SectionHead
-            number="05"
+            number={num("anchors")}
             title="Integrity anchors"
             standfirst="Third-party time evidence over this run's own sealed records, carried in the bundle as the proof's exact bytes."
           />
@@ -511,10 +616,11 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
 
         <section id="limitations" className="report-section">
           <SectionHead
-            number="06"
-            title="What this does not show"
-            standfirst="Carried in the claim package, at the same size as the results."
+            number={num("does-not-establish")}
+            title={heading("does-not-establish", "What this does not show")}
           />
+          {prose("does-not-establish")}
+          <h3 className="narrative-heading">Venue limitations carried in the claim package</h3>
           <ul className="limits-list" style={{ marginTop: 0 }}>
             {report.limitations.map((limitation) => (
               <li key={limitation}>{limitation}</li>
@@ -527,7 +633,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
 
         <section id="bundle" className="report-section">
           <SectionHead
-            number="07"
+            number={num("bundle")}
             title="Check it yourself"
             standfirst={`Everything above is derived from the bundle below: ${[
               plural(report.memberCounts.records, "evidence record"),
@@ -613,6 +719,27 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             </div>
           )}
         </section>
+
+        {narrative.has("reproducibility") && (
+          <section id="reproducibility" className="report-section">
+            <SectionHead
+              level={3}
+              rule="hair"
+              title={heading("reproducibility", "Reproducibility identifiers")}
+            />
+            {prose("reproducibility")}
+          </section>
+        )}
+
+        {narrative.has("materials") && (
+          <section id="materials" className="report-section">
+            <SectionHead
+              number={num("materials")}
+              title={heading("materials", "Materials, credit, and license")}
+            />
+            {prose("materials")}
+          </section>
+        )}
 
         <section className="report-section report-bridge">
           <p className="prose">
