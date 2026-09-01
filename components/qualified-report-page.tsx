@@ -181,8 +181,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
   // Reading order, stated once. Section numbers follow this list, so inserting
   // a narrative section cannot leave the page numbered out of sequence.
   const ORDER = [
-    "result", "why-this-matters", "disclosure-standard", "recommendations",
-    "method", "accounting", "anchors", "does-not-establish", "bundle", "materials",
+    "five-questions", "why-this-matters", "result", "recommendations",
+    "disclosure-standard", "method", "accounting", "does-not-establish",
+    "anchors", "bundle", "materials",
   ];
   const num = (id: string) => String(ORDER.indexOf(id) + 1).padStart(2, "0");
   const narrative = new Map((report.narrative ?? []).map((s: NarrativeSection) => [s.slot, s]));
@@ -245,10 +246,51 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           </section>
         )}
 
+        <section id="five-questions" className="report-section">
+          <SectionHead
+            number={num("five-questions")}
+            title={heading("five-questions", "The five questions and their answers")}
+            standfirst="These questions were published in the experiment design before the benchmark ran."
+          />
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Fixed before the run</th>
+                  <th>Answer</th>
+                  <th>Proven by</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.question.preRegistered.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.question}</td>
+                    <td>{item.answer}</td>
+                    <td className="mono">{item.provenBy}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {prose("five-questions")}
+          <Footnote marker="1" href={report.question.designUrl}>
+            The design was posted publicly on {report.question.postedOn}, before any official result
+            existed.
+          </Footnote>
+        </section>
+
+        <section id="why-this-matters" className="report-section">
+          <SectionHead
+            number={num("why-this-matters")}
+            title={heading("why-this-matters", "Why this matters")}
+          />
+          {prose("why-this-matters")}
+        </section>
+
         <section id="result" className="report-section">
           <SectionHead
             number={num("result")}
-            title="Result"
+            title="Results"
             standfirst={report.result.methodStatement}
           />
           <p className="report-reading">{report.result.primary}</p>
@@ -286,12 +328,12 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           <p className="report-reading">{report.result.interpretation}</p>
         </section>
 
-        <section id="why-this-matters" className="report-section">
+        <section id="recommendations" className="report-section">
           <SectionHead
-            number={num("why-this-matters")}
-            title={heading("why-this-matters", "Why this matters")}
+            number={num("recommendations")}
+            title={heading("recommendations", "Recommendations")}
           />
-          {prose("why-this-matters")}
+          {prose("recommendations")}
         </section>
 
         <section id="disclosure" className="report-section">
@@ -349,7 +391,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                 structurally inapplicable, so six is not a target every experiment can reach, and a
                 count would rank experiment shape rather than disclosure.
               </Callout>
-              <Footnote marker="1" href={`${bundleBase}/${disclosure.recordPath}`}>
+              <Footnote marker="3" href={`${bundleBase}/${disclosure.recordPath}`}>
                 The declaration is a sealed record in the bundle, {shortDigest(disclosure.recordSha256)},
                 written by <code>{disclosure.author}</code> over this run&apos;s result matrix{" "}
                 {shortDigest(disclosure.subjectSha256)}, against the standard at{" "}
@@ -359,19 +401,11 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           )}
         </section>
 
-        <section id="recommendations" className="report-section">
-          <SectionHead
-            number={num("recommendations")}
-            title={heading("recommendations", "Recommendations")}
-          />
-          {prose("recommendations")}
-        </section>
-
         <section id="method" className="report-section">
           <SectionHead
             number={num("method")}
             title="Method"
-            standfirst="The judge prompts under test, the questions fixed before the run, and the settings held constant across every arm."
+            standfirst="The judge prompts under test and the settings held constant across every arm."
           />
           <div className="table-scroll">
             <table className="data-table">
@@ -434,30 +468,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               </dl>
             </div>
           </div>
-          <div className="table-scroll">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Fixed before the run</th>
-                  <th>Answer</th>
-                  <th>Proven by</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.question.preRegistered.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.question}</td>
-                    <td>{item.answer}</td>
-                    <td className="mono">{item.provenBy}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Footnote marker="3" href={report.question.designUrl}>
-            The design was posted publicly on {report.question.postedOn}, before any official result
-            existed.
-          </Footnote>
+
         </section>
 
         <section id="accounting" className="report-section">
@@ -562,6 +573,23 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           )}
         </section>
 
+        <section id="limitations" className="report-section">
+          <SectionHead
+            number={num("does-not-establish")}
+            title={heading("does-not-establish", "What this does not show")}
+          />
+          {prose("does-not-establish")}
+          <h3 className="narrative-heading">Venue limitations carried in the claim package</h3>
+          <ul className="limits-list" style={{ marginTop: 0 }}>
+            {report.limitations.map((limitation) => (
+              <li key={limitation}>{limitation}</li>
+            ))}
+          </ul>
+          <Callout kind="limitation" title="Self-run venue">
+            {report.selfRunDisclosure}
+          </Callout>
+        </section>
+
         <section id="anchors" className="report-section">
           <SectionHead
             number={num("anchors")}
@@ -612,23 +640,6 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             bundle&apos;s owner. Trust material is the reader&apos;s to supply, so a proof reads here as
             carried, never as evaluated.
           </Footnote>
-        </section>
-
-        <section id="limitations" className="report-section">
-          <SectionHead
-            number={num("does-not-establish")}
-            title={heading("does-not-establish", "What this does not show")}
-          />
-          {prose("does-not-establish")}
-          <h3 className="narrative-heading">Venue limitations carried in the claim package</h3>
-          <ul className="limits-list" style={{ marginTop: 0 }}>
-            {report.limitations.map((limitation) => (
-              <li key={limitation}>{limitation}</li>
-            ))}
-          </ul>
-          <Callout kind="limitation" title="Self-run venue">
-            {report.selfRunDisclosure}
-          </Callout>
         </section>
 
         <section id="bundle" className="report-section">
@@ -720,19 +731,8 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           )}
         </section>
 
-        {narrative.has("reproducibility") && (
-          <section id="reproducibility" className="report-section">
-            <SectionHead
-              level={3}
-              rule="hair"
-              title={heading("reproducibility", "Reproducibility identifiers")}
-            />
-            {prose("reproducibility")}
-          </section>
-        )}
-
         {narrative.has("materials") && (
-          <section id="materials" className="report-section">
+        <section id="materials" className="report-section">
             <SectionHead
               number={num("materials")}
               title={heading("materials", "Materials, credit, and license")}

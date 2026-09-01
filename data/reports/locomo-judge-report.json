@@ -509,6 +509,16 @@
       ]
     },
     {
+      "slot": "five-questions",
+      "heading": "The five questions and their answers",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "A separate consistency gate found that three of five applicable graders did not treat equivalent set-answer operations consistently."
+        }
+      ]
+    },
+    {
       "slot": "why-this-matters",
       "heading": "Why this matters",
       "blocks": [
