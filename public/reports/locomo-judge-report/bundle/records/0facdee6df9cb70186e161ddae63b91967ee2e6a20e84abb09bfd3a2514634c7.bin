@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'Woodhaven', which matches the gold answer, even though it adds 'Midwest' for additional context.",
+  "label": "CORRECT"
+}
+```

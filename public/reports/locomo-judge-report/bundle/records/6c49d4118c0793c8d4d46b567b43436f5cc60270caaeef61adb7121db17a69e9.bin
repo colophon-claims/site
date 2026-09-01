@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not address Jolene's interest in video games, which is the reason given in the gold answer for why she puts off yoga.",
+  "label": "WRONG"
+}
+```

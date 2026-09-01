@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the number of pets, thus it does not contain any correct items from the gold answer.",
+  "label": "WRONG"
+}
+```

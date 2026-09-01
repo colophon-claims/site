@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies a date (21 August 2022) that falls within the week before 22 August 2022, making it consistent with the gold answer.",
+  "label": "CORRECT"
+}
+```

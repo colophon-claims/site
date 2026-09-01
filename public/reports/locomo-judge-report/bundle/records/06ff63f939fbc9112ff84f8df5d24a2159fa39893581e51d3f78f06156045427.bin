@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions activities that are not included in the gold answer, which specifically lists different forms of participation in the LGBTQ community, making it incorrect.",
+  "label": "WRONG"
+}
+```

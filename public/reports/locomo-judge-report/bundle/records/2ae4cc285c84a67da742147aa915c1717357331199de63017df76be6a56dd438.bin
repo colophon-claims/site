@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify that Joanna uses a stuffed animal dog named Tilly, which is the specific detail in the gold answer.",
+  "label": "WRONG"
+}
+```

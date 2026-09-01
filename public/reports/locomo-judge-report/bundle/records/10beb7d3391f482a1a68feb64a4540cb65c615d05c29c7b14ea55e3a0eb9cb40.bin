@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer contradicts the gold answer by stating that both achieved significant milestones, while the gold answer indicates setbacks.",
+  "label": "WRONG"
+}
+```

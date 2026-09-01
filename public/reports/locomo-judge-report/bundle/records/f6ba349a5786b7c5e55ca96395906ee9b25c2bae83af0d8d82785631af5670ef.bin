@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions similar concepts of healthy eating and exercise, but the specific activities differ, making it not a direct match with the gold answer.",
+  "label": "WRONG"
+}
+```

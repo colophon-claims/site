@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specifically mention Whispering Falls waterfall, which is the key detail in the gold answer, so it does not adequately address the question.",
+  "label": "WRONG"
+}
+```

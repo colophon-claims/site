@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions a type of yoga that is related to core strength, but it does not match the specific type mentioned in the gold answer.",
+  "label": "WRONG"
+}
+```

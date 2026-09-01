@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is within 14 days of the gold answer's date, making it acceptable.",
+  "label": "CORRECT"
+}
+```

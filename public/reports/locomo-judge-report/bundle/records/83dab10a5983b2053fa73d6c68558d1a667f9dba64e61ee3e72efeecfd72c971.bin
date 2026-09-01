@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not mention the specific item (stuffed animal dog Tilly) from the gold answer, but it implies a similar concept of a memento, which is not enough to be marked as CORRECT.",
+  "label": "WRONG"
+}
+```

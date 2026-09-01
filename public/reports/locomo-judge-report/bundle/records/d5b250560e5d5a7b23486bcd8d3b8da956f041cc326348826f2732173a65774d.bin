@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not address the concept of self-care, which is the focus of the gold answer, making it irrelevant to the question asked.",
+  "label": "WRONG"
+}
+```

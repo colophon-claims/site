@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the content of the sign as mentioned in the gold answer, which is about someone not being able to leave, making it too vague and not directly matching.",
+  "label": "WRONG"
+}
+```

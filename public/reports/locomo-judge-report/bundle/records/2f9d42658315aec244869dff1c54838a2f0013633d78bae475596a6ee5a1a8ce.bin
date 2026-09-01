@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'A digestive condition' is too vague and does not specifically mention 'gastritis', which is the ailment referred to in the gold answer.",
+  "label": "WRONG"
+}
+```

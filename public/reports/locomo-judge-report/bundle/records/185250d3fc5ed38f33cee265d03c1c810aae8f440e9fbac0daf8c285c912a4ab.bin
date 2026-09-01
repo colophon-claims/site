@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not include any of the correct items from the gold answer's list, focusing instead on different fields of study.",
+  "label": "WRONG"
+}
+```

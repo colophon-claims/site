@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer describes a different event (a cookout) rather than the small party mentioned in the gold answer, so it does not match the primary focus.",
+  "label": "WRONG"
+}
+```

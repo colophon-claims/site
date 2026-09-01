@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies the same number of attendees as the gold answer, just with additional wording, which maintains the primary focus.",
+  "label": "CORRECT"
+}
+```

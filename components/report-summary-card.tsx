@@ -1,9 +1,13 @@
 import { Mark } from "./mark";
 import {
+  DISCLOSURE_VARIABLE_KEYS,
+  disclosureVariableLabel,
+  formatPercent,
   formatRewardPpm,
   formatUtc,
   isEvidenceReport,
   isGroupedReport,
+  isQualifiedReport,
   shortDigest,
   type ReportData,
 } from "@/lib/reports";
@@ -29,6 +33,70 @@ export function ReportSummaryCard({
         </div>
         <div className="featured-report-foot">
           <span>Self-run venue</span><span>{shortDigest(report.digests.runSha256)}</span>
+        </div>
+      </article>
+    );
+  }
+  if (isQualifiedReport(report)) {
+    const arms = report.result.perArm;
+    const lowest = arms.find((arm) => arm.armId === report.result.spread.lowestArmId) ?? arms[0];
+    const highest = arms.find((arm) => arm.armId === report.result.spread.highestArmId) ?? arms[0];
+    // Which variables are proved, never how many. `outside-this-experiment`
+    // marks a variable that is structurally inapplicable, so six is not a
+    // target every experiment can reach, and one number per report rendered in
+    // a list of reports is a leaderboard whatever it is called.
+    const measured = report.disclosure === null
+      ? null
+      : DISCLOSURE_VARIABLE_KEYS.filter(
+        (key) => report.disclosure?.variables[key].status === "measured-here",
+      ).map((key) => disclosureVariableLabel(key).toLowerCase());
+    return (
+      <article className="featured-report-card">
+        <div className="featured-report-head">
+          <div className="featured-report-eyebrow">
+            <Mark size={12} /> {label}
+          </div>
+          <h3>{report.title}</h3>
+          <p>
+            {report.subject.benchmark.name} · {report.population.items} items ·{" "}
+            {report.subject.arms.length} judge prompts
+          </p>
+        </div>
+        <div className="featured-result">
+          <div>
+            <span>Agreement spread</span>
+            <strong>{report.result.spread.pointsBetween} pts</strong>
+          </div>
+          <dl>
+            <div>
+              <dt>Lowest</dt>
+              <dd>
+                {lowest.armId} {formatPercent(lowest.agreement.estimate)}
+              </dd>
+            </div>
+            <div>
+              <dt>Highest</dt>
+              <dd>
+                {highest.armId} {formatPercent(highest.agreement.estimate)}
+              </dd>
+            </div>
+            <div>
+              <dt>Accounting</dt>
+              <dd>
+                {report.accounting.cells.judged}/{report.accounting.cells.expected} calls
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <div className="featured-report-foot">
+          <span>
+            {measured === null
+              ? "No sealed disclosure record"
+              : measured.length === 0
+                ? "No variable measured here"
+                : `Measured here: ${measured.join(", ")}`}
+          </span>
+          <span>{shortDigest(report.digests.reportSha256)}</span>
         </div>
       </article>
     );

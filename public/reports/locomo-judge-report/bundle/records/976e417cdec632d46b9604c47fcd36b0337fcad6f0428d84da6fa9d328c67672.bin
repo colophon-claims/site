@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to reptiles in general, which does not specifically identify turtles as the animal both Nate and Joanna like, making it too vague.",
+  "label": "WRONG"
+}
+```

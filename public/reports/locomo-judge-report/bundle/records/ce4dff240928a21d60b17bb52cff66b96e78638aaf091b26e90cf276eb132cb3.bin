@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a different type of car preference than the gold answer, which specifies 'classic vintage cars'.",
+  "label": "WRONG"
+}
+```

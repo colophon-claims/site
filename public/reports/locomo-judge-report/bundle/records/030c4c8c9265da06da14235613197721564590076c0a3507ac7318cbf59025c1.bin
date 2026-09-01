@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer uses different adjectives ('frustrated' and 'hopeful') compared to the gold answer ('discouraged' and 'determined'), which changes the sentiment and does not match the original meaning.",
+  "label": "WRONG"
+}
+```

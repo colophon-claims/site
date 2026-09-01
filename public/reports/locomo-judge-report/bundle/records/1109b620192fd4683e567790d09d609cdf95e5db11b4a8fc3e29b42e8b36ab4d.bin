@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes the same names as the gold answer, just in a different order, which is acceptable.",
+  "label": "CORRECT"
+}
+```

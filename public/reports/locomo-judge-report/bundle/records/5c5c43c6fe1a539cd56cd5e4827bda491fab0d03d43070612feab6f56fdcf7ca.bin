@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not include any correct items from the gold answer and addresses a different reason for not doing yoga.",
+  "label": "WRONG"
+}
+```

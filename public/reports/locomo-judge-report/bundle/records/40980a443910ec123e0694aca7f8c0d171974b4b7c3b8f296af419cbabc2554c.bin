@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify 'sage' as the spice, which is essential to match the gold answer.",
+  "label": "WRONG"
+}
+```

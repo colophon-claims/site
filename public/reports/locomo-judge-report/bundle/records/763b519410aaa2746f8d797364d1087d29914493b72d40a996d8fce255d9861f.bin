@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions a different type of cookie, which does not match Evan's favorite food of ginger snaps.",
+  "label": "WRONG"
+}
+```

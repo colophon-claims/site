@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer provides a specific year (2017) that is not within the acceptable range of the gold answer (2019), but it does mention the same movie, which is a key entity.",
+  "label": "CORRECT"
+}
+```

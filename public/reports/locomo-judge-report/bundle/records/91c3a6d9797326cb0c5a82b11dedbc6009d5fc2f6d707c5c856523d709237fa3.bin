@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify 'Voyageurs National Park' and is too vague, failing to match the gold answer directly.",
+  "label": "WRONG"
+}
+```

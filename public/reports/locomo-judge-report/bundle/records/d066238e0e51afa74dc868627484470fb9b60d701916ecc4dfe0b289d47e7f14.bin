@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions different instruments (flute and cello) than those in the gold answer (clarinet and violin), making it incorrect.",
+  "label": "WRONG"
+}
+```

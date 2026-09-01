@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions different activities and concepts (clean eating, gym membership, cycling, yoga) that do not directly match the gold answer's focus on healthy eating, exercise routine, running, and hiking, indicating a lack of alignment in the specific lifestyle changes.",
+  "label": "WRONG"
+}
+```

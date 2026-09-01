@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'A few times' is vague but implies multiple instances, which aligns with the gold answer of 'three times'.",
+  "label": "CORRECT"
+}
+```

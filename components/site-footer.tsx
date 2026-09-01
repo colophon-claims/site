@@ -6,10 +6,24 @@ import { listReports } from "@/lib/reports";
  * "Built on Jinn." appears exactly twice on a page: the infrastructure note
  * and the legal line, both here. Links are real or absent. There are no pending
  * placeholders on a public page. */
-export function SiteFooter() {
+export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
   const reports = listReports();
   const report = reports[0];
   const reportHref = report === undefined ? "/reports/" : `/reports/${report.slug}/`;
+  if (quiet) {
+    return (
+      <footer className="site-footer site-footer-report">
+        <div className="site-footer-report-inner">
+          <p><strong>Colophon</strong> publishes the evidence and limitations with the result.</p>
+          <nav aria-label="Report footer">
+            <Link href="/reports/">Reports</Link>
+            <Link href="/docs/#verification">Verification guide</Link>
+          </nav>
+          <span>© 2026 Colophon</span>
+        </div>
+      </footer>
+    );
+  }
   return (
     <footer className="site-footer">
       <div className="site-footer-grid">

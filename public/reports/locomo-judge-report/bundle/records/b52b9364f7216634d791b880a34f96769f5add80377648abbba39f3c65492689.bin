@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions Montana, which is not the same as the gold answer of Alaska, indicating a lack of recall about the specific state visited during the internship.",
+  "label": "WRONG"
+}
+```

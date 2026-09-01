@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer addresses a different type of car preference and does not include any correct items from the gold answer.",
+  "label": "WRONG"
+}
+```

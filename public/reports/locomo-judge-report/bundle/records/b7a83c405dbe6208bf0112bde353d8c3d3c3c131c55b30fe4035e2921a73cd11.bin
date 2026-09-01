@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to attending a vintage car auction, which is not the same activity as attending a car modification workshop, making it incorrect.",
+  "label": "WRONG"
+}
+```

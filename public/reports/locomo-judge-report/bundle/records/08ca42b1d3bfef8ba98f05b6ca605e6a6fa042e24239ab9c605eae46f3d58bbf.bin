@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer indicates a location in the northeastern US, which includes Connecticut, but it does not specifically mention the state, making it too vague.",
+  "label": "WRONG"
+}
+```

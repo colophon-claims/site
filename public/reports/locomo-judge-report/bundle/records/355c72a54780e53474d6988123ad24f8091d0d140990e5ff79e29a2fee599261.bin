@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer states 'three', which does not match the gold answer of 'two', making it incorrect.",
+  "label": "WRONG"
+}
+```

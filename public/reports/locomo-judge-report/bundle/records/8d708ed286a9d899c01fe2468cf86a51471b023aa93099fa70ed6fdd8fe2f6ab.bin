@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions Thanksgiving, which is not the same as the gold answer of Christmas, indicating a misunderstanding of the holiday season related to Evan's wedding.",
+  "label": "WRONG"
+}
+```

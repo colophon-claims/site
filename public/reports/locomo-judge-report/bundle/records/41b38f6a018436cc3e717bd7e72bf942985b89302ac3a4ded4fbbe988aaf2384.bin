@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify that it was an art show, which is a key detail in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

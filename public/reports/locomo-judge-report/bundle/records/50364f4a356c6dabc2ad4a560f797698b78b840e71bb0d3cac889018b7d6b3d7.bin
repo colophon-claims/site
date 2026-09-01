@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies 'Toronto', which matches the location in the gold answer, even though it omits 'Canada'.",
+  "label": "CORRECT"
+}
+```

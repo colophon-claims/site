@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer provides the same date as the gold answer, just with a slightly different format, which makes it correct.",
+  "label": "CORRECT"
+}
+```

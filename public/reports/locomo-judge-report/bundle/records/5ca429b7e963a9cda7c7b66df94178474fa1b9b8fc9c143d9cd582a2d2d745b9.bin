@@ -1,0 +1,1 @@
+{"completeReviewRequired":true,"labels":["CORRECT","WRONG","indeterminate"],"protocol":"https://spec.jinn.network/binary-judgment/human-review-form/v1","question":"Is the candidate answer correct relative to the question and reference answer?","rationale":"optional"}

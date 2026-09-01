@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions volunteering at an environmental nonprofit, which is unrelated to the gold answer about interning at a well-known engineering firm.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'Woodhaven', which matches the gold answer, and the additional detail 'Midwest' does not change the correctness of the primary focus.",
+  "label": "CORRECT"
+}
+```

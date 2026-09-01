@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the console Nate owns, which is essential to match the gold answer.",
+  "label": "WRONG"
+}
+```

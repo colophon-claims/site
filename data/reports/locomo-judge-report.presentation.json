@@ -1,0 +1,826 @@
+{
+  "schema": "colophon.report-presentation/2",
+  "slug": "locomo-judge-report",
+  "title": "Judging the LoCoMo judges",
+  "summary": "A controlled benchmark of the grading prompts behind published LoCoMo scores. Six grading configurations judged the same 240 answers on the same model snapshot.",
+  "sealedAt": "2026-08-29T16:30:51Z",
+  "subject": {
+    "judgeModel": "gpt-4o-mini-2024-07-18",
+    "harness": {
+      "id": "inspect-ai-judge",
+      "version": "1"
+    },
+    "benchmark": {
+      "name": "LoCoMo",
+      "description": "A benchmark for long-term conversational memory, whose published scores are often produced with an LLM judge. This measures the graders, not the memory systems.",
+      "sha256": "9ae50617f9112b750518c04309b96648207f6d0e17ba044a077d0d5185b84c9e"
+    },
+    "arms": [
+      {
+        "id": "audited",
+        "label": "The EverMemOS-derived prompt reconstructed in the community audit",
+        "instrumentSha256": "sha256:1956c8fe0a7a10b6301e111fe83a6446c612d7371953302b8c77b2d025fc25b5"
+      },
+      {
+        "id": "backboard",
+        "label": "Backboard's posted prompt",
+        "instrumentSha256": "sha256:4771a07e88e8acb4a084255bf2ba8cbe62e36004601a0a00856d6f0fb0dfee8b"
+      },
+      {
+        "id": "mem0",
+        "label": "Mem0's posted prompt",
+        "instrumentSha256": "sha256:ed91e8559bc259142a22b26d36126334b97704b48e9711e41ddd3866f6fa4f0f"
+      },
+      {
+        "id": "mem0-evidence",
+        "label": "The Mem0 prompt with the dataset's source evidence added",
+        "instrumentSha256": "sha256:47473dfe08a02038ba35192fb8a430c0c3cf3680545e20c478bd1197d3e04b1a"
+      },
+      {
+        "id": "revised",
+        "label": "The successor rubric from mem0ai/memory-benchmarks",
+        "instrumentSha256": "sha256:8b8ae208c62dd4afe0c8cceb58a18b11511158324d106dd7bfac60863ae29476"
+      },
+      {
+        "id": "strict-dial",
+        "label": "The stricter community variant posted by @dial481",
+        "instrumentSha256": "sha256:d7f663de1795438f28c7f7c8a2aa3288d12ad6a3e41186321ce3b1c8ffd417e2"
+      }
+    ]
+  },
+  "question": {
+    "designUrl": "https://github.com/snap-research/locomo/issues/23#issuecomment-5334425775",
+    "postedOn": "2026-08-18",
+    "preRegistered": [
+      {
+        "id": "q1",
+        "question": "How often does each judge accept a known-wrong answer, and does the type of wrong answer matter?",
+        "answer": "A great deal. Acceptance ranged from 2.5% to 28.8% for specific wrong answers and from 32.5% to 88.8% for vague, on-topic wrong answers. Every judge was substantially more forgiving of vagueness.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q2",
+        "question": "What does a stricter judge cost in rejected right answers?",
+        "answer": "Very little when the reference answer is correct. Across 479 scored right answers, there was one rejection. The tradeoff appears when the reference answer itself is wrong.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q3",
+        "question": "Does changing the grader change the LoCoMo score?",
+        "answer": "Yes. On identical answers, agreement with the labels ranged from 60.8% to 87.9% depending only on the grader.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q4",
+        "question": "Does showing the judge the source evidence matter?",
+        "answer": "Yes. In this setup, evidence made the judge more permissive, not more accurate. The evidence-fed configuration accepted 7.7 percentage points more answers overall, with nearly all of the increase coming from vague wrong answers. Its overall agreement was lower, not higher.",
+        "provenBy": "this-bundle"
+      },
+      {
+        "id": "q5",
+        "question": "When the answer key is wrong, does the judge follow the key or the truth?",
+        "answer": "It depends on the grader. Against a true answer, broken-key following ranged from 10% to 70%. Every grader accepted all 20 true answers once the key was corrected.",
+        "provenBy": "this-bundle"
+      }
+    ]
+  },
+  "execution": {
+    "judgePrompts": {
+      "count": 6,
+      "provenance": "already present in the LoCoMo ecosystem or community discussion"
+    },
+    "modelSnapshot": {
+      "id": "gpt-4o-mini-2024-07-18",
+      "temperature": "0.0",
+      "profile": "dated-snapshot-sampling"
+    },
+    "replicates": 3,
+    "reduction": "strict-majority",
+    "abstainPolicy": {
+      "parserInvalid": "abstain",
+      "description": "Unparseable responses were recorded as neutral rather than converted into rejections."
+    },
+    "intervals": "Wilson, alpha 0.05",
+    "truthAdmission": "screened-operator-sampled",
+    "venue": "self-run"
+  },
+  "result": {
+    "primary": "Changing only the grader moved agreement with the same correctness labels from 60.8% to 87.9%. Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer.",
+    "perArm": [
+      {
+        "armId": "audited",
+        "agreement": {
+          "numerator": 197,
+          "denominator": 240,
+          "estimate": "0.8208",
+          "wilsonInterval": {
+            "low": "0.7674",
+            "high": "0.8642"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 9,
+          "denominator": 80,
+          "estimate": "0.1125",
+          "wilsonInterval": {
+            "low": "0.0603",
+            "high": "0.2002"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 34,
+          "denominator": 80,
+          "estimate": "0.4250",
+          "wilsonInterval": {
+            "low": "0.3226",
+            "high": "0.5343"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "backboard",
+        "agreement": {
+          "numerator": 164,
+          "denominator": 240,
+          "estimate": "0.6833",
+          "wilsonInterval": {
+            "low": "0.6220",
+            "high": "0.7389"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 14,
+          "denominator": 80,
+          "estimate": "0.1750",
+          "wilsonInterval": {
+            "low": "0.1072",
+            "high": "0.2726"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 62,
+          "denominator": 80,
+          "estimate": "0.7750",
+          "wilsonInterval": {
+            "low": "0.6721",
+            "high": "0.8527"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "mem0",
+        "agreement": {
+          "numerator": 188,
+          "denominator": 240,
+          "estimate": "0.7833",
+          "wilsonInterval": {
+            "low": "0.7270",
+            "high": "0.8308"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 10,
+          "denominator": 80,
+          "estimate": "0.1250",
+          "wilsonInterval": {
+            "low": "0.0693",
+            "high": "0.2150"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 42,
+          "denominator": 80,
+          "estimate": "0.5250",
+          "wilsonInterval": {
+            "low": "0.4170",
+            "high": "0.6308"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "mem0-evidence",
+        "agreement": {
+          "numerator": 163,
+          "denominator": 233,
+          "estimate": "0.6996",
+          "wilsonInterval": {
+            "low": "0.6379",
+            "high": "0.7548"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 11,
+          "denominator": 76,
+          "estimate": "0.1447",
+          "wilsonInterval": {
+            "low": "0.0828",
+            "high": "0.2409"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 59,
+          "denominator": 78,
+          "estimate": "0.7564",
+          "wilsonInterval": {
+            "low": "0.6506",
+            "high": "0.8381"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 79,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0464"
+          }
+        }
+      },
+      {
+        "armId": "revised",
+        "agreement": {
+          "numerator": 146,
+          "denominator": 240,
+          "estimate": "0.6083",
+          "wilsonInterval": {
+            "low": "0.5453",
+            "high": "0.6679"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 23,
+          "denominator": 80,
+          "estimate": "0.2875",
+          "wilsonInterval": {
+            "low": "0.1999",
+            "high": "0.3946"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 71,
+          "denominator": 80,
+          "estimate": "0.8875",
+          "wilsonInterval": {
+            "low": "0.7998",
+            "high": "0.9397"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 0,
+          "denominator": 80,
+          "estimate": "0.0000",
+          "wilsonInterval": {
+            "low": "0.0000",
+            "high": "0.0458"
+          }
+        }
+      },
+      {
+        "armId": "strict-dial",
+        "agreement": {
+          "numerator": 211,
+          "denominator": 240,
+          "estimate": "0.8792",
+          "wilsonInterval": {
+            "low": "0.8318",
+            "high": "0.9145"
+          }
+        },
+        "acceptsSpecificWrong": {
+          "numerator": 2,
+          "denominator": 80,
+          "estimate": "0.0250",
+          "wilsonInterval": {
+            "low": "0.0069",
+            "high": "0.0866"
+          }
+        },
+        "acceptsVagueTopicalWrong": {
+          "numerator": 26,
+          "denominator": 80,
+          "estimate": "0.3250",
+          "wilsonInterval": {
+            "low": "0.2324",
+            "high": "0.4336"
+          }
+        },
+        "rejectsCorrect": {
+          "numerator": 1,
+          "denominator": 80,
+          "estimate": "0.0125",
+          "wilsonInterval": {
+            "low": "0.0022",
+            "high": "0.0675"
+          }
+        }
+      }
+    ],
+    "spread": {
+      "lowestArmId": "revised",
+      "highestArmId": "strict-dial",
+      "pointsBetween": "27.1"
+    },
+    "interpretation": "This is a benchmark of graders, not memory systems. It does not rank or re-score any memory product, and it cannot establish which published system is better.",
+    "methodStatement": "Agreement with the same correctness labels. Each answer was graded three times under every configuration; the final verdict was the majority of those calls. Intervals are 95% Wilson intervals."
+  },
+  "population": {
+    "items": 240,
+    "perCandidateClass": [
+      {
+        "candidateClass": "correct",
+        "items": 80
+      },
+      {
+        "candidateClass": "specific-wrong",
+        "items": 80
+      },
+      {
+        "candidateClass": "vague-topical-wrong",
+        "items": 80
+      }
+    ],
+    "perStratum": [
+      {
+        "stratum": "category-1",
+        "items": 60
+      },
+      {
+        "stratum": "category-2",
+        "items": 60
+      },
+      {
+        "stratum": "category-3",
+        "items": 60
+      },
+      {
+        "stratum": "category-4",
+        "items": 60
+      }
+    ],
+    "labels": "The candidate pool contained 664 items, screened against the question, reference answer, and dataset evidence. The operator hand-reviewed 255 items selected from flagged cases and a preselected sample. The process excluded 137 candidates, including 52 from the initial main-bank selection, and replaced them while preserving the final 80/80/80 class balance and equal category balance. Labels are therefore screened and sampled, not equivalent to independent annotation by two human raters."
+  },
+  "accounting": {
+    "cells": {
+      "expected": 4320,
+      "judged": 4320,
+      "lost": 0
+    },
+    "parserNeutral": {
+      "calls": 22,
+      "denominator": 4320,
+      "policy": "abstain",
+      "note": "Unparseable responses were recorded as neutral rather than converted into rejections, all of them in the evidence-fed configuration. The evidence-fed items consequently left without a valid majority appear as explicit exclusions."
+    },
+    "excludedItems": {
+      "count": 7,
+      "byArm": [
+        {
+          "armId": "mem0-evidence",
+          "items": 7
+        }
+      ]
+    },
+    "completenessFloor": "0.995",
+    "runOutcome": "complete"
+  },
+  "manipulationCheck": {
+    "replicateInstability": {
+      "unstableItems": 21,
+      "gradedItems": 240
+    },
+    "conflictedCells": 0,
+    "companionChecks": [
+      {
+        "name": "Consistency across equivalent list answers",
+        "finding": "Three of five graders changed their decision across equivalent list-answer cases.",
+        "provenBy": "companion-bundle"
+      },
+      {
+        "name": "Behavior with a wrong answer key",
+        "finding": "Depending on the grader, 10% to 70% of true answers were rejected when the key was wrong. Every grader accepted all 20 once the key was corrected.",
+        "provenBy": "companion-bundle"
+      }
+    ]
+  },
+  "limitations": [
+    "This is a local, self-run venue: the same operator controls task dispatch, execution, and evaluation.",
+    "Pre-registration here is a discipline enforced by this tool, not a proof against the run's own owner — nothing prevents the owner from having altered the record before publishing it.",
+    "Run pinning on the harness, model, and loadout axes is enforced by an admission gate at dispatch time. The isolation axis is unverifiable: this configured venue admits both unrestricted and OCI-container execution, so its multi-policy inventory cannot establish containment from admission alone.",
+    "Cost figures, where present, are self-reported by this venue and were never independently settled.",
+    "Distinct solver and evaluator identities prove agent-distinctness only — each evaluator identity is backed by its own workspace-minted signing key, whose verdict signature this product verifies — not that they are independent real-world parties.",
+    "Truth uses screened-operator-sampled admission: a pinned model screens every item and the operator hand-checks the flagged set plus a random sample; this proves screen-hand agreement on that sample, not independent two-human truth.",
+    "prompt-compliance-not-machine-verified",
+    "provider-execution-not-machine-verified",
+    "transcript-provenance-not-machine-verified",
+    "mutable-model-alias-weights-not-machine-verified"
+  ],
+  "selfRunDisclosure": "Distinct evaluator identities are workspace-minted keys; they prove agent-distinctness, not party-independence, on this self-run venue.",
+  "verification": {
+    "bundleFormat": "benchmark-product-public-bundle/7",
+    "checks": [
+      "manifest",
+      "evidence-closure",
+      "trust",
+      "matrix-rederivation",
+      "report-verification",
+      "claim-consistency",
+      "integrity-anchors"
+    ],
+    "command": "npx @colophon-claims/verify@0.2.1 <bundle-dir>",
+    "compatibleCommand": "npx @colophon-claims/verify@0.2 <bundle-dir>",
+    "readerAvailability": "available",
+    "reportEnvelopeSha256": "4b16846a5ca64585867c55ce853afc0cdaafaaa947de7b6c15cb4de130396fe1",
+    "reportSha256": "7869bab3a30defb29f171d7f572e68020edca789cfa7695ebe0a4621a9be5edd"
+  },
+  "provenance": {
+    "runSha256": "481c9680e005eb7814f7120a56ef2242ba8167802571416ec363f6a743a6730e",
+    "benchmarkSha256": "9ae50617f9112b750518c04309b96648207f6d0e17ba044a077d0d5185b84c9e",
+    "matrixSha256": "04de526b99dfa7180c875108101eaacbdfabe9a50a90ef317eca4c879ce1eb35",
+    "reportSha256": "7869bab3a30defb29f171d7f572e68020edca789cfa7695ebe0a4621a9be5edd",
+    "reportEnvelopeSha256": "4b16846a5ca64585867c55ce853afc0cdaafaaa947de7b6c15cb4de130396fe1",
+    "anchors": [
+      {
+        "subject": "lock",
+        "provider": "https://spec.jinn.network/trust/anchor-profiles/opentimestamps/v1",
+        "recordSha256": "18a34061bb1d7dce5ef8eab9e69371e9db4318909d065a955154f5115190d54d"
+      }
+    ],
+    "siblingAnalyses": [],
+    "companionBundles": []
+  },
+  "narrative": [
+    {
+      "slot": "opening",
+      "heading": null,
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "LoCoMo is a benchmark for long-term conversational memory. Its published scores are often produced with an LLM judge: a model reads a question, a reference answer, and a candidate answer, then decides whether the candidate should count as correct."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The problem is that there is no single LoCoMo LLM judge. Different published results use different judge prompts, models, and inputs, then place the resulting scores next to one another as though the grading instrument had stayed fixed."
+        },
+        {
+          "kind": "paragraph",
+          "text": "This benchmark measures how much that choice matters. Six grading configurations judged the same 240 answers on the same model snapshot. The configurations varied the judge prompt; one paired configuration also varied whether the judge received source evidence. Two additional tests examined consistency and behavior when the official answer key is wrong."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The central finding is simple: changing only the grader moved agreement with the same correctness labels from 60.8% to 87.9%.",
+          "strong": true
+        },
+        {
+          "kind": "paragraph",
+          "text": "The spread caused by changing the grader was 27.1 percentage points on the same answers. That is larger than many of the differences used to compare memory systems. Two scores produced by different graders are measurements from different instruments. Their numerical difference cannot be attributed to the memory systems alone."
+        },
+        {
+          "kind": "paragraph",
+          "text": "Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer. Three of five graders were internally inconsistent on list-answer cases involving subsets and supersets. When the answer key was wrong, graders followed the broken key against a true answer between 10% and 70% of the time."
+        },
+        {
+          "kind": "paragraph",
+          "text": "This is a benchmark of graders, not memory systems. It does not rank or re-score any memory product, and it cannot establish which published system is better."
+        }
+      ]
+    },
+    {
+      "slot": "five-questions",
+      "heading": "The five questions and their answers",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "A separate consistency test found that three of five applicable graders did not treat equivalent list-answer cases consistently."
+        }
+      ]
+    },
+    {
+      "slot": "recommendations",
+      "heading": "Recommendations",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "Six actions for more reliable LoCoMo judging"
+        },
+        {
+          "kind": "list",
+          "ordered": true,
+          "items": [
+            "**Audit answer keys before tightening the judge.** Strict grading caused only one false rejection across 479 right answers when the key was correct, but the strictest grader rejected 70% of true answers paired with broken keys. Adopt the audit's corrected keys, verify them, then standardize a stricter judge.",
+            "**Require answers to state the requested fact.** Every judge struggled more with vague, on-topic answers; even the strictest accepted 32.5%. Test a judge that first identifies the exact value an answer gives, then compares it with the reference. If no value is given, the answer fails.",
+            "**Add a third verdict for a likely broken key.** Every grader accepted all 20 true answers once the key was corrected. When an answer contradicts the reference but is supported by evidence, send it to review instead of automatically marking it wrong.",
+            "**Test consistency with both accept and reject cases.** The two graders that passed the current test accepted every probe, so it rewarded leniency as well as consistency. A replacement should include cases where rejection is the only consistent decision.",
+            "**Spend evaluation effort on more items and better keys.** Repeat disagreement was 1.6% overall and 2.9% at worst, while grader choice moved agreement by 27.1 points. On this bank, broader coverage and key auditing are more valuable than additional repeated calls.",
+            "**Tell the judge how to use evidence.** Simply adding source evidence raised acceptance by 7.7 points and lowered agreement from 78.3% to 70.0%; almost all extra acceptances were wrong. A reference prompt should require explicit comparison with the evidence, not merely include it as context."
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "The practical recommendation is one versioned LoCoMo reference judge, used with audited answer keys.",
+          "strong": true
+        },
+        {
+          "kind": "paragraph",
+          "text": "It should identify the fact an answer commits to, compare that fact with the reference, and allow review when the key appears wrong. These design changes remain proposals for a follow-up benchmark, not findings of this run."
+        },
+        {
+          "kind": "heading",
+          "text": "How to use LoCoMo scores today"
+        },
+        {
+          "kind": "list",
+          "items": [
+            "Compare scores only when the grading configuration matches; otherwise, do not treat the difference as a memory-system effect.",
+            "Require the judge model, prompt, evidence input, parser behavior, and repeated-call rule.",
+            "Publish error rates separately for specific wrong and vague wrong answers.",
+            "Treat small score gaps cautiously when grader choice can move agreement by 27.1 points."
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "disclosure-standard",
+      "heading": "The disclosure standard this benchmark supports",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "A LoCoMo score is not fully specified by the memory system's name and final percentage. It is the product of an answer pipeline and a grading pipeline. A comparable result must disclose the six choices that define those pipelines."
+        },
+        {
+          "kind": "heading",
+          "text": "The six variables"
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Variable",
+            "What it describes"
+          ],
+          "rows": [
+            [
+              "Ingestion model",
+              "What reads the source conversation and builds the memory or index"
+            ],
+            [
+              "Retrieval configuration",
+              "How information is selected, including search strategy, depth, and limits"
+            ],
+            [
+              "Answer model",
+              "What produces the candidate answer"
+            ],
+            [
+              "Answer prompt",
+              "The instructions under which the candidate answer is produced"
+            ],
+            [
+              "Judge model",
+              "What grades the candidate against the reference answer"
+            ],
+            [
+              "Judge prompt",
+              "The grading instructions and the complete input shown to the judge"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Whether the judge receives source evidence belongs in the judge-prompt entry because it changes the judge's input. Parser behavior and repeated-call aggregation should be reported alongside the judge configuration."
+        },
+        {
+          "kind": "heading",
+          "text": "Three ways to report each variable"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Each of the six variables must have one of three states:"
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "State shown in a report",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "Measured in this benchmark",
+              "The experiment fixed and recorded the variable itself"
+            ],
+            [
+              "Reported by the publisher",
+              "The publisher stated the choice, but this experiment did not measure or independently establish it"
+            ],
+            [
+              "Not reported",
+              "The choice is unknown, not stated, or not applicable"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Unknown information must be reported as not reported, not omitted or inferred from a repository name, model family, or surrounding context. Evidence belongs only with a choice measured in the benchmark. A publisher statement may be cited, but it should not be presented as an independent measurement."
+        },
+        {
+          "kind": "heading",
+          "text": "Why the benchmark supports this standard"
+        },
+        {
+          "kind": "paragraph",
+          "text": "This benchmark directly measures the importance of the grading variables. Holding the answer bank and judge model fixed while changing the judge prompt moved agreement from 60.8% to 87.9%. Holding the Mem0 prompt family fixed while adding source evidence changed acceptance by 7.7 percentage points. The judge prompt and the judge's input therefore change the meaning of the resulting score."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The experiment did not vary the first four variables. They still need disclosure because they determine which candidate answers reach the grader. Without them, a reader cannot distinguish a memory-system effect from a retrieval, generation, or answer-style effect. The benchmark establishes the grader side of the problem; the complete reporting standard covers the whole measurement pipeline."
+        },
+        {
+          "kind": "paragraph",
+          "text": "A LoCoMo score without all six entries is an incompletely described measurement. Scores produced under different disclosed configurations should not be treated as directly comparable.",
+          "strong": true
+        },
+        {
+          "kind": "heading",
+          "text": "This report's disclosure"
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Variable",
+            "State",
+            "Declaration"
+          ],
+          "rows": [
+            [
+              "Ingestion model",
+              "Not reported",
+              "The published source materials do not identify what produced the upstream memories or indexes"
+            ],
+            [
+              "Retrieval configuration",
+              "Not reported",
+              "The published source materials do not identify the retrieval settings used upstream"
+            ],
+            [
+              "Answer model",
+              "Not reported",
+              "The candidate-answer files do not identify the model that wrote every answer"
+            ],
+            [
+              "Answer prompt",
+              "Not reported",
+              "The candidate-answer files do not identify the complete answering instructions"
+            ],
+            [
+              "Judge model",
+              "Measured in this benchmark",
+              "All grading calls used `gpt-4o-mini-2024-07-18` at temperature zero"
+            ],
+            [
+              "Judge prompt",
+              "Measured in this benchmark",
+              "The six grading configurations and their input shapes were fixed and recorded by this benchmark"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Four entries are marked not reported. That is the honest description of a grader benchmark that used candidate answers produced elsewhere. This report makes no claim about upstream choices that its source materials cannot establish."
+        }
+      ]
+    },
+    {
+      "slot": "does-not-establish",
+      "heading": "What this benchmark does not establish",
+      "blocks": [
+        {
+          "kind": "list",
+          "items": [
+            "It does not evaluate or rank memory systems.",
+            "It tests one dated judge-model snapshot on a balanced 240-answer diagnostic bank. Rates may differ on another model, snapshot, or answer distribution.",
+            "The correctness labels were model-screened and selectively reviewed by the authors, not independently labelled by multiple human annotators.",
+            "The 20 broken-key items and 12 consistency probes demonstrate mechanisms; they do not estimate how common those problems are in ordinary benchmark runs.",
+            "The authors operated the experiment themselves. Colophon verifies the published files and their internal consistency, but not the provider's internal execution or the authors' organizational independence."
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "reproducibility",
+      "heading": "Data and verification",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Download the full result data, grading outputs, prompts, and analysis files from the published evidence package. Colophon packages these materials and checks that the files used by this report have not changed since publication."
+        },
+        {
+          "kind": "paragraph",
+          "text": "File verification confirms the integrity of the published materials. It does not prove that the correctness labels are right or independently verify the model provider's internal execution. Independent timestamping is pending."
+        },
+        {
+          "kind": "heading",
+          "text": "Technical verification details"
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Companion run",
+            "Record",
+            "SHA-256"
+          ],
+          "rows": [
+            [
+              "Consistency gate",
+              "Run",
+              "`06ae9e458b12562015296228297828e22f291ec0c73ec6833eec4288f0511be6`"
+            ],
+            [
+              "Consistency gate",
+              "Result matrix",
+              "`aaeddc612a8625d598ccce4ffa03318ed546cce3854912244baa4cce91a79d60`"
+            ],
+            [
+              "Consistency gate",
+              "Current bundle",
+              "`d1535f32bfa850f2e5ecedcae4be97e17e6dedff37aebe412f2ef6d36fc6a404`"
+            ],
+            [
+              "Corrupt-key test",
+              "Run",
+              "`bdc3b0e2ac4c22e9a859b5879118af7df3939ad4501ea3afd4c8ede0770e509d`"
+            ],
+            [
+              "Corrupt-key test",
+              "Result matrix",
+              "`2a788dc9cdcaa53260dac8b0f7728d3bfd62aac24ccfcbaddc213fa0729ea2d7`"
+            ],
+            [
+              "Corrupt-key test",
+              "Current bundle",
+              "`271f87db4e616992dea75483ec69e92624ab7fc84aeb32e6a0bc82674dc506ed`"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Each bundle was verified from outside the workspace that produced it, and every tested tamper variant was rejected."
+        }
+      ]
+    },
+    {
+      "slot": "materials",
+      "heading": "Materials, credit, and license",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "This benchmark builds on the published materials in [dial481/locomo-audit](https://github.com/dial481/locomo-audit), with the author's stated permission, and on judge prompts posted by Backboard, Mem0, and community contributors in the [LoCoMo discussion](https://github.com/snap-research/locomo/issues/23). The audited judge prompt derives from [EverMemOS](https://github.com/EverMind-AI/EverMemOS), and the revised rubric from [mem0ai/memory-benchmarks](https://github.com/mem0ai/memory-benchmarks), both under Apache-2.0. The consistency examples originated with @AnitaLeungxx, and the strict variant and audit materials with @dial481."
+        },
+        {
+          "kind": "paragraph",
+          "text": "The underlying dataset is [LoCoMo](https://github.com/snap-research/locomo). LoCoMo and the audit annotations are CC BY-NC 4.0. This report and the selected derived materials are released under the same non-commercial license, with source pointers rather than full conversation data."
+        }
+      ]
+    }
+  ],
+  "derivedFigures": {
+    "agreementLow": "60.8%",
+    "agreementHigh": "87.9%",
+    "agreementSpreadPoints": "27.1",
+    "vagueWrongAcceptLow": "32.5%",
+    "vagueWrongAcceptHigh": "88.8%",
+    "rightAnswersScored": 479,
+    "rightAnswersRejected": 1,
+    "pairedItems": 233,
+    "plainPromptAgreement": "78.3%",
+    "evidencePromptAgreement": "70.0%",
+    "repeatDisagreementOverall": "1.6%",
+    "repeatDisagreementWorst": "2.9%",
+    "evidenceAcceptanceDeltaPoints": "7.7",
+    "evidenceAcceptanceDirection": "more"
+  }
+}

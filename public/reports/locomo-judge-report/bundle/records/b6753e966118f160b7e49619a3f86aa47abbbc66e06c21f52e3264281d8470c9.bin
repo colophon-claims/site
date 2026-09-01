@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'Two Priuses' matches the gold answer 'two' in meaning, as both indicate the same quantity of Prius vehicles owned by Evan.",
+  "label": "CORRECT"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer states July 2023, which does not match the gold answer of June 2023, making it incorrect.",
+  "label": "WRONG"
+}
+```

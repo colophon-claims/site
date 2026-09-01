@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions different challenges and methods of addressing them that do not align with the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

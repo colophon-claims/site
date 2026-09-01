@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions challenges related to cravings and schedule management, which are relevant but not the same as the gold answer's focus on motivation and dietary changes; however, the methods of addressing challenges differ significantly, making the generated answer not aligned with the gold answer.",
+  "label": "WRONG"
+}
+```

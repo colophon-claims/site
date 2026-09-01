@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer provides a vague timeframe that is consistent with the gold answer's date, falling within the same month.",
+  "label": "CORRECT"
+}
+```

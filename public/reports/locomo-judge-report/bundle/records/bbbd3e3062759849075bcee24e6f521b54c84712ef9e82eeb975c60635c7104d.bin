@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions different countries than the gold answer, so it does not match the topic of the question.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the exact date of 'the Friday before 22 August, 2023', making it too vague and not matching the gold answer.",
+  "label": "WRONG"
+}
+```

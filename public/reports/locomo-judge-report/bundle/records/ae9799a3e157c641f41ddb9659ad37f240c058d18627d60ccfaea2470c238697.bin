@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes both items from the gold answer's list.",
+  "label": "CORRECT"
+}
+```

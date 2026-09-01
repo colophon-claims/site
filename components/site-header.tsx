@@ -5,7 +5,7 @@ import { LinkButton } from "./link-button";
 /** Adapted from the vendored site ui_kit's SiteHeader
  * (vendor/design-system/reference/ui_kits/site/Site.jsx): same rules and
  * spacing, real links instead of the kit's demo nav. */
-export function SiteHeader() {
+export function SiteHeader({ quiet = false }: { quiet?: boolean }) {
   return (
     <header className="site-header">
       <div className="site-header-inner">
@@ -16,10 +16,12 @@ export function SiteHeader() {
         <nav className="site-nav">
           <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
-          <Link href="/offer/">Standing offer</Link>
-          <span className="site-nav-cta">
-            <LinkButton href="/#contact" variant="primary">Bring a claim</LinkButton>
-          </span>
+          {!quiet && <Link href="/offer/">Standing offer</Link>}
+          {!quiet && (
+            <span className="site-nav-cta">
+              <LinkButton href="/#contact" variant="primary">Bring a claim</LinkButton>
+            </span>
+          )}
         </nav>
       </div>
     </header>

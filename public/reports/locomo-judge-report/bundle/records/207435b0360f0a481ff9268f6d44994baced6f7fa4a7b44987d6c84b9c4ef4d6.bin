@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer matches the gold answer exactly, indicating that it correctly identifies Evan's preferred type of vacation.",
+  "label": "CORRECT"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer contradicts the gold answer, providing incorrect information about how Jolene learned to play the console.",
+  "label": "WRONG"
+}
+```

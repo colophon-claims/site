@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a different weekend than the gold answer, as it specifies a date in April instead of the weekend before March 26, 2023.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions Vinyasa Yoga, which is not the same as Hatha Yoga, thus it does not correctly address the question about the specific type of yoga for building core strength that John might benefit from.",
+  "label": "WRONG"
+}
+```

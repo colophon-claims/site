@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the item given, which is essential to match the gold answer about the stuffed toy pup.",
+  "label": "WRONG"
+}
+```

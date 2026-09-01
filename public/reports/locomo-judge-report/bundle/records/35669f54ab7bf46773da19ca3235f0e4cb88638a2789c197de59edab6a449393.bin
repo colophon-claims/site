@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify Boston, which is the exact city mentioned in the gold answer, so it does not meet the criteria for being considered correct.",
+  "label": "WRONG"
+}
+```

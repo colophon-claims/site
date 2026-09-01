@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer lists different personality traits that do not match the traits provided in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a time period close to the gold answer but does not match the specific month provided.",
+  "label": "WRONG"
+}
+```

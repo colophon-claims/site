@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'France' directly matches the gold answer 'In France' in terms of the country mentioned.",
+  "label": "CORRECT"
+}
+```

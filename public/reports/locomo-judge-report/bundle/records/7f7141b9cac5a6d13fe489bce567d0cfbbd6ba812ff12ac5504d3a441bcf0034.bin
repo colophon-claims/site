@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer matches the gold answer in meaning, only omitting the article 'a', which does not change the essence of the response.",
+  "label": "CORRECT"
+}
+```

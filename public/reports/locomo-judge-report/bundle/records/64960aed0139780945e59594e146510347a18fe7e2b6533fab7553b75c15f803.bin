@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'Woodhaven', which is the same location as the gold answer, so it is considered correct despite the additional detail.",
+  "label": "CORRECT"
+}
+```

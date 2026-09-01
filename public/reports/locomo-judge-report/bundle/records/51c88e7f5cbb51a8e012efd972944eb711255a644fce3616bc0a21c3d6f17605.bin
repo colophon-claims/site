@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer describes the same item as the gold answer, just with an additional adjective, which maintains the primary focus on the 'rainbow sidewalk'.",
+  "label": "CORRECT"
+}
+```

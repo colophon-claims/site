@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer expresses a different emotional state ('frustrated but hopeful') compared to the gold answer ('discouraged but determined'), which indicates a mismatch in sentiment.",
+  "label": "WRONG"
+}
+```

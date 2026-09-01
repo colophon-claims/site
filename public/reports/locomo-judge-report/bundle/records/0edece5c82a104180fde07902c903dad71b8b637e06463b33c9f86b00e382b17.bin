@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer provides a different date than the gold answer, which does not match the specific time reference asked in the question.",
+  "label": "WRONG"
+}
+```

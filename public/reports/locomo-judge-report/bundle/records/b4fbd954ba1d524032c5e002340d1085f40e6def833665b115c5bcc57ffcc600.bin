@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer confirms the gold answer's implication that the friend is no longer alive, thus matching the primary focus.",
+  "label": "CORRECT"
+}
+```

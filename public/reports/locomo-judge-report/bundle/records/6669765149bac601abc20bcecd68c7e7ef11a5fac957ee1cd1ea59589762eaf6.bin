@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer contradicts the gold answer by stating that Caroline would likely want to pursue counseling, whereas the gold answer suggests she likely would not without support.",
+  "label": "WRONG"
+}
+```

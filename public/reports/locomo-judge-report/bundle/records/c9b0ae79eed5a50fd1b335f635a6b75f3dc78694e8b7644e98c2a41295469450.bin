@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer contradicts the gold answer by stating she wants to move back, which is not aligned with her current situation of adopting children.",
+  "label": "WRONG"
+}
+```

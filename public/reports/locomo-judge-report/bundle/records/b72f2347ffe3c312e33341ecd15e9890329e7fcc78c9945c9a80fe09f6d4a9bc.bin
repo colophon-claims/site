@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions ramen, which is a different food than the gold answer of sushi, so it does not match the topic.",
+  "label": "WRONG"
+}
+```

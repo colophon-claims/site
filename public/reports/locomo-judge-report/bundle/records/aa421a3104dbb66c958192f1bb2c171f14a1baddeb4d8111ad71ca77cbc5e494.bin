@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is within the date tolerance of 14 days, as Saturday is one day before Sunday.",
+  "label": "CORRECT"
+}
+```

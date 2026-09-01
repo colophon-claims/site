@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a time frame in 2023, but it does not specify September, making it too vague to match the gold answer.",
+  "label": "WRONG"
+}
+```

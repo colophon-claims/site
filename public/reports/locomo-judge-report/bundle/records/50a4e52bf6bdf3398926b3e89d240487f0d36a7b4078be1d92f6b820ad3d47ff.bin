@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify Canada, which is the exact country mentioned in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

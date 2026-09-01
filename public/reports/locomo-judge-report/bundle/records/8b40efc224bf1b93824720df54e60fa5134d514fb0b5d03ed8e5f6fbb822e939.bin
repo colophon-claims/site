@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to a different type of application (fitness tracking) that does not align with the gold answer about dog walking and pet care.",
+  "label": "WRONG"
+}
+```

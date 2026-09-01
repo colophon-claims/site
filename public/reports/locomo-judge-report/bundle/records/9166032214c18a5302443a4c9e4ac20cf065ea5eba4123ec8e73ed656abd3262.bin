@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'A few times' is too vague and does not match the specific count of 'three times' in the gold answer.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to the same month and year as the gold answer, indicating a similar timeframe, which falls within the acceptable date tolerance.",
+  "label": "CORRECT"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'family-friendly outdoor and indoor activities,' which is a broad reference to the types of activities John's family enjoys, but it does not specifically mention any of the activities listed in the gold answer.",
+  "label": "WRONG"
+}
+```

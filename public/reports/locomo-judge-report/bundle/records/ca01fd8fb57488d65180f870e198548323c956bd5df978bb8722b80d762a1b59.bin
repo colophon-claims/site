@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer 'Chicken' matches the gold answer 'chicken' in content, differing only in capitalization, which does not affect the correctness.",
+  "label": "CORRECT"
+}
+```

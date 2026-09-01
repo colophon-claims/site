@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes all the events mentioned in the gold answer, along with additional relevant details, making it correct.",
+  "label": "CORRECT"
+}
+```

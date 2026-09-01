@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer states that Dave attended three car shows, which does not match the gold answer of two.",
+  "label": "WRONG"
+}
+```

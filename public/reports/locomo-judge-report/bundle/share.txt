@@ -1,0 +1,1 @@
+Colophon · verified qualification. 240 tasks · 6 arms · 3 replicates · self-run. Report 7869bab3a30defb29f171d7f572e68020edca789cfa7695ebe0a4621a9be5edd. Full evidence: index.html; verify: index.html#verification with npx @colophon-claims/verify@0.2.1 <bundle-dir>.

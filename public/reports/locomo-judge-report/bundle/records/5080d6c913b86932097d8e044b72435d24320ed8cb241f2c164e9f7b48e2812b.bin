@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is too vague and does not specifically mention 'turtles', which is the animal both Nate and Joanna like.",
+  "label": "WRONG"
+}
+```

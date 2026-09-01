@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'the dog park,' which is the same core entity as the gold answer.",
+  "label": "CORRECT"
+}
+```

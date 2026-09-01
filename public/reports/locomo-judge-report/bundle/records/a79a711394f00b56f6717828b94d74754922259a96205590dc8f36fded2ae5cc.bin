@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer includes hiking and walking, which are part of the gold answer's activities with dogs.",
+  "label": "CORRECT"
+}
+```

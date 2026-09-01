@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not mention political science, public administration, or public affairs, which are the specific fields referenced in the gold answer, thus it does not align with the topic.",
+  "label": "WRONG"
+}
+```

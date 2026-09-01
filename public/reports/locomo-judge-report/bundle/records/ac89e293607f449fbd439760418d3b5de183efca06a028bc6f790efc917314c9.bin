@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer refers to the same year as the gold answer, which is sufficient to consider it correct despite lacking the specific season.",
+  "label": "CORRECT"
+}
+```

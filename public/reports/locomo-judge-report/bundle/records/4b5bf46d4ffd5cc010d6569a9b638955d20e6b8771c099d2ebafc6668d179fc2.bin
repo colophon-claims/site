@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is outside the acceptable date range of 14 days from the gold answer.",
+  "label": "WRONG"
+}
+```

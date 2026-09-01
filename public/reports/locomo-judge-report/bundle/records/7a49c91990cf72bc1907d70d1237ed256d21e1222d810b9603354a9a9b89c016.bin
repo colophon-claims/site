@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer contradicts the gold answer by stating that Caroline is considering moving back, while the gold answer indicates she is not planning to move back due to her adoption process.",
+  "label": "WRONG"
+}
+```

@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer is too vague and does not specifically mention the gifts listed in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

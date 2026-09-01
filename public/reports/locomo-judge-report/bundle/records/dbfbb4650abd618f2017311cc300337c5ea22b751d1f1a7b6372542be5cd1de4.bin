@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer mentions 'Game convention,' which aligns with the 'agaming convention' in the gold answer, but it does not include 'tournament,' making it incomplete.",
+  "label": "WRONG"
+}
+```

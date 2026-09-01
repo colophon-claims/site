@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the TV series 'Wheel of Time' mentioned in the gold answer, making it incorrect.",
+  "label": "WRONG"
+}
+```

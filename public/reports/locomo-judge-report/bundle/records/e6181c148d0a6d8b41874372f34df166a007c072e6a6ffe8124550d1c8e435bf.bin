@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer specifies a date in August 2021, which is within the year 2021 mentioned in the gold answer, making it a correct reference to the same time period.",
+  "label": "CORRECT"
+}
+```

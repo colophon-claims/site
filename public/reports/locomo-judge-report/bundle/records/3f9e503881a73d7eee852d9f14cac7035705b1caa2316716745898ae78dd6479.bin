@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not mention 'Wheel of Time' or 'That', thus it contains zero correct items from the gold answer.",
+  "label": "WRONG"
+}
+```

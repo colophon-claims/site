@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify a particular show, which is necessary to match the gold answer's focus on Tim's favorite fantasy TV show.",
+  "label": "WRONG"
+}
+```

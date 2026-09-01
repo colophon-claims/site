@@ -1,0 +1,6 @@
+```json
+{
+  "reasoning": "The generated answer does not specify the movies 'Little Women' and 'Lord of the Rings' as mentioned in the gold answer, making it too vague and not directly matching the required information.",
+  "label": "WRONG"
+}
+```
