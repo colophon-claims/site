@@ -146,6 +146,24 @@ function validateQualified(report, bundleDir) {
       rejected += r.numerator;
       scored += r.denominator;
     }
+    const repeatDisagreements = decisions.filter((item) => item.unstable === true).length;
+    const repeatDisagreementsByArm = ids.map((id) => {
+      const armDecisions = decisions.filter((item) => item.armId === id);
+      const armUnstable = armDecisions.filter((item) => item.unstable === true).length;
+      return armUnstable / armDecisions.length;
+    });
+    const plainDecisions = new Map(
+      decisions.filter((item) => item.armId === "mem0").map((item) => [item.taskDigest, item]),
+    );
+    const evidenceDecisions = new Map(
+      decisions.filter((item) => item.armId === "mem0-evidence").map((item) => [item.taskDigest, item]),
+    );
+    const pairedTaskDigests = [...plainDecisions.keys()].filter((key) => evidenceDecisions.has(key));
+    const plainAccepted = pairedTaskDigests
+      .filter((key) => plainDecisions.get(key).decision === "ACCEPT").length;
+    const evidenceAccepted = pairedTaskDigests
+      .filter((key) => evidenceDecisions.get(key).decision === "ACCEPT").length;
+    const evidenceAcceptanceDelta = (evidenceAccepted - plainAccepted) / pairedTaskDigests.length;
     const recomputed = {
       agreementLow: pct(Math.min(...agreement)),
       agreementHigh: pct(Math.max(...agreement)),
@@ -157,6 +175,12 @@ function validateQualified(report, bundleDir) {
       pairedItems: arms["mem0-evidence"].agreement.denominator,
       plainPromptAgreement: pct(arms.mem0.agreement.estimate),
       evidencePromptAgreement: pct(arms["mem0-evidence"].agreement.estimate),
+      repeatDisagreementOverall: pct(repeatDisagreements / decisions.length),
+      repeatDisagreementWorst: pct(Math.max(...repeatDisagreementsByArm)),
+      evidenceAcceptanceDeltaPoints: (Math.abs(evidenceAcceptanceDelta) * 100).toFixed(1),
+      evidenceAcceptanceDirection: evidenceAcceptanceDelta > 0
+        ? "more"
+        : evidenceAcceptanceDelta < 0 ? "fewer" : "same",
     };
     if (canonical(recomputed) !== canonical(report.derivedFigures)) {
       fail(
@@ -177,12 +201,18 @@ function validateQualified(report, bundleDir) {
     // words; the rest reach the page through the sealed per-arm table instead.
     const STATED_IN_PROSE = [
       "agreementLow", "agreementHigh", "agreementSpreadPoints",
-      "vagueWrongAcceptLow", "vagueWrongAcceptHigh", "rightAnswersScored", "pairedItems",
+      "vagueWrongAcceptLow", "vagueWrongAcceptHigh", "rightAnswersScored", "rightAnswersRejected",
+      "plainPromptAgreement", "evidencePromptAgreement",
+      "repeatDisagreementOverall", "repeatDisagreementWorst", "evidenceAcceptanceDeltaPoints",
     ];
     for (const key of STATED_IN_PROSE) {
       if (!prose.includes(String(recomputed[key]))) {
         fail(`${report.slug} prose does not state the recomputed ${key} (${recomputed[key]})`);
       }
+    }
+    const acceptancePhrase = `${recomputed.evidenceAcceptanceDeltaPoints} percentage points ${recomputed.evidenceAcceptanceDirection} answers`;
+    if (!prose.includes(acceptancePhrase)) {
+      fail(`${report.slug} prose does not state the recomputed acceptance change (${acceptancePhrase})`);
     }
   }
 

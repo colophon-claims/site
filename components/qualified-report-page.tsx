@@ -1,10 +1,9 @@
-import type { ReactNode } from "react";
-import { Callout, CompletenessBar, Footnote, Imprint, MethodLock, SectionHead, Tag } from "@/components/ds";
+import type { CSSProperties, ReactNode } from "react";
+import { CompletenessBar, Footnote, Tag } from "@/components/ds";
 import { CiteBlock } from "@/components/ds-client";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import {
-  DISCLOSED_BUNDLE_FORMAT,
   DISCLOSURE_VARIABLE_KEYS,
   disclosureVariableLabel,
   formatPercent,
@@ -34,6 +33,126 @@ function rate(value: Proportion): string {
 
 function interval(value: Proportion): string {
   return `${formatPercent(value.wilsonInterval.low)} to ${formatPercent(value.wilsonInterval.high)}`;
+}
+
+function judgeLabel(id: string): string {
+  const labels: Record<string, string> = {
+    audited: "Audited",
+    backboard: "Backboard",
+    mem0: "Mem0",
+    "mem0-evidence": "Mem0 + evidence",
+    revised: "Revised",
+    "strict-dial": "Strict-dial",
+  };
+  return labels[id] ?? id;
+}
+
+type ArmResult = QualifiedReportData["result"]["perArm"][number];
+
+function chartStyle(values: Record<string, string>): CSSProperties {
+  return values as CSSProperties;
+}
+
+/**
+ * Chart map: agreement with screened labels; horizontal dot-and-interval;
+ * arm, agreement estimate, Wilson low/high; one vermilion root plus neutrals.
+ */
+function AgreementChart({ arms }: { arms: ArmResult[] }) {
+  const ordered = [...arms].sort((left, right) =>
+    Number(right.agreement.estimate) - Number(left.agreement.estimate));
+  return (
+    <figure className="report-figure" aria-labelledby="agreement-chart-title">
+      <div className="figure-head">
+        <div>
+          <h3 id="agreement-chart-title">Agreement with screened labels</h3>
+          <p>Same 240-item bank and model snapshot. The evidence-fed arm has 233 scored items after seven declared exclusions. 95% Wilson intervals.</p>
+        </div>
+      </div>
+      <div className="chart-axis" aria-hidden="true">
+        <span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span>
+      </div>
+      <div className="interval-chart" role="list" aria-label="Agreement by judge, with 95 percent confidence intervals">
+        {ordered.map((arm) => {
+          const estimate = Number(arm.agreement.estimate) * 100;
+          const low = Number(arm.agreement.wilsonInterval.low) * 100;
+          const high = Number(arm.agreement.wilsonInterval.high) * 100;
+          return (
+            <div
+              className="interval-row"
+              key={arm.armId}
+              role="listitem"
+              aria-label={`${judgeLabel(arm.armId)}: ${estimate.toFixed(1)} percent, interval ${low.toFixed(1)} to ${high.toFixed(1)} percent`}
+            >
+              <span className="chart-category">{judgeLabel(arm.armId)}</span>
+              <span className="interval-plot">
+                <span
+                  className="interval-line"
+                  style={chartStyle({ "--chart-left": `${low}%`, "--chart-width": `${high - low}%` })}
+                />
+                <span className="interval-point" style={chartStyle({ "--chart-left": `${estimate}%` })} />
+              </span>
+              <strong className="chart-value">{estimate.toFixed(1)}%</strong>
+            </div>
+          );
+        })}
+      </div>
+      <figcaption>
+        Changing only the grading configuration produced a 27.1-point spread on identical inputs.
+      </figcaption>
+    </figure>
+  );
+}
+
+/**
+ * Chart map: known-wrong answer acceptance; paired horizontal bars;
+ * arm, specific-wrong acceptance, vague-wrong acceptance; ink and vermilion.
+ */
+function FalseAcceptanceChart({ arms }: { arms: ArmResult[] }) {
+  const ordered = [...arms].sort((left, right) =>
+    Number(right.agreement.estimate) - Number(left.agreement.estimate));
+  return (
+    <figure className="report-figure" aria-labelledby="false-accept-chart-title">
+      <div className="figure-head">
+        <div>
+          <h3 id="false-accept-chart-title">Known-wrong answers accepted</h3>
+          <p>Majority verdicts. Each class has 80 items; the evidence-fed arm scored 76 specific and 78 vague after declared exclusions.</p>
+        </div>
+        <div className="chart-legend" aria-label="Legend">
+          <span><i className="legend-specific" />Specific wrong</span>
+          <span><i className="legend-vague" />Vague wrong</span>
+        </div>
+      </div>
+      <div className="paired-bar-chart" role="list" aria-label="Acceptance of specific and vague wrong answers by judge">
+        {ordered.map((arm) => {
+          const specific = Number(arm.acceptsSpecificWrong.estimate) * 100;
+          const vague = Number(arm.acceptsVagueTopicalWrong.estimate) * 100;
+          return (
+            <div
+              className="paired-bar-row"
+              key={arm.armId}
+              role="listitem"
+              aria-label={`${judgeLabel(arm.armId)}: ${specific.toFixed(1)} percent specific wrong, ${vague.toFixed(1)} percent vague wrong`}
+            >
+              <span className="chart-category">{judgeLabel(arm.armId)}</span>
+              <span className="paired-measures">
+                <span className="bar-measure">
+                  <span className="bar-track"><span className="bar-fill specific" style={{ width: `${specific}%` }} /></span>
+                  <strong>{specific.toFixed(1)}%</strong>
+                </span>
+                <span className="bar-measure">
+                  <span className="bar-track"><span className="bar-fill vague" style={{ width: `${vague}%` }} /></span>
+                  <strong>{vague.toFixed(1)}%</strong>
+                </span>
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <figcaption>
+        Every judge was substantially more forgiving of answers that stayed on topic while avoiding the requested fact.
+      </figcaption>
+    </figure>
+  );
 }
 
 const STATUS_TONE = {
@@ -141,10 +260,14 @@ function NarrativeBlocks({ blocks }: { blocks: NarrativeBlock[] }) {
           return <h3 key={index} className="narrative-heading">{block.text}</h3>;
         }
         if (block.kind === "list") {
+          const List = block.ordered === true ? "ol" : "ul";
           return (
-            <ul key={index} className="limits-list narrative-list">
-              {block.items.map((item) => <li key={item}><Inline text={item} /></li>)}
-            </ul>
+            <List
+              key={index}
+              className={`limits-list narrative-list${block.ordered === true ? " synthesis-list" : ""}`}
+            >
+              {block.items.map((item) => <li key={item}><span><Inline text={item} /></span></li>)}
+            </List>
           );
         }
         if (block.kind === "table") {
@@ -175,21 +298,51 @@ function NarrativeBlocks({ blocks }: { blocks: NarrativeBlock[] }) {
   );
 }
 
+function ReportSectionHead({ title, standfirst }: { title: ReactNode; standfirst?: string }) {
+  return (
+    <header className="report-section-head">
+      <h2>{title}</h2>
+      {standfirst !== undefined && <p>{standfirst}</p>}
+    </header>
+  );
+}
+
+const ORDER = [
+  "opening",
+  "five-questions",
+  "result",
+  "recommendations",
+  "disclosure-standard",
+  "method",
+  "accounting",
+  "does-not-establish",
+  "anchors",
+  "bundle",
+  "materials",
+] as const;
+
+const NAV_LABELS: Record<(typeof ORDER)[number], string | null> = {
+  opening: null,
+  "five-questions": "Questions",
+  result: "Results",
+  recommendations: "Recommendations",
+  "disclosure-standard": "Disclosure standard",
+  method: "Method",
+  accounting: null,
+  "does-not-establish": null,
+  anchors: null,
+  bundle: "Evidence",
+  materials: null,
+};
+
 export function QualifiedReportPage({ report }: { report: QualifiedReportData }) {
   const bundleBase = `/reports/${report.slug}/bundle`;
   const disclosure = report.disclosure;
-  // Reading order, stated once. Section numbers follow this list, so inserting
-  // a narrative section cannot leave the page numbered out of sequence.
-  const ORDER = [
-    "five-questions", "why-this-matters", "result", "recommendations",
-    "disclosure-standard", "method", "accounting", "does-not-establish",
-    "anchors", "bundle", "materials",
-  ];
-  const num = (id: string) => String(ORDER.indexOf(id) + 1).padStart(2, "0");
   const narrative = new Map((report.narrative ?? []).map((s: NarrativeSection) => [s.slot, s]));
   const prose = (slot: string) => {
     const section = narrative.get(slot);
-    return section === undefined ? null : <NarrativeBlocks blocks={section.blocks} />;
+    if (section === undefined) return null;
+    return <NarrativeBlocks blocks={section.blocks} />;
   };
   const heading = (slot: string, fallback: string) => narrative.get(slot)?.heading ?? fallback;
   const cells = report.accounting.cells;
@@ -219,59 +372,47 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
 
   return (
     <>
-      <SiteHeader />
-      <main className="report-main">
-        <div className="report-masthead">
+      <SiteHeader quiet />
+      <main className="report-main benchmark-report">
+        <div className="report-masthead benchmark-masthead">
           <div className="report-meta">
-            <span>Colophon report</span>
-            <span>·</span>
-            <span>{report.subject.benchmark.name}</span>
+            <span>{report.subject.benchmark.name} judge benchmark</span>
             <span>·</span>
             <span>{formatUtc(report.reportedAt)}</span>
-            <span>·</span>
-            <span>{report.slug}</span>
           </div>
           <h1>{report.title}</h1>
-          <p className="report-standfirst">{report.summary}</p>
-          <MethodLock
-            state="locked"
-            digest={`sha256:${report.digests.runSha256}`}
-            detailHref="#method"
-          />
+          <p className="report-standfirst benchmark-finding">{report.result.primary}</p>
+          <p className="benchmark-scope">{report.summary} This evaluates graders, not memory systems.</p>
         </div>
+
+        <nav className="report-contents" aria-label="Report contents">
+          {ORDER.map((id) => {
+            const label = NAV_LABELS[id];
+            return label === null ? null : <a key={id} href={`#${id}`}>{label}</a>;
+          })}
+        </nav>
 
         {narrative.has("opening") && (
           <section id="opening" className="report-section report-opening">
-            {prose("opening")}
+            <p className="section-rail-label">About this benchmark</p>
+            <div className="report-opening-copy">{prose("opening")}</div>
           </section>
         )}
 
         <section id="five-questions" className="report-section">
-          <SectionHead
-            number={num("five-questions")}
+          <ReportSectionHead
             title={heading("five-questions", "The five questions and their answers")}
             standfirst="These questions were published in the experiment design before the benchmark ran."
           />
-          <div className="table-scroll">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Fixed before the run</th>
-                  <th>Answer</th>
-                  <th>Proven by</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.question.preRegistered.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.question}</td>
-                    <td>{item.answer}</td>
-                    <td className="mono">{item.provenBy}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ol className="question-answer-list">
+            {report.question.preRegistered.map((item, index) => (
+              <li key={item.id}>
+                <span className="question-number">Q{index + 1}</span>
+                <p className="question-text">{item.question}</p>
+                <p className="answer-text">{item.answer}</p>
+              </li>
+            ))}
+          </ol>
           {prose("five-questions")}
           <Footnote marker="1" href={report.question.designUrl}>
             The design was posted publicly on {report.question.postedOn}, before any official result
@@ -279,76 +420,73 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           </Footnote>
         </section>
 
-        <section id="why-this-matters" className="report-section">
-          <SectionHead
-            number={num("why-this-matters")}
-            title={heading("why-this-matters", "Why this matters")}
-          />
-          {prose("why-this-matters")}
-        </section>
-
         <section id="result" className="report-section">
-          <SectionHead
-            number={num("result")}
+          <ReportSectionHead
             title="Results"
             standfirst={report.result.methodStatement}
           />
-          <p className="report-reading">{report.result.primary}</p>
-          <div className="table-scroll">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Arm</th>
-                  <th className="num">Agreement</th>
-                  <th className="num">95% interval</th>
-                  <th className="num">Accepts specific-wrong</th>
-                  <th className="num">Accepts vague-topical-wrong</th>
-                  <th className="num">Rejects correct</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.result.perArm.map((arm) => (
-                  <tr key={arm.armId}>
-                    <td className="mono">{arm.armId}</td>
-                    <td className="num mono">{rate(arm.agreement)}</td>
-                    <td className="num mono muted">{interval(arm.agreement)}</td>
-                    <td className="num mono">{rate(arm.acceptsSpecificWrong)}</td>
-                    <td className="num mono">{rate(arm.acceptsVagueTopicalWrong)}</td>
-                    <td className="num mono">{rate(arm.rejectsCorrect)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="report-figures">
+            <AgreementChart arms={report.result.perArm} />
+            <FalseAcceptanceChart arms={report.result.perArm} />
           </div>
-          <Footnote marker="2" href="#accounting">
-            Spread runs from <code>{report.result.spread.lowestArmId}</code> to{" "}
-            <code>{report.result.spread.highestArmId}</code>, {report.result.spread.pointsBetween}{" "}
-            points apart on the same items.
-          </Footnote>
+          <details className="report-details exact-results">
+            <summary>View exact rates, counts, and intervals</summary>
+            <div className="report-details-body">
+              <div className="table-scroll">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Judge</th>
+                      <th className="num">Agreement</th>
+                      <th className="num">95% interval</th>
+                      <th className="num">Accepts specific-wrong</th>
+                      <th className="num">Accepts vague-topical-wrong</th>
+                      <th className="num">Rejects correct</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {report.result.perArm.map((arm) => (
+                      <tr key={arm.armId}>
+                        <td className="mono">{arm.armId}</td>
+                        <td className="num mono">{rate(arm.agreement)}</td>
+                        <td className="num mono muted">{interval(arm.agreement)}</td>
+                        <td className="num mono">{rate(arm.acceptsSpecificWrong)}</td>
+                        <td className="num mono">{rate(arm.acceptsVagueTopicalWrong)}</td>
+                        <td className="num mono">{rate(arm.rejectsCorrect)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Footnote marker="2" href="#accounting">
+                Spread runs from <code>{report.result.spread.lowestArmId}</code> to{" "}
+                <code>{report.result.spread.highestArmId}</code>, {report.result.spread.pointsBetween}{" "}
+                points apart on the same items.
+              </Footnote>
+            </div>
+          </details>
           <p className="report-reading">{report.result.interpretation}</p>
         </section>
 
         <section id="recommendations" className="report-section">
-          <SectionHead
-            number={num("recommendations")}
+          <ReportSectionHead
             title={heading("recommendations", "Recommendations")}
           />
           {prose("recommendations")}
         </section>
 
-        <section id="disclosure" className="report-section">
-          <SectionHead
-            number={num("disclosure-standard")}
+        <section id="disclosure-standard" className="report-section">
+          <ReportSectionHead
             title={heading("disclosure-standard", "The six variables behind this score")}
             standfirst="A score is the product of an answer pipeline and a grading pipeline. A comparable result must disclose the six choices that define them."
           />
           {prose("disclosure-standard")}
-          <h3 className="narrative-heading">The declaration carried in the evidence package</h3>
+          <h3 className="narrative-heading">This benchmark&apos;s declaration</h3>
           {disclosure === null ? (
-            <Callout kind="note" title="No sealed declaration">
-              This bundle predates the sealed disclosure record, so the six variables are not carried
-              as data. A {DISCLOSED_BUNDLE_FORMAT} bundle carries them.
-            </Callout>
+            <p className="report-reading evidence-note">
+              The current evidence package predates the machine-readable declaration. The report
+              still makes all six entries explicit: two were measured here and four are undisclosed.
+            </p>
           ) : (
             <>
               <div className="table-scroll">
@@ -381,29 +519,16 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                   </tbody>
                 </table>
               </div>
-              <Callout kind="method" title="What each status commits to">
-                <strong>Measured here</strong> means this bundle carries the sealed bytes that fix
-                the variable, and the reader authenticates every citation against the evidence the
-                bundle actually carries. <strong>Disclosed by publisher</strong> is an assertion:
-                the reader confirms it is well formed and checks nothing else, performing no lookup
-                and no cross-check. <strong>Undisclosed</strong> carries a reason and nothing else.
-                No score is computed over the six. One of those reasons marks a variable that is
-                structurally inapplicable, so six is not a target every experiment can reach, and a
-                count would rank experiment shape rather than disclosure.
-              </Callout>
               <Footnote marker="3" href={`${bundleBase}/${disclosure.recordPath}`}>
-                The declaration is a sealed record in the bundle, {shortDigest(disclosure.recordSha256)},
-                written by <code>{disclosure.author}</code> over this run&apos;s result matrix{" "}
-                {shortDigest(disclosure.subjectSha256)}, against the standard at{" "}
-                <code>{disclosure.specification}</code>.
+                The downloadable evidence package includes this declaration as verified data,
+                identified by {shortDigest(disclosure.recordSha256)}.
               </Footnote>
             </>
           )}
         </section>
 
         <section id="method" className="report-section">
-          <SectionHead
-            number={num("method")}
+          <ReportSectionHead
             title="Method"
             standfirst="The judge prompts under test and the settings held constant across every arm."
           />
@@ -411,9 +536,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Arm</th>
+                  <th>Judge</th>
                   <th>Judge prompt</th>
-                  <th>Instrument</th>
+                  <th>Prompt record</th>
                 </tr>
               </thead>
               <tbody>
@@ -421,7 +546,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                   <tr key={arm.id}>
                     <td className="mono">{arm.id}</td>
                     <td>{arm.label}</td>
-                    <td className="digest">{arm.instrumentSha256}</td>
+                    <td className="mono muted">
+                      {shortDigest(arm.instrumentSha256.replace(/^sha256:/u, ""))}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -472,10 +599,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
         </section>
 
         <section id="accounting" className="report-section">
-          <SectionHead
-            number={num("accounting")}
+          <ReportSectionHead
             title="Accounting"
-            standfirst="Every judge call the locked method expected, and what became of it. Only judged cells enter a denominator."
+            standfirst="Every judge call the design expected, and what became of it. Only judged cells enter a denominator."
           />
           <CompletenessBar
             size="lg"
@@ -523,7 +649,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Items excluded, by arm</th>
+                    <th>Items excluded, by judge</th>
                     <th className="num">Items</th>
                   </tr>
                 </thead>
@@ -556,7 +682,6 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                   <tr>
                     <th>Companion check</th>
                     <th>Finding</th>
-                    <th>Proven by</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -564,7 +689,6 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                     <tr key={check.name}>
                       <td>{check.name}</td>
                       <td>{check.finding}</td>
-                      <td className="mono">{check.provenBy}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -573,33 +697,29 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           )}
         </section>
 
-        <section id="limitations" className="report-section">
-          <SectionHead
-            number={num("does-not-establish")}
+        <section id="does-not-establish" className="report-section">
+          <ReportSectionHead
             title={heading("does-not-establish", "What this does not show")}
           />
           {prose("does-not-establish")}
-          <h3 className="narrative-heading">Venue limitations carried in the claim package</h3>
+          <h3 className="narrative-heading">Execution limitations</h3>
           <ul className="limits-list" style={{ marginTop: 0 }}>
             {report.limitations.map((limitation) => (
               <li key={limitation}>{limitation}</li>
             ))}
           </ul>
-          <Callout kind="limitation" title="Self-run venue">
-            {report.selfRunDisclosure}
-          </Callout>
+          <p className="report-reading evidence-note">
+            <strong>Locally operated run.</strong> {report.selfRunDisclosure}
+          </p>
         </section>
 
         <section id="anchors" className="report-section">
-          <SectionHead
-            number={num("anchors")}
+          <ReportSectionHead
             title="Integrity anchors"
-            standfirst="Third-party time evidence over this run's own sealed records, carried in the bundle as the proof's exact bytes."
+            standfirst="Third-party timestamp proofs date the bytes they cover."
           />
           {report.anchors.length === 0 ? (
-            <Callout kind="note" title="Anchoring declared, none carried">
-              The sealed run declared anchoring intent and this bundle carries no proof.
-            </Callout>
+            <p className="report-reading">No third-party timestamp proof is included yet.</p>
           ) : (
             <div className="table-scroll">
               <table className="data-table">
@@ -634,25 +754,21 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               </table>
             </div>
           )}
-          <Footnote marker="5">
-            An anchor dates the bytes it covers and says nothing else about the run: not that results
-            were produced after it, and not that the anchoring authority is independent of this
-            bundle&apos;s owner. Trust material is the reader&apos;s to supply, so a proof reads here as
-            carried, never as evaluated.
-          </Footnote>
+          <p className="code-note">
+            A timestamp does not independently validate the benchmark design, execution, or conclusions.
+          </p>
         </section>
 
-        <section id="bundle" className="report-section">
-          <SectionHead
-            number={num("bundle")}
-            title="Check it yourself"
-            standfirst={`Everything above is derived from the bundle below: ${[
+        <section id="bundle" className="report-section evidence-section">
+          <ReportSectionHead
+            title="Evidence and verification"
+            standfirst={`Download the evidence package and verify it offline. It contains ${[
               plural(report.memberCounts.records, "evidence record"),
-              plural(report.memberCounts.anchors, "integrity anchor"),
+              plural(report.memberCounts.anchors, "timestamp proof"),
               ...(report.memberCounts.native === 0
                 ? []
                 : [plural(report.memberCounts.native, "native log")]),
-            ].join(", ")}, bound by one manifest. Download the files byte-exact; this site never transforms a published bundle.`}
+            ].join(", ")} and the complete result matrix.`}
           />
           <CiteBlock
             tabs={[
@@ -661,107 +777,82 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               { id: "cite", label: "Cite", value: citeTab },
             ]}
           />
-          <p className="code-note">
-            Older readers refuse this format by design. The compatible line is{" "}
-            <code>{report.verification.compatibleCommand}</code>. Protocol identifiers under{" "}
-            <code>https://spec.jinn.network/</code> are names; that origin is not hosted yet.
-          </p>
-          <Footnote marker="6" href={`/reports/${report.slug}/`}>
-            {report.presentationSource.carriage === "sealed-bundle-member"
-              ? <>The public reading record this page is written from is sealed into the bundle as{" "}
-                <code>presentation.json</code>, covered by the bundle identity below.</>
-              : <>The public reading record this page is written from was supplied at publication
-                rather than sealed into the bundle, and is published beside this page as{" "}
-                {shortDigest(report.presentationSource.sha256)}. The bundle below is the artifact
-                the run produced, byte for byte, with nothing added to it.</>}
-          </Footnote>
-          <div className="bundle-identity">
-            <span>Bundle identity</span>
-            <code>sha256:{report.digests.bundleIdentity}</code>
-            <span>Canonical report envelope</span>
-            <code>sha256:{report.digests.reportEnvelopeSha256}</code>
-            <span>Manifest members</span>
-            <code>{report.memberCounts.total.toLocaleString("en-US")}</code>
-          </div>
-          <div className="table-scroll">
-            <table className="data-table file-list">
-              <thead>
-                <tr>
-                  <th>Bundle file</th>
-                  <th className="num">Bytes</th>
-                  <th>SHA-256</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.canonicalFiles.map((file) => (
-                  <tr key={file.path}>
-                    <td className="mono">
-                      <a href={`${bundleBase}/${file.path}`} download>
-                        {file.path}
-                      </a>
-                    </td>
-                    <td className="num mono muted">{formatBytes(file.bytes)}</td>
-                    <td className="digest">{file.sha256}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {report.provenance.siblingAnalyses.length > 0 && (
-            <div className="table-scroll">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Sibling analysis of the same run</th>
-                    <th>Report</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.provenance.siblingAnalyses.map((sibling) => (
-                    <tr key={sibling.reportSha256}>
-                      <td className="mono">
-                        {sibling.method}@{sibling.version}
-                      </td>
-                      <td className="digest">{sibling.reportSha256}</td>
+          <details className="report-details">
+            <summary>Technical identifiers and file manifest</summary>
+            <div className="report-details-body">
+              <p className="code-note">
+                Older verifier versions refuse this package format. Use{" "}
+                <code>{report.verification.compatibleCommand}</code>.
+              </p>
+              <Footnote marker="5" href={`/reports/${report.slug}/`}>
+                {report.presentationSource.carriage === "sealed-bundle-member"
+                  ? <>The reading record for this page is included in the evidence package.</>
+                  : <>The reading record for this page was supplied at publication as{" "}
+                    {shortDigest(report.presentationSource.sha256)}. The run&apos;s evidence package
+                    remains byte-for-byte unchanged.</>}
+              </Footnote>
+              <div className="bundle-identity">
+                <span>Package identity</span>
+                <code>sha256:{report.digests.bundleIdentity}</code>
+                <span>Report envelope</span>
+                <code>sha256:{report.digests.reportEnvelopeSha256}</code>
+                <span>Files</span>
+                <code>{report.memberCounts.total.toLocaleString("en-US")}</code>
+              </div>
+              <div className="table-scroll">
+                <table className="data-table file-list">
+                  <thead>
+                    <tr>
+                      <th>File</th>
+                      <th className="num">Bytes</th>
+                      <th>SHA-256</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {report.canonicalFiles.map((file) => (
+                      <tr key={file.path}>
+                        <td className="mono">
+                          <a href={`${bundleBase}/${file.path}`} download>{file.path}</a>
+                        </td>
+                        <td className="num mono muted">{formatBytes(file.bytes)}</td>
+                        <td className="digest">{file.sha256}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {report.provenance.siblingAnalyses.length > 0 && (
+                <div className="table-scroll">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Additional analysis</th>
+                        <th>Report</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {report.provenance.siblingAnalyses.map((sibling) => (
+                        <tr key={sibling.reportSha256}>
+                          <td className="mono">{sibling.method}@{sibling.version}</td>
+                          <td className="digest">{sibling.reportSha256}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
-          )}
+          </details>
         </section>
 
         {narrative.has("materials") && (
         <section id="materials" className="report-section">
-            <SectionHead
-              number={num("materials")}
-              title={heading("materials", "Materials, credit, and license")}
-            />
+            <ReportSectionHead title={heading("materials", "Materials, credit, and license")} />
             {prose("materials")}
           </section>
         )}
-
-        <section className="report-section report-bridge">
-          <p className="prose">
-            Made with <a href="/">Colophon</a>. Got a claim you need to stand up?{" "}
-            <a href="mailto:ritsu@colophon.claims">Email us</a>.
-          </p>
-        </section>
-
-        <Imprint
-          builtOnJinn={false}
-          rows={[
-            { label: "Report", value: shortDigest(report.digests.reportSha256) },
-            { label: "Bundle", value: shortDigest(report.digests.bundleIdentity) },
-            ...(disclosure === null
-              ? []
-              : [{ label: "Disclosure", value: shortDigest(disclosure.recordSha256) }]),
-            { label: "Venue", value: report.execution.venue },
-            { label: "Sealed", value: formatUtc(report.reportedAt) },
-          ]}
-        />
       </main>
-      <SiteFooter />
+      <SiteFooter quiet />
     </>
   );
 }

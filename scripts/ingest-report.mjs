@@ -707,6 +707,9 @@ function extractQualified() {
         if (block.kind === "list" && (!Array.isArray(block.items) || block.items.length === 0)) {
           fail(`narrative slot ${section.slot} carries an empty list`);
         }
+        if (block.kind === "list" && block.ordered !== undefined && typeof block.ordered !== "boolean") {
+          fail(`narrative slot ${section.slot} carries an invalid ordered-list flag`);
+        }
         if (block.kind === "table") {
           if (!Array.isArray(block.columns) || block.columns.length === 0) {
             fail(`narrative slot ${section.slot} carries a table with no columns`);

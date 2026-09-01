@@ -242,7 +242,7 @@ export interface Proportion {
 export type NarrativeBlock =
   | { kind: "paragraph"; text: string; strong?: boolean }
   | { kind: "heading"; text: string }
-  | { kind: "list"; items: string[] }
+  | { kind: "list"; items: string[]; ordered?: boolean }
   | { kind: "table"; columns: string[]; rows: string[][] };
 
 export interface NarrativeSection {
@@ -263,6 +263,10 @@ export interface DerivedFigures {
   pairedItems: number;
   plainPromptAgreement: string;
   evidencePromptAgreement: string;
+  repeatDisagreementOverall: string;
+  repeatDisagreementWorst: string;
+  evidenceAcceptanceDeltaPoints: string;
+  evidenceAcceptanceDirection: "more" | "fewer" | "same";
 }
 
 export interface QualifiedReportData {

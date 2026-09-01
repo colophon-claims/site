@@ -618,7 +618,7 @@ test("carries the report's own prose and refuses a block the page cannot render"
     blocks: [
       { kind: "heading", text: "Graders differ" },
       { kind: "paragraph", text: "Changing only the grader moved agreement.", strong: true },
-      { kind: "list", items: ["Ask for the judge prompt."] },
+      { kind: "list", ordered: true, items: ["Ask for the judge prompt."] },
       { kind: "table", columns: ["Variable", "Meaning"], rows: [["Judge model", "What grades the answer"]] },
     ],
   }];
@@ -634,6 +634,18 @@ test("carries the report's own prose and refuses a block the page cannot render"
   const result = run(root, "ingest-report.mjs", [broken, "--slug", "broken"]);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /unknown block kind: diagram/u);
+
+  const unorderedFlag = makeQualifiedBundle(join(root, "unordered-flag"), {
+    slug: "unordered-flag",
+    narrative: [{
+      slot: "why",
+      heading: null,
+      blocks: [{ kind: "list", ordered: "yes", items: ["Ask for the judge prompt."] }],
+    }],
+  });
+  const unorderedFlagResult = run(root, "ingest-report.mjs", [unorderedFlag, "--slug", "unordered-flag"]);
+  assert.equal(unorderedFlagResult.status, 1);
+  assert.match(unorderedFlagResult.stderr, /invalid ordered-list flag/u);
 
   const ragged = makeQualifiedBundle(join(root, "ragged"), {
     slug: "ragged",
