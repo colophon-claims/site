@@ -66,8 +66,8 @@
       },
       {
         "id": "q3",
-        "question": "Is \"the LoCoMo score\" one stable instrument or several?",
-        "answer": "Several. On identical answers, agreement with the labels ranged from 60.8% to 87.9% depending only on the grader.",
+        "question": "Does changing the grader change the LoCoMo score?",
+        "answer": "Yes. On identical answers, agreement with the labels ranged from 60.8% to 87.9% depending only on the grader.",
         "provenBy": "this-bundle"
       },
       {
@@ -105,7 +105,7 @@
     "venue": "self-run"
   },
   "result": {
-    "primary": "Changing only the grader moved agreement with the same screened labels from 60.8% to 87.9%. Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer.",
+    "primary": "Changing only the grader moved agreement with the same correctness labels from 60.8% to 87.9%. Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer.",
     "perArm": [
       {
         "armId": "audited",
@@ -348,7 +348,7 @@
       "pointsBetween": "27.1"
     },
     "interpretation": "This is a benchmark of graders, not memory systems. It does not rank or re-score any memory product, and it cannot establish which published system is better.",
-    "methodStatement": "Per-arm agreement with screened labels over the same items, three judge calls per item-arm cell reduced by strict majority, with 95% Wilson intervals."
+    "methodStatement": "Agreement with the same correctness labels. Each answer was graded three times under every configuration; the final verdict was the majority of those calls. Intervals are 95% Wilson intervals."
   },
   "population": {
     "items": 240,
@@ -418,8 +418,8 @@
     "conflictedCells": 0,
     "companionChecks": [
       {
-        "name": "Consistency gate",
-        "finding": "Three of five applicable graders did not treat equivalent set-answer operations consistently.",
+        "name": "Consistency test",
+        "finding": "Three of five applicable graders did not treat equivalent list-answer cases consistently.",
         "provenBy": "companion-bundle"
       },
       {
@@ -494,7 +494,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "The central finding is simple: changing only the grader moved agreement with the same screened labels from 60.8% to 87.9%.",
+          "text": "The central finding is simple: changing only the grader moved agreement with the same correctness labels from 60.8% to 87.9%.",
           "strong": true
         },
         {
@@ -503,7 +503,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer. Three of five graders were internally inconsistent on basic set-answer cases. When the answer key was wrong, graders followed the broken key against a true answer between 10% and 70% of the time."
+          "text": "Every grader was much more likely to accept a vague, on-topic wrong answer than a specific wrong answer. Three of five graders were internally inconsistent on list-answer cases involving subsets and supersets. When the answer key was wrong, graders followed the broken key against a true answer between 10% and 70% of the time."
         },
         {
           "kind": "paragraph",
@@ -517,7 +517,7 @@
       "blocks": [
         {
           "kind": "paragraph",
-          "text": "A separate consistency gate found that three of five applicable graders did not treat equivalent set-answer operations consistently."
+          "text": "A separate consistency test found that three of five applicable graders did not treat equivalent list-answer cases consistently."
         }
       ]
     },
@@ -533,21 +533,21 @@
           "kind": "list",
           "ordered": true,
           "items": [
-            "**Fix the answer keys first, then be strict.** Strictness was nearly free when the key was right: across the whole panel, there was one false rejection in 479 scored right answers. The material downside appeared under broken keys, where the strictest grader followed the key against a true answer 70% of the time. Key quality and judge strictness are complements. A future benchmark should adopt the audit's corrected keys, after checking them, so that a strict judge loses almost all of its observed downside.",
-            "**Treat vague-answer acceptance as an underspecified task, not a model limit.** Every grader was nearly perfect on right answers and much weaker on vague, on-topic answers. Even the strictest configuration accepted 32.5% of them. The prompts do not define what answering requires precisely enough. The structural fix to test is to make the judge first extract the candidate's committed value for the requested fact, then compare values. An answer that commits to no value would fail by rule, not by judgment. The strictest prompt's lead is consistent with this account because it forces the answer to make a commitment.",
-            "**Give the judge a third verdict for key conflicts.** Every grader accepted all 20 true answers once the key was corrected. On these items, the graders could recognize the true answer but rejected it under a broken key because the instructions told them to compare against that key. A candidate that contradicts the reference but appears well-grounded should become a separately counted, reviewable outcome rather than a rejection.",
-            "**Include rejection cases in the consistency battery.** The two graders that passed this run's gate did so by accepting every probe, while the grader with the highest agreement on the main bank failed both tested operations. As designed, the gate cannot separate consistency from indiscriminate leniency. A replacement battery must include probes where rejection is the consistent answer.",
-            "**Spend the next call budget on items and key auditing, not more replicas.** Repeat disagreement was 1.6% overall and 2.9% at worst, against a 27.1-point grader effect. On this bank and model snapshot, more items and better keys are likely to buy more measurement quality than more calls per item.",
-            "**Force evidence through the grading task instead of offering it as context.** Adding evidence to a prompt that did not require comparison made the judge accept 7.7 percentage points more answers, with nearly all of the increase coming from wrong answers, and lowered agreement from 78.3% to 70.0%. Extra input without a changed task is a lever on the score. A reference judge should specify how evidence must be used rather than merely placing it in the prompt."
+            "**Fix the answer keys first, then be strict.** Strictness was nearly free when the key was right: across the whole panel, there was one false rejection in 479 scored right answers. The material downside appeared under broken keys, where the strictest grader followed the key against a true answer 70% of the time. A stricter judge only helps when the answer key is reliable. A future benchmark should adopt the audit's corrected keys, after checking them, so that a strict judge loses almost all of its observed downside.",
+            "**Treat vague-answer acceptance as an underspecified task, not a model limit.** Every grader was nearly perfect on right answers and much weaker on vague, on-topic answers. Even the strictest configuration accepted 32.5% of them. The prompts do not define what answering requires precisely enough. The structural fix to test is to make the judge first identify the exact value the answer gives for the requested fact, then compare that value with the reference. An answer that gives no value would fail by rule, not by judgment. The strictest prompt's lead is consistent with this account because it forces the answer to make a commitment.",
+            "**Give the judge a third verdict when the reference appears wrong.** Every grader accepted all 20 true answers once the key was corrected. On these items, the graders could recognize the true answer but rejected it under a broken key because the instructions told them to compare against that key. A candidate that contradicts the reference but appears well-grounded should become a separately counted, reviewable outcome rather than a rejection.",
+            "**Include cases that should be rejected in the consistency test.** The two graders that passed this run's test did so by accepting every probe, while the grader with the highest agreement on the main bank failed both tested operations. As designed, the test cannot separate consistency from indiscriminate leniency. A replacement set must include probes where rejection is the consistent answer.",
+            "**Spend the next evaluation resources on items and key auditing, not more repeated calls.** Repeat disagreement was 1.6% overall and 2.9% at worst, against a 27.1-point grader effect. On this bank and model snapshot, more items and better keys are likely to buy more measurement quality than more calls per item.",
+            "**Force evidence through the grading task instead of offering it as context.** Adding evidence to a prompt that did not require comparison made the judge accept 7.7 percentage points more answers, with nearly all of the increase coming from wrong answers, and lowered agreement from 78.3% to 70.0%. Simply adding evidence changed the score even though the grading instructions stayed the same. A reference judge should specify how evidence must be used rather than merely placing it in the prompt."
           ]
         },
         {
           "kind": "paragraph",
-          "text": "Together, these results support one versioned reference judge for LoCoMo: an extract-then-compare task with a key-conflict flag channel, run over audited answer keys. It should be validated on published measurements of false acceptance by wrong-answer class, false rejection, repeat stability, rejection-inclusive consistency, and behavior under broken keys. The disclosure standard should then be the fallback for any result not produced by that reference judge, rather than the whole ask."
+          "text": "Together, these results support one versioned reference judge for LoCoMo, run over audited answer keys. It should first identify the exact fact an answer commits to and then compare that fact with the reference. It should also allow a third, reviewable verdict when the reference appears wrong. Before adoption, it should be tested for false acceptance by wrong-answer class, false rejection, repeat stability, consistency on both accept and reject cases, and behavior under broken keys. Results produced by another judge should use the disclosure standard below."
         },
         {
           "kind": "paragraph",
-          "text": "The extract-then-compare task and the key-conflict channel are implications that point to a follow-up experiment. This run did not test either design. It used one model snapshot and one diagnostic bank."
+          "text": "These proposed changes require a follow-up experiment. This run did not test the new comparison task or the third verdict. It used one model snapshot and one diagnostic bank."
         },
         {
           "kind": "heading",
@@ -568,7 +568,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "For people publishing LoCoMo results, report an unknown choice as undisclosed rather than omitting or inferring it. Publish the parser behavior, repeated-call aggregation rule, and treatment of invalid or missing outputs as well as the judge model, prompt, and input shape."
+          "text": "For people publishing LoCoMo results, mark an unknown choice as not reported rather than omitting or inferring it. Publish the parser behavior, repeated-call aggregation rule, and treatment of invalid or missing outputs as well as the judge model, prompt, and input shape."
         },
         {
           "kind": "paragraph",
@@ -627,7 +627,7 @@
         },
         {
           "kind": "heading",
-          "text": "The three disclosure states"
+          "text": "Three ways to report each variable"
         },
         {
           "kind": "paragraph",
@@ -636,27 +636,27 @@
         {
           "kind": "table",
           "columns": [
-            "State",
+            "State shown in a report",
             "Meaning"
           ],
           "rows": [
             [
-              "`measured-here`",
+              "Measured in this benchmark",
               "The experiment fixed and recorded the variable itself"
             ],
             [
-              "`disclosed-by-publisher`",
+              "Reported by the publisher",
               "The publisher stated the choice, but this experiment did not measure or independently establish it"
             ],
             [
-              "`undisclosed`",
+              "Not reported",
               "The choice is unknown, not stated, or not applicable"
             ]
           ]
         },
         {
           "kind": "paragraph",
-          "text": "Unknown information must be reported as `undisclosed`, not omitted or inferred from a repository name, model family, or surrounding context. Evidence belongs only with a `measured-here` entry. A publisher statement may be cited, but it should not be presented as an independent measurement."
+          "text": "Unknown information must be reported as not reported, not omitted or inferred from a repository name, model family, or surrounding context. Evidence belongs only with a choice measured in the benchmark. A publisher statement may be cited, but it should not be presented as an independent measurement."
         },
         {
           "kind": "heading",
@@ -689,43 +689,43 @@
           "rows": [
             [
               "Ingestion model",
-              "`undisclosed` (`not-stated`)",
+              "Not reported",
               "The published source materials do not identify what produced the upstream memories or indexes"
             ],
             [
               "Retrieval configuration",
-              "`undisclosed` (`not-stated`)",
+              "Not reported",
               "The published source materials do not identify the retrieval settings used upstream"
             ],
             [
               "Answer model",
-              "`undisclosed` (`not-stated`)",
+              "Not reported",
               "The candidate-answer files do not identify the model that wrote every answer"
             ],
             [
               "Answer prompt",
-              "`undisclosed` (`not-stated`)",
+              "Not reported",
               "The candidate-answer files do not identify the complete answering instructions"
             ],
             [
               "Judge model",
-              "`measured-here`",
+              "Measured in this benchmark",
               "All grading calls used `gpt-4o-mini-2024-07-18` at temperature zero"
             ],
             [
               "Judge prompt",
-              "`measured-here`",
+              "Measured in this benchmark",
               "The six grading configurations and their input shapes were fixed and recorded by this benchmark"
             ]
           ]
         },
         {
           "kind": "paragraph",
-          "text": "Four undisclosed entries are not a defect hidden by the report. They are the honest description of a grader benchmark that used candidate answers produced elsewhere. This report makes no claim about upstream choices that its source materials cannot establish."
+          "text": "Four entries are marked not reported. That is the honest description of a grader benchmark that used candidate answers produced elsewhere. This report makes no claim about upstream choices that its source materials cannot establish."
         },
         {
           "kind": "paragraph",
-          "text": "The evidence package carries the full machine-readable declaration and verification rules. The benchmark report states the human-readable standard, the result that supports it, and the report's own disclosure."
+          "text": "Colophon defines these same six fields in a machine-readable disclosure format. This report's evidence package predates that format, so the declaration above is published with the report rather than inside the verified package."
         }
       ]
     },
@@ -737,25 +737,29 @@
           "kind": "list",
           "items": [
             "It does not evaluate or rank memory systems.",
-            "It does not say which historical LoCoMo score is the correct one.",
-            "It does not reproduce any publisher's complete private harness. Prompts, parsers, judge models, and surrounding code may differ.",
-            "It tests one dated judge-model snapshot. Results may differ on another model or snapshot.",
-            "It measures behavior on a balanced diagnostic bank, not the prevalence of these answer types in ordinary benchmark runs.",
-            "The 20 corrupt-key items and 12 consistency probes demonstrate mechanisms; they do not estimate population prevalence.",
-            "Labels were model-screened and selectively hand-reviewed, not independently labelled by multiple human annotators.",
-            "Majority-of-three reduces but does not remove stochastic variation.",
-            "The run was locally operated. Artifact verification cannot establish organizational independence or the provider's internal execution conditions."
+            "It tests one dated judge-model snapshot on a balanced 240-answer diagnostic bank. Rates may differ on another model, snapshot, or answer distribution.",
+            "The correctness labels were model-screened and selectively reviewed by the authors, not independently labelled by multiple human annotators.",
+            "The 20 broken-key items and 12 consistency probes demonstrate mechanisms; they do not estimate how common those problems are in ordinary benchmark runs.",
+            "The authors operated the experiment themselves. Colophon verifies the published files and their internal consistency, but not the provider's internal execution or the authors' organizational independence."
           ]
         }
       ]
     },
     {
       "slot": "reproducibility",
-      "heading": "Reproducibility identifiers",
+      "heading": "Data and verification",
       "blocks": [
         {
           "kind": "paragraph",
-          "text": "SHA-256 identifiers for the machine-readable results follow. Bundle identifiers refer to the currently verified offline bundles and may be replaced only if publication packaging adds sealed presentation or disclosure members; such a packaging change does not alter the result matrix or any number in this report."
+          "text": "Download the full result data, grading outputs, prompts, and analysis files from the published evidence package. Colophon packages these materials and checks that the files used by this report have not changed since publication."
+        },
+        {
+          "kind": "paragraph",
+          "text": "File verification confirms the integrity of the published materials. It does not prove that the correctness labels are right or independently verify the model provider's internal execution. Independent timestamping is pending."
+        },
+        {
+          "kind": "heading",
+          "text": "Technical verification details"
         },
         {
           "kind": "table",

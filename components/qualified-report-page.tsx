@@ -54,7 +54,7 @@ function chartStyle(values: Record<string, string>): CSSProperties {
 }
 
 /**
- * Chart map: agreement with screened labels; horizontal dot-and-interval;
+ * Chart map: agreement with correctness labels; horizontal dot-and-interval;
  * arm, agreement estimate, Wilson low/high; one vermilion root plus neutrals.
  */
 function AgreementChart({ arms }: { arms: ArmResult[] }) {
@@ -64,8 +64,8 @@ function AgreementChart({ arms }: { arms: ArmResult[] }) {
     <figure className="report-figure" aria-labelledby="agreement-chart-title">
       <div className="figure-head">
         <div>
-          <h3 id="agreement-chart-title">Agreement with screened labels</h3>
-          <p>Same 240-item bank and model snapshot. The evidence-fed arm has 233 scored items after seven declared exclusions. 95% Wilson intervals.</p>
+          <h3 id="agreement-chart-title">Agreement with correctness labels</h3>
+          <p>Same 240-item bank and model snapshot. The evidence-fed configuration has 233 scored items after seven exclusions. 95% Wilson intervals.</p>
         </div>
       </div>
       <div className="chart-axis" aria-hidden="true">
@@ -162,9 +162,9 @@ const STATUS_TONE = {
 } as const;
 
 const STATUS_LABEL = {
-  "measured-here": "Measured here",
-  "disclosed-by-publisher": "Disclosed by publisher",
-  undisclosed: "Undisclosed",
+  "measured-here": "Measured in benchmark",
+  "disclosed-by-publisher": "Reported by publisher",
+  undisclosed: "Not reported",
 } as const;
 
 const REASON_LABEL = {
@@ -317,10 +317,8 @@ const ORDER = [
   "recommendations",
   "disclosure-standard",
   "method",
-  "accounting",
   "does-not-establish",
-  "anchors",
-  "bundle",
+  "data-verification",
   "materials",
 ] as const;
 
@@ -329,12 +327,10 @@ const NAV_LABELS: Record<(typeof ORDER)[number], string | null> = {
   "five-questions": "Questions",
   result: "Results",
   recommendations: "Recommendations",
-  "disclosure-standard": "Disclosure standard",
+  "disclosure-standard": "Disclosure",
   method: "Method",
-  accounting: null,
-  "does-not-establish": null,
-  anchors: null,
-  bundle: "Evidence",
+  "does-not-establish": "Limitations",
+  "data-verification": "Data & verification",
   materials: null,
 };
 
@@ -349,7 +345,6 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
   };
   const heading = (slot: string, fallback: string) => narrative.get(slot)?.heading ?? fallback;
   const cells = report.accounting.cells;
-  const instability = report.manipulationCheck.replicateInstability;
 
   const verifyTab = [
     "# download the bundle directory, preserving paths, then:",
@@ -370,7 +365,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
     `${report.format}, identity sha256:${report.digests.bundleIdentity}.`,
     `Report sha256:${report.digests.reportSha256}.`,
     `${report.subject.benchmark.name}, ${report.population.items} items, ${report.subject.arms.length} arms, ${report.execution.replicates} judge calls per item-arm cell.`,
-    `${report.execution.venue} venue; limitations in the report. Verify: ${report.verification.command}`,
+    `Operated by the report authors; limitations in the report. Verify: ${report.verification.command}`,
   ].join("\n");
 
   return (
@@ -461,7 +456,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                   </tbody>
                 </table>
               </div>
-              <Footnote marker="2" href="#accounting">
+              <Footnote marker="2" href="#method">
                 Spread runs from <code>{report.result.spread.lowestArmId}</code> to{" "}
                 <code>{report.result.spread.highestArmId}</code>, {report.result.spread.pointsBetween}{" "}
                 points apart on the same items.
@@ -481,17 +476,11 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
         <section id="disclosure-standard" className="report-section">
           <ReportSectionHead
             title={heading("disclosure-standard", "The six variables behind this score")}
-            standfirst="A score is the product of an answer pipeline and a grading pipeline. A comparable result must disclose the six choices that define them."
           />
           {prose("disclosure-standard")}
-          <h3 className="narrative-heading">This benchmark&apos;s declaration</h3>
-          {disclosure === null ? (
-            <p className="report-reading evidence-note">
-              The current evidence package predates the machine-readable declaration. The report
-              still makes all six entries explicit: two were measured here and four are undisclosed.
-            </p>
-          ) : (
+          {disclosure !== null && (
             <>
+              <h3 className="narrative-heading">Machine-readable declaration</h3>
               <div className="table-scroll">
                 <table className="data-table disclosure-table">
                   <thead>
@@ -532,16 +521,15 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
 
         <section id="method" className="report-section">
           <ReportSectionHead
-            title="Method"
-            standfirst="The judge prompts under test and the settings held constant across every arm."
+            title="How the benchmark was run"
+            standfirst="Six grading configurations judged the same 240 answers using the same model version and settings."
           />
           <div className="table-scroll">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Judge</th>
-                  <th>Judge prompt</th>
-                  <th>Prompt record</th>
+                  <th>Grading configuration</th>
+                  <th>Prompt tested</th>
                 </tr>
               </thead>
               <tbody>
@@ -549,9 +537,6 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                   <tr key={arm.id}>
                     <td className="mono">{arm.id}</td>
                     <td>{arm.label}</td>
-                    <td className="mono muted">
-                      {shortDigest(arm.instrumentSha256.replace(/^sha256:/u, ""))}
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -563,55 +548,50 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               <dl className="kv">
                 <dt>Judge model</dt>
                 <dd>{report.subject.judgeModel}</dd>
-                <dt>Snapshot</dt>
+                <dt>Model settings</dt>
                 <dd>
                   {report.execution.modelSnapshot.id}, temperature{" "}
                   {report.execution.modelSnapshot.temperature}
                 </dd>
-                <dt>Harness</dt>
+                <dt>Evaluation software</dt>
                 <dd>
                   {report.subject.harness.id}@{report.subject.harness.version}
                 </dd>
-                <dt>Judge calls</dt>
-                <dd>{report.execution.replicates} per item-arm cell</dd>
-                <dt>Reduction</dt>
-                <dd>{report.execution.reduction}</dd>
-                <dt>Intervals</dt>
-                <dd>{report.execution.intervals}</dd>
+                <dt>Repeated grading</dt>
+                <dd>Each answer was graded {report.execution.replicates} times per configuration</dd>
+                <dt>Final verdict</dt>
+                <dd>Majority of the {report.execution.replicates} calls</dd>
+                <dt>Confidence intervals</dt>
+                <dd>95% Wilson intervals</dd>
               </dl>
             </div>
             <div className="record-card">
-              <span className="eyebrow">Items and truth</span>
+              <span className="eyebrow">Answers and labels</span>
               <dl className="kv">
-                <dt>Items</dt>
-                <dd>{report.population.items}</dd>
-                <dt>Truth admission</dt>
-                <dd>{report.execution.truthAdmission}</dd>
-                <dt>Labels</dt>
-                <dd>{report.population.labels}</dd>
-                <dt>Judge prompts</dt>
+                <dt>Answer bank</dt>
+                <dd>{report.population.items} candidate answers, balanced across three correctness classes</dd>
+                <dt>Correctness labels</dt>
+                <dd>A model screened every label; the authors reviewed flagged cases and a random sample</dd>
+                <dt>Grading prompts</dt>
                 <dd>
                   {report.execution.judgePrompts.count}, {report.execution.judgePrompts.provenance}
                 </dd>
-                <dt>Venue</dt>
-                <dd>{report.execution.venue}</dd>
+                <dt>Run operator</dt>
+                <dd>The report authors</dd>
               </dl>
             </div>
           </div>
-
-        </section>
-
-        <section id="accounting" className="report-section">
-          <ReportSectionHead
-            title="Accounting"
-            standfirst="Every judge call the design expected, and what became of it. Only judged cells enter a denominator."
-          />
+          <h3 className="narrative-heading">Run completeness</h3>
+          <p className="report-reading">
+            All {cells.expected.toLocaleString("en-US")} planned judge calls completed. Twenty-two
+            responses could not be parsed, which excluded seven evidence-fed items from that comparison.
+          </p>
           <CompletenessBar
             size="lg"
             total={cells.expected}
             label={`${cells.expected} expected judge calls`}
             segments={[
-              { verdict: "met", label: "judged", count: cells.judged },
+              { verdict: "met", label: "completed", count: cells.judged },
               { verdict: "incomplete", label: "lost", count: cells.lost },
             ]}
           />
@@ -630,7 +610,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                     <td className="num mono">{cells.expected}</td>
                   </tr>
                   <tr>
-                    <td>Judged</td>
+                    <td>Completed</td>
                     <td className="num mono">{cells.judged}</td>
                   </tr>
                   <tr>
@@ -638,12 +618,8 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                     <td className="num mono">{cells.lost}</td>
                   </tr>
                   <tr>
-                    <td>Parser-neutral ({report.accounting.parserNeutral.policy})</td>
+                    <td>Could not be parsed</td>
                     <td className="num mono">{report.accounting.parserNeutral.calls}</td>
-                  </tr>
-                  <tr>
-                    <td>Conflicted cells</td>
-                    <td className="num mono">{report.manipulationCheck.conflictedCells}</td>
                   </tr>
                 </tbody>
               </table>
@@ -652,7 +628,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Items excluded, by judge</th>
+                    <th>Items excluded, by configuration</th>
                     <th className="num">Items</th>
                   </tr>
                 </thead>
@@ -672,12 +648,13 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             </div>
           </div>
           <p className="report-reading">
-            <strong>Replicate instability.</strong> {instability.unstableItems} of{" "}
-            {instability.gradedItems} graded items changed their item-level majority across
-            replicates. Run outcome: {report.accounting.runOutcome}, against a completeness floor of{" "}
-            {formatPercent(report.accounting.completenessFloor)}.
+            <strong>Repeat stability.</strong> Repeat disagreement was 1.6% overall and 2.9% in
+            the least stable grading configuration.
           </p>
-          <Footnote marker="4">{report.accounting.parserNeutral.note}</Footnote>
+          <Footnote marker="3">
+            Responses that could not be parsed were treated as neither correct nor incorrect. All
+            22 occurred in the evidence-fed configuration.
+          </Footnote>
           {report.manipulationCheck.companionChecks.length > 0 && (
             <div className="table-scroll">
               <table className="data-table">
@@ -705,67 +682,12 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             title={heading("does-not-establish", "What this does not show")}
           />
           {prose("does-not-establish")}
-          <h3 className="narrative-heading">Execution limitations</h3>
-          <ul className="limits-list" style={{ marginTop: 0 }}>
-            {report.limitations.map((limitation) => (
-              <li key={limitation}>{limitation}</li>
-            ))}
-          </ul>
-          <p className="report-reading evidence-note">
-            <strong>Locally operated run.</strong> {report.selfRunDisclosure}
-          </p>
         </section>
 
-        <section id="anchors" className="report-section">
+        <section id="data-verification" className="report-section evidence-section">
           <ReportSectionHead
-            title="Integrity anchors"
-            standfirst="Third-party timestamp proofs date the bytes they cover."
-          />
-          {report.anchors.length === 0 ? (
-            <p className="report-reading">No third-party timestamp proof is included yet.</p>
-          ) : (
-            <div className="table-scroll">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Subject</th>
-                    <th>State</th>
-                    <th>Provider</th>
-                    <th>Proof</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.anchors.map((anchor) => {
-                    const state = anchorState(anchor);
-                    return (
-                      <tr key={anchor.recordSha256}>
-                        <td className="mono">{anchor.subject}</td>
-                        <td>
-                          <Tag tone={state.label === "Pending" ? "outline" : "ink"}>{state.label}</Tag>
-                          <p className="anchor-detail">{state.detail}</p>
-                        </td>
-                        <td className="mono muted">{anchor.provider}</td>
-                        <td className="mono">
-                          <a href={`${bundleBase}/anchors/${anchor.recordSha256}.bin`} download>
-                            {shortDigest(anchor.recordSha256)}
-                          </a>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-          <p className="code-note">
-            A timestamp does not independently validate the benchmark design, execution, or conclusions.
-          </p>
-        </section>
-
-        <section id="bundle" className="report-section evidence-section">
-          <ReportSectionHead
-            title="Evidence and verification"
-            standfirst={`Download the evidence package and verify it offline. It contains ${[
+            title="Data and verification"
+            standfirst={`Download the full result data, grading outputs, prompts, and analysis files. The package contains ${[
               plural(report.memberCounts.records, "evidence record"),
               plural(report.memberCounts.anchors, "timestamp proof"),
               ...(report.memberCounts.native === 0
@@ -773,21 +695,75 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                 : [plural(report.memberCounts.native, "native log")]),
             ].join(", ")} and the complete result matrix.`}
           />
+          <p className="report-reading">
+            Colophon packages these materials and checks that the files used by this report have
+            not changed since publication.
+          </p>
+          <p className="report-reading evidence-note">
+            File verification confirms the integrity of the published materials. It does not prove
+            that the correctness labels are right or independently verify the model provider&apos;s
+            internal execution.
+          </p>
+          <p className="code-note">Independent timestamping is pending.</p>
           <CiteBlock
             tabs={[
-              { id: "verify", label: "Verify", value: verifyTab },
-              { id: "digests", label: "Digests", value: digestsTab },
+              { id: "verify", label: "Verify files", value: verifyTab },
+              { id: "digests", label: "File identifiers", value: digestsTab },
               { id: "cite", label: "Cite", value: citeTab },
             ]}
           />
           <details className="report-details">
-            <summary>Technical identifiers and file manifest</summary>
+            <summary>Technical verification details</summary>
             <div className="report-details-body">
               <p className="code-note">
                 Older verifier versions refuse this package format. Use{" "}
                 <code>{report.verification.compatibleCommand}</code>.
               </p>
-              <Footnote marker="5" href={`/reports/${report.slug}/`}>
+              <h3 className="narrative-heading">Timestamp record</h3>
+              {report.anchors.length === 0 ? (
+                <p className="report-reading">No third-party timestamp proof is included yet.</p>
+              ) : (
+                <div className="table-scroll">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Subject</th>
+                        <th>State</th>
+                        <th>Provider</th>
+                        <th>Proof</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {report.anchors.map((anchor) => {
+                        const state = anchorState(anchor);
+                        return (
+                          <tr key={anchor.recordSha256}>
+                            <td className="mono">{anchor.subject}</td>
+                            <td>
+                              <Tag tone={state.label === "Pending" ? "outline" : "ink"}>{state.label}</Tag>
+                              <p className="anchor-detail">{state.detail}</p>
+                            </td>
+                            <td className="mono muted">{anchor.provider}</td>
+                            <td className="mono">
+                              <a href={`${bundleBase}/anchors/${anchor.recordSha256}.bin`} download>
+                                {shortDigest(anchor.recordSha256)}
+                              </a>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <p className="code-note">
+                A timestamp dates the bytes it covers; it does not validate the benchmark design,
+                execution, or conclusions.
+              </p>
+              {narrative.get("reproducibility") !== undefined && (
+                <NarrativeBlocks blocks={narrative.get("reproducibility")!.blocks.slice(3)} />
+              )}
+              <Footnote marker="4" href={`/reports/${report.slug}/`}>
                 {report.presentationSource.carriage === "sealed-bundle-member"
                   ? <>The reading record for this page is included in the evidence package.</>
                   : <>The reading record for this page was supplied at publication as{" "}

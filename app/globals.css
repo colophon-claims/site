@@ -553,6 +553,11 @@ main {
 .report-contents a:hover {
   color: var(--link-hover);
 }
+@media (min-width: 800px) {
+  .report-contents {
+    justify-content: space-between;
+  }
+}
 .report-meta {
   display: flex;
   gap: var(--space-4);
@@ -2031,8 +2036,8 @@ main {
   }
   .benchmark-report > .report-contents {
     width: 100%;
-    justify-content: center;
-    gap: clamp(var(--space-7), 3vw, var(--space-10));
+    justify-content: space-between;
+    gap: var(--space-7);
   }
   .benchmark-report > .report-section {
     position: relative;
