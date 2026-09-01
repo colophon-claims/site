@@ -17,6 +17,11 @@ import {
   type QualifiedReportData,
 } from "@/lib/reports";
 
+const BUNDLE_RELEASE_BASES: Record<string, string> = {
+  "locomo-judge-report":
+    "https://github.com/colophon-claims/locomo-judge-report/releases/download/locomo-judge-report-run-completion-2026-09-01",
+};
+
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -336,6 +341,20 @@ const NAV_LABELS: Record<(typeof ORDER)[number], string | null> = {
 
 export function QualifiedReportPage({ report }: { report: QualifiedReportData }) {
   const bundleBase = `/reports/${report.slug}/bundle`;
+  const bundleDirectory = `./${report.digests.bundleIdentity}`;
+  const bundleArchiveName = `${report.digests.bundleIdentity}.tar.gz`;
+  const bundleReleaseBase = BUNDLE_RELEASE_BASES[report.slug];
+  const bundleArchiveUrl = bundleReleaseBase === undefined
+    ? null
+    : `${bundleReleaseBase}/${bundleArchiveName}`;
+  const verificationCommand = report.verification.command.replace(
+    "<bundle-dir>",
+    bundleDirectory,
+  );
+  const compatibleVerificationCommand = report.verification.compatibleCommand.replace(
+    "<bundle-dir>",
+    bundleDirectory,
+  );
   const disclosure = report.disclosure;
   const narrative = new Map((report.narrative ?? []).map((s: NarrativeSection) => [s.slot, s]));
   const prose = (slot: string) => {
@@ -347,8 +366,16 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
   const cells = report.accounting.cells;
 
   const verifyTab = [
-    "# download the bundle directory, preserving paths, then:",
-    report.verification.command,
+    ...(bundleArchiveUrl === null
+      ? ["# download the complete bundle, preserving its directory structure"]
+      : [
+          "# download and unpack the published bundle",
+          `curl -fLO '${bundleArchiveUrl}'`,
+          `tar -xzf '${bundleArchiveName}'`,
+          "",
+          "# verify the extracted bundle",
+        ]),
+    verificationCommand,
     `# returns ${report.verification.checks.length} checks: ${report.verification.checks.join(", ")}`,
   ].join("\n");
   const digestsTab = [
@@ -365,7 +392,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
     `${report.format}, identity sha256:${report.digests.bundleIdentity}.`,
     `Report sha256:${report.digests.reportSha256}.`,
     `${report.subject.benchmark.name}, ${report.population.items} items, ${report.subject.arms.length} arms, ${report.execution.replicates} judge calls per item-arm cell.`,
-    `Operated by the report authors; limitations in the report. Verify: ${report.verification.command}`,
+    `Operated by the report authors; limitations in the report. Verify: ${verificationCommand}`,
   ].join("\n");
 
   return (
@@ -733,6 +760,12 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             that the correctness labels are right or independently verify the model provider&apos;s
             internal execution.
           </p>
+          {bundleArchiveUrl !== null && (
+            <p className="report-reading">
+              <a href={bundleArchiveUrl}>Download the complete evidence bundle</a>. The archive
+              extracts to <code>{report.digests.bundleIdentity}</code>.
+            </p>
+          )}
           <p className="code-note">Independent timestamping is pending.</p>
           <CiteBlock
             tabs={[
@@ -746,7 +779,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             <div className="report-details-body">
               <p className="code-note">
                 Older verifier versions refuse this package format. Use{" "}
-                <code>{report.verification.compatibleCommand}</code>.
+                <code>{compatibleVerificationCommand}</code>.
               </p>
               <h3 className="narrative-heading">Timestamp record</h3>
               {report.anchors.length === 0 ? (
