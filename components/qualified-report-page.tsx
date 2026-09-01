@@ -656,24 +656,31 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             22 occurred in the evidence-fed configuration.
           </Footnote>
           {report.manipulationCheck.companionChecks.length > 0 && (
-            <div className="table-scroll">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Companion check</th>
-                    <th>Finding</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.manipulationCheck.companionChecks.map((check) => (
-                    <tr key={check.name}>
-                      <td>{check.name}</td>
-                      <td>{check.finding}</td>
+            <>
+              <h3 className="narrative-heading">Two additional tests</h3>
+              <p className="report-reading">
+                Two smaller tests checked grader behavior that the main 240-answer comparison
+                could not isolate.
+              </p>
+              <div className="table-scroll">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Test</th>
+                      <th>What it showed</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {report.manipulationCheck.companionChecks.map((check) => (
+                      <tr key={check.name}>
+                        <td>{check.name}</td>
+                        <td>{check.finding}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </section>
 

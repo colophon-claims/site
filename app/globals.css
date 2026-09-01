@@ -1998,8 +1998,14 @@ main {
   color: var(--text-accent);
 }
 .synthesis-list strong {
+  display: block;
+  width: fit-content;
+  max-width: 44ch;
+  margin-bottom: var(--space-2);
   font-weight: var(--weight-bold);
   color: var(--text-primary);
+  line-height: var(--leading-snug);
+  text-wrap: balance;
 }
 .narrative-points {
   display: flex;
