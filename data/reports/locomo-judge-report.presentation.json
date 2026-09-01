@@ -490,7 +490,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "This benchmark measures how much that choice matters. Six grading configurations judged the same 240 answers on the same model snapshot. The configurations varied the judge prompt; one paired configuration also varied whether the judge received source evidence. Two companion tests examined consistency and behavior when the official answer key is wrong."
+          "text": "This benchmark measures how much that choice matters. Six grading configurations judged the same 240 answers on the same model snapshot. The configurations varied the judge prompt; one paired configuration also varied whether the judge received source evidence. Two additional tests examined consistency and behavior when the official answer key is wrong."
         },
         {
           "kind": "paragraph",

@@ -491,7 +491,7 @@
         },
         {
           "kind": "paragraph",
-          "text": "This benchmark measures how much that choice matters. Six grading configurations judged the same 240 answers on the same model snapshot. The configurations varied the judge prompt; one paired configuration also varied whether the judge received source evidence. Two companion tests examined consistency and behavior when the official answer key is wrong."
+          "text": "This benchmark measures how much that choice matters. Six grading configurations judged the same 240 answers on the same model snapshot. The configurations varied the judge prompt; one paired configuration also varied whether the judge received source evidence. Two additional tests examined consistency and behavior when the official answer key is wrong."
         },
         {
           "kind": "paragraph",
@@ -846,7 +846,7 @@
   },
   "presentationSource": {
     "carriage": "supplied-at-ingest",
-    "sha256": "55af72ce150361eb494be2e017960e73e995a61714657ff8cc0b024e10a81e82",
+    "sha256": "67feb4bce67084c1f53bc9c9110e640e9826c322bace8040742faece9c3e7798",
     "path": "locomo-judge-report.presentation.json"
   },
   "socialCardPath": "social-card.svg",

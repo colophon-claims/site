@@ -463,6 +463,43 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               </Footnote>
             </div>
           </details>
+          {report.manipulationCheck.companionChecks.length > 0 && (
+            <div className="additional-results">
+              <h3 className="narrative-heading">Results from two additional tests</h3>
+              <p className="report-reading">
+                The wrong-key test directly answers Q5 and explains the exception in Q2. The
+                consistency test checks a separate property: whether equivalent answers receive
+                the same verdict.
+              </p>
+              <div className="additional-result-list">
+                {report.manipulationCheck.companionChecks
+                  .map((check) => {
+                    const isWrongKey = check.name === "Behavior with a wrong answer key";
+                    return {
+                      ...check,
+                      relation: isWrongKey ? "Answers Q5 and qualifies Q2" : "Separate consistency diagnostic",
+                      title: isWrongKey
+                        ? "When the answer key is wrong"
+                        : "Equivalent answers should receive the same verdict",
+                      note: isWrongKey
+                        ? "This is where stricter grading creates a real cost."
+                        : "The two graders that stayed consistent accepted every probe, so consistency alone is not correctness.",
+                      order: isWrongKey ? 0 : 1,
+                    };
+                  })
+                  .sort((left, right) => left.order - right.order)
+                  .map((check) => (
+                    <article key={check.name}>
+                      <p className="additional-result-relation">{check.relation}</p>
+                      <div>
+                        <h4>{check.title}</h4>
+                        <p><strong>{check.finding}</strong> {check.note}</p>
+                      </div>
+                    </article>
+                  ))}
+              </div>
+            </div>
+          )}
           <p className="report-reading">{report.result.interpretation}</p>
         </section>
 
@@ -657,29 +694,14 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           </Footnote>
           {report.manipulationCheck.companionChecks.length > 0 && (
             <>
-              <h3 className="narrative-heading">Two additional tests</h3>
+              <h3 className="narrative-heading">How the additional tests were run</h3>
               <p className="report-reading">
-                Two smaller tests checked grader behavior that the main 240-answer comparison
-                could not isolate.
+                The consistency test used 12 constructed list-answer probes, five applicable
+                grading configurations, and three calls per probe, for 180 calls. The wrong-key
+                test used 20 questions under both the official and corrected answer keys, six
+                configurations, and three calls per case, for 720 calls. All planned calls
+                completed.
               </p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Test</th>
-                      <th>What it showed</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {report.manipulationCheck.companionChecks.map((check) => (
-                      <tr key={check.name}>
-                        <td>{check.name}</td>
-                        <td>{check.finding}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </>
           )}
         </section>
