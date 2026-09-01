@@ -230,21 +230,24 @@ function DisclosureDetail({
 }
 
 /**
- * Renders the report's own inline notation: `code` spans and [text](url) links.
+ * Renders the report's own inline notation: **strong text**, `code` spans, and
+ * [text](url) links.
  * The prose is carried verbatim, so the markdown it was written in is resolved
  * here rather than stripped out of the record.
  */
 function Inline({ text }: { text: string }) {
   const parts: ReactNode[] = [];
-  const pattern = /`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)/gu;
+  const pattern = /\*\*([^*]+)\*\*|`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)/gu;
   let last = 0;
   let match: RegExpExecArray | null;
   while ((match = pattern.exec(text)) !== null) {
     if (match.index > last) parts.push(text.slice(last, match.index));
     if (match[1] !== undefined) {
-      parts.push(<code key={parts.length}>{match[1]}</code>);
+      parts.push(<strong key={parts.length}>{match[1]}</strong>);
+    } else if (match[2] !== undefined) {
+      parts.push(<code key={parts.length}>{match[2]}</code>);
     } else {
-      parts.push(<a key={parts.length} href={match[3]}>{match[2]}</a>);
+      parts.push(<a key={parts.length} href={match[4]}>{match[3]}</a>);
     }
     last = match.index + match[0].length;
   }

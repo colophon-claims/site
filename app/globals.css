@@ -1992,6 +1992,10 @@ main {
   font-size: var(--text-sm);
   color: var(--text-accent);
 }
+.synthesis-list strong {
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+}
 .narrative-points {
   display: flex;
   flex-direction: column;
