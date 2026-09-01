@@ -16,7 +16,6 @@ export function SiteHeader({ quiet = false }: { quiet?: boolean }) {
         <nav className="site-nav">
           <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
-          {!quiet && <Link href="/offer/">Standing offer</Link>}
           {!quiet && (
             <span className="site-nav-cta">
               <LinkButton href="/#contact" variant="primary">Bring a claim</LinkButton>
