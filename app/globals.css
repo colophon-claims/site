@@ -169,6 +169,12 @@ main {
   gap: var(--space-5);
   flex-wrap: wrap;
 }
+.eyebrow {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
 .home-seal__label {
   display: inline-flex;
   align-items: center;
