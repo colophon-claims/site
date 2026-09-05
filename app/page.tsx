@@ -1,182 +1,181 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { LinkButton } from "@/components/link-button";
-import { ReportSummaryCard } from "@/components/report-summary-card";
 import { CopyCommand } from "@/components/copy-command";
-import { listReports } from "@/lib/reports";
-
-// v4 (2026-08-13): same arc as v3, plainer register. Short sentences,
-// contractions, second person, concrete nouns. Deliberately avoids the
-// balanced triads, participial clauses and em-dash rhythm of v3.
+import { HomeFooter } from "@/components/home-footer";
+import { LinkButton } from "@/components/link-button";
+import { Mark } from "@/components/mark";
+import { SiteHeader } from "@/components/site-header";
+import { getReport, isQualifiedReport } from "@/lib/reports";
 
 const CONTACT_EMAIL = "ritsu@colophon.claims";
+const REPORT_SLUG = "locomo-judge-report";
+const VERIFY_COMMAND = "npx @colophon-claims/verify@0.2 ./bundle";
 
-const BUYER_MOMENTS: { title: string; body: string }[] = [
+const AUDIENCES = [
   {
-    title: "You’re about to make a performance claim",
-    body: "Publish the basis before customers, contributors, or competitors ask how you know.",
+    title: "You are publishing a benchmark",
+    body: "Give the result a permanent place people can cite, inspect, and return to.",
   },
   {
-    title: "You’re choosing between agent setups",
-    body: "Make the decision on a comparison approved before execution, not on the most convenient run.",
+    title: "You are making a performance claim",
+    body: "Give customers, reviewers, and competitors something stronger than your word.",
   },
   {
-    title: "Someone else needs to inspect the result",
-    body: "Give them the method, every planned outcome, the limits, and the exact evidence behind the answer.",
+    title: "You are relying on a result",
+    body: "Put a clear public record behind a product, research, or procurement decision.",
   },
-];
+] as const;
 
-const DELIVERABLES: { title: string; body: string }[] = [
-  {
-    title: "The comparison, fixed first",
-    body: "Approve the tasks, setups, grading, and limits. Colophon seals that method before execution.",
-  },
-  {
-    title: "Every planned result, accounted for",
-    body: "Passes, failures, timeouts, and ungradable cells remain visible. Nothing disappears because it is inconvenient.",
-  },
-  {
-    title: "A report that travels",
-    body: "Get a permanent URL, a readable result, the evidence bundle, and one-command verification.",
-  },
-];
+export const metadata: Metadata = {
+  title: "Benchmark claims that hold up",
+  description: "Give benchmark claims a public basis people can inspect for themselves.",
+};
 
 export default function Home() {
-  const reports = listReports();
-  const featured = reports[0];
-  const featuredHref = featured === undefined ? "#contact" : `/reports/${featured.slug}/`;
+  const report = getReport(REPORT_SLUG);
+
+  if (!isQualifiedReport(report)) {
+    throw new Error(`the homepage example must be a qualified report: ${REPORT_SLUG}`);
+  }
+
+  const reportHref = `/reports/${report.slug}/`;
 
   return (
     <>
-      <SiteHeader />
-      <main>
-        {/* 1. Proof-led first fold. Narrow screens read copy, proof, then actions. */}
-        <section className="hero-section" id="read-one">
-          <div className="container hero-grid">
-            <div className="hero-copy">
-              <span className="eyebrow">Benchmark publishing for agent performance</span>
-              <h1>Turn benchmark results into claims that hold up.</h1>
-              <p className="hero-what">
-                Lock the method, account for every expected result, and publish the evidence so the
-                claim can survive outside the person who made it.
+      <SiteHeader ctaLabel="Talk to us" />
+      <main className="home-main">
+        <section className="home-hero" aria-labelledby="home-title">
+          <div className="container home-hero__grid">
+            <div className="home-hero__copy">
+              <h1 id="home-title">Turn benchmark results into claims that hold up.</h1>
+              <p>
+                Your team knows what went into the result. Everyone else has to take your word for
+                it. Colophon closes that gap with a public claim people can inspect for themselves.
               </p>
+              <div className="button-row home-hero__actions">
+                <LinkButton href={reportHref} variant="primary" size="lg">
+                  See the LoCoMo report
+                </LinkButton>
+                <LinkButton href="#contact" variant="secondary" size="lg">
+                  Talk to Colophon
+                </LinkButton>
+              </div>
             </div>
-            <div className="hero-feature">
-              {featured !== undefined ? (
-                <Link
-                  aria-label={`Read the featured report: ${featured.title}`}
-                  className="hero-report-link"
-                  href={featuredHref}
-                >
-                  <ReportSummaryCard report={featured} label="Latest report" />
-                </Link>
-              ) : (
-                <p className="prose">No report is published yet.</p>
-              )}
-            </div>
-            <div className="button-row hero-actions">
-              <LinkButton href="#contact" variant="primary" size="lg">
-                Bring a claim
-              </LinkButton>
-              <LinkButton href="/reports/" variant="secondary" size="lg">
-                Browse reports
-              </LinkButton>
-            </div>
+
+            <article className="home-example" aria-labelledby="example-report-title">
+              <header className="home-example__head">
+                <div className="home-example__meta">
+                  <span className="home-example__label">
+                    <Mark size={13} /> A real published claim
+                  </span>
+                  <span className="claim-origin claim-origin--self">Self-run</span>
+                </div>
+                <h2 id="example-report-title">{report.title}</h2>
+                <p>{report.summary}</p>
+              </header>
+              <div className="home-example__finding">
+                <span>What it found</span>
+                <p>
+                  Changing only the grader moved agreement with the same labels from 60.8% to
+                  87.9%.
+                </p>
+              </div>
+              <div className="home-example__accounting">
+                <strong>
+                  {report.accounting.cells.judged.toLocaleString("en-US")} of{" "}
+                  {report.accounting.cells.expected.toLocaleString("en-US")}
+                </strong>
+                <span>planned calls accounted for</span>
+              </div>
+              <footer className="home-example__foot">
+                <Link href={reportHref}>Read the report</Link>
+                <Link href={`${reportHref}#bundle`}>Download its files</Link>
+              </footer>
+            </article>
           </div>
         </section>
 
-        {/* 2. Buyer situations */}
-        <section className="section buyer-section" id="when-it-matters">
-          <div className="container buyer-grid">
-            <div className="buyer-lede">
-              <h2 className="section-title">When the claim has to hold up.</h2>
-              <p>
-                You don&apos;t need another unsupported score. You need an answer that can travel.
-              </p>
+        <section className="home-section home-audiences" aria-labelledby="audiences-title">
+          <div className="container home-audiences__grid">
+            <div className="home-section__intro">
+              <h2 id="audiences-title">For results that need to leave the room.</h2>
+              <p>A benchmark becomes valuable when people beyond its authors can rely on it.</p>
             </div>
-            <div className="buyer-needs">
-              {BUYER_MOMENTS.map((item) => (
-                <article className="buyer-need" key={item.title}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
+            <div className="home-audiences__list">
+              {AUDIENCES.map((audience) => (
+                <article key={audience.title}>
+                  <h3>{audience.title}</h3>
+                  <p>{audience.body}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 3. Engagement outcomes */}
-        <section className="section deliverables-section" id="what-you-get">
+        <section className="home-section home-paths" aria-labelledby="paths-title">
           <div className="container">
-            <h2 className="section-title">What you get.</h2>
-            <div className="deliverables-grid">
-              {DELIVERABLES.map((item) => (
-                <div className="deliverable" key={item.title}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 4. Managed suite breadth */}
-        <section className="suite-section" id="benchmark-methods">
-          <div className="container suite-layout">
-            <div className="suite-copy">
-              <h2>Run the benchmark that fits the claim.</h2>
+            <div className="home-section__intro home-paths__intro">
+              <h2 id="paths-title">Independence that fits the claim.</h2>
               <p>
-                Use <strong>APEX-Agents</strong>, <strong>SWE-bench Verified</strong>,{" "}
-                <strong>Terminal-Bench 3.0</strong>, or another established suite. If none fits,
-                we&apos;ll build one around your claim.
+                Choose the level of separation that gives your audience the confidence they need.
               </p>
             </div>
-            <div className="suite-action">
-              <div className="button-row">
-                <LinkButton href="#contact" variant="primary" size="lg">
-                  Bring us your claim
-                </LinkButton>
-                <Link href="/docs/#methods">See the benchmark methods</Link>
-              </div>
+
+            <div className="home-paths__list">
+              <article className="home-path">
+                <div className="home-path__heading">
+                  <span className="claim-origin claim-origin--self">Self-run</span>
+                  <h3>Strong for most claims</h3>
+                </div>
+                <p>
+                  Keep the run with your team while giving readers a result they can inspect for
+                  themselves.
+                </p>
+              </article>
+              <article className="home-path">
+                <div className="home-path__heading">
+                  <span className="claim-origin claim-origin--independent">Independently run</span>
+                  <h3>When added distance matters</h3>
+                </div>
+                <p>
+                  Give readers confidence that the benchmark was run by someone separate from the
+                  claimant.
+                </p>
+              </article>
             </div>
           </div>
         </section>
 
-        {/* 5. Reader path */}
-        <section className="section verification-section" id="check-it-yourself">
-          <div className="container verification-grid">
-            <div className="verification-copy">
-              <h2 className="section-title">The evidence travels with the claim.</h2>
-              <p className="prose">
-                Every report links the exact bundle. A reader can verify its manifest, evidence,
-                signatures, matrix, report, and claim consistency in one command.
-              </p>
-              <Link href="/docs/#verification">How checking works</Link>
+        <section className="home-section home-verification" aria-labelledby="verification-title">
+          <div className="container home-verification__grid">
+            <div className="home-verification__copy">
+              <h2 id="verification-title">Anyone can check the claim.</h2>
+              <p>Checking is free. It stays free.</p>
+              <Link href={`${reportHref}#bundle`}>Get the files from the LoCoMo report</Link>
             </div>
-            <CopyCommand value="npx @colophon-claims/verify@0.1 ./bundle" />
+            <div className="home-verification__command">
+              <CopyCommand value={VERIFY_COMMAND} />
+              <p>The checker is available on npm.</p>
+            </div>
           </div>
         </section>
 
-        {/* 6. The engagement */}
-        <section className="section contact-section" id="contact">
-          <div className="container contact-grid">
-            <div className="contact-copy">
-              <h2 className="section-title">What claim needs to hold up?</h2>
-              <p className="prose">
-                Send us the claim, the decision it supports, and the benchmark you have in mind. If
-                no suite fits, we&apos;ll shape the task set and lock the method with you.
+        <section className="home-contact" id="contact" aria-labelledby="contact-title">
+          <div className="container home-contact__grid">
+            <div>
+              <h2 id="contact-title">Where does your claim need to go?</h2>
+              <p>
+                Tell us what you are trying to establish and who needs to rely on it. We can talk
+                through which path fits.
               </p>
             </div>
-            <div className="contact-action">
-              <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">
-                Bring us your claim
-              </LinkButton>
-            </div>
+            <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">
+              Start a conversation
+            </LinkButton>
           </div>
         </section>
       </main>
-      <SiteFooter />
+      <HomeFooter />
     </>
   );
 }
