@@ -309,11 +309,13 @@ export function makeQualifiedBundle(directory, options = {}) {
 
 test("re-ingesting the published evidence-native report reproduces its read model byte for byte", (context) => {
   const root = scratchSite(context);
-  const slug = "skill-vs-root-claude-md-haiku-4-5";
+  const slug = "locomo-judge-report";
   const result = run(root, "ingest-report.mjs", [
     join(siteRoot, "public", "reports", slug, "bundle"),
     "--slug",
     slug,
+    "--presentation",
+    join(siteRoot, "data", "reports", `${slug}.presentation.json`),
   ]);
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(
