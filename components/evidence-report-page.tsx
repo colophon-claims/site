@@ -407,7 +407,7 @@ export function EvidenceReportPage({ report }: { report: EvidenceReportData }) {
           <p className="prose">
             If you&apos;re preparing to ship or defend a skill, harness, loadout, or review-agent
             claim, Colophon can lock the method, account for the run, and publish the evidence.{" "}
-            <a href="mailto:ritsu@colophon.claims">Bring the claim</a>.
+            <a href="mailto:ritsu.kai2000@gmail.com">Bring the claim</a>.
           </p>
         </section>
 
