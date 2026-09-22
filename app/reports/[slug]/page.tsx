@@ -390,7 +390,7 @@ function LegacyReportPage({ report, slug }: { report: LegacyReportData; slug: st
         <section className="report-section report-bridge">
           <p className="prose">
             Made with <a href="/">Colophon</a>. Got a claim you need to stand up?{" "}
-            <a href="mailto:ritsu@colophon.claims">Email us</a>.
+            <a href="mailto:ritsu.kai2000@gmail.com">Email us</a>.
           </p>
         </section>
 

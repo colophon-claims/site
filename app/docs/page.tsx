@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "How Colophon turns an agent benchmark result into a published claim others can inspect.",
 };
 
-const CONTACT_EMAIL = "ritsu@colophon.claims";
+const CONTACT_EMAIL = "ritsu.kai2000@gmail.com";
 
 const NAV = [
   { href: "#overview", label: "Overview" },

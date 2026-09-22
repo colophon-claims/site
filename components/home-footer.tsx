@@ -11,7 +11,7 @@ export function HomeFooter() {
         <nav className="home-footer__nav" aria-label="Footer">
           <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
-          <a href="mailto:ritsu@colophon.claims">ritsu@colophon.claims</a>
+          <a href="mailto:ritsu.kai2000@gmail.com">ritsu.kai2000@gmail.com</a>
         </nav>
         <div className="home-footer__line">
           <span>Checking stays free.</span>

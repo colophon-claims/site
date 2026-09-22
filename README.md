@@ -141,7 +141,7 @@ The landing page keeps the short v4 register and features the first real
 report without reproducing it. The public report title and slug come from the
 bundle's `presentation.json`; internal run labels stay confined to technical
 provenance and sealed source filenames. Public contact is
-`ritsu@colophon.claims`.
+`ritsu.kai2000@gmail.com`.
 
 The reader command shown publicly is
 `npx @colophon-claims/verify@0.1 ./bundle`. The public reader checks the
