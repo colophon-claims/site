@@ -9,7 +9,7 @@ import { getReport, isQualifiedReport } from "@/lib/reports";
 
 const CONTACT_EMAIL = "ritsu.kai2000@gmail.com";
 const REPORT_SLUG = "locomo-judge-report";
-const VERIFY_COMMAND = "npx @colophon-claims/verify@0.2 ./bundle";
+const VERIFY_COMMAND = "npx @colophon-claims/verify@0.2.1 ./bundle";
 
 const AUDIENCES = [
   {
