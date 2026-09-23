@@ -75,11 +75,34 @@ const PUBLISHED_PARTS = [
 ];
 
 const VERIFIER_CHECKS = [
-  "Every file listed by the bundle is present and unchanged.",
-  "The evidence records cover the result the report presents.",
-  "The supplied signatures match the published records.",
-  "The result table can be rebuilt from the evidence.",
-  "The readable report and machine-readable claim agree.",
+  {
+    name: "manifest",
+    gloss: "Every file listed by the bundle is present and unchanged.",
+  },
+  {
+    name: "evidence-closure",
+    gloss: "The evidence records cover the result the report presents.",
+  },
+  {
+    name: "trust",
+    gloss: "The public keys in the bundle are the ones its signed records name, one key per signer.",
+  },
+  {
+    name: "matrix-rederivation",
+    gloss: "The result table can be rebuilt from the evidence.",
+  },
+  {
+    name: "report-verification",
+    gloss: "The signed report covers this result table, and its numbers recompute from it.",
+  },
+  {
+    name: "claim-consistency",
+    gloss: "The machine-readable claim is rebuilt from the signed records and matches them exactly.",
+  },
+  {
+    name: "integrity-anchors",
+    gloss: "Any timestamp proofs the bundle carries match the bytes they claim to cover.",
+  },
 ];
 
 const LIMITS = [
@@ -195,10 +218,17 @@ export default function Docs() {
                 </p>
               </div>
               <pre className="codeblock">
-                <code>npx @colophon-claims/verify@0.1 ./bundle</code>
+                <code>npx @colophon-claims/verify@0.2.1 ./bundle</code>
               </pre>
+              <p className="docs-note">
+                For the published report&apos;s format, the checker runs these seven checks.
+              </p>
               <ul className="docs-check-list">
-                {VERIFIER_CHECKS.map((item) => <li key={item}>{item}</li>)}
+                {VERIFIER_CHECKS.map((item) => (
+                  <li key={item.name}>
+                    <code>{item.name}</code>: {item.gloss}
+                  </li>
+                ))}
               </ul>
               <p className="docs-note">
                 The verifier is a convenience, not a requirement. A reader can inspect the JSON,
