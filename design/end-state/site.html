@@ -1,0 +1,2038 @@
+<title>Colophon Site Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap');
+
+:root{
+  --paper:#f7f4ed;
+  --raised:#fffdf8;
+  --sunken:#f4f1e9;
+  --ink:#14120e;
+  --faded:#5c554c;
+  --rule:#c6bfb4;
+  --rule-soft:#e2dcd1;
+  --inverse-text:#f4f1e9;
+  --vermilion:#a8331f;
+  --vermilion-100:#f6dfd9;
+  --indigo:#27406b;
+  --indigo-100:#dce3ee;
+  --moss:#2e6144;
+  --moss-100:#dde9e1;
+  --ochre:#8a6113;
+  --ochre-100:#f2e6cc;
+  --bar-track:#eee9df;
+  --bar-fill:#b9c6de;
+  --bar-edge:#27406b;
+  --term-bg:#14120e;
+  --term-bar:#211e18;
+  --term-ink:#e9e4d8;
+  --term-faded:#9b9486;
+  --term-rule:#3a352c;
+  --term-accent:#c7b98f;
+  --term-green:#8fbf9f;
+  --term-red:#e08b76;
+  --cell-tex-fail:rgba(255,253,248,.78);
+  --cell-tex-timeout:rgba(255,253,248,.88);
+  --cell-tex-error:rgba(20,18,14,.55);
+
+  --f-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-ui:"Public Sans",-apple-system,"Segoe UI",Helvetica,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12110e;
+    --raised:#1b1915;
+    --sunken:#17150f;
+    --ink:#f2efe6;
+    --faded:#a49c8f;
+    --rule:#3f3a31;
+    --rule-soft:#2b2721;
+    --inverse-text:#14120e;
+    --vermilion:#e08b76;
+    --vermilion-100:#3a1e17;
+    --indigo:#9db6e0;
+    --indigo-100:#1b2537;
+    --moss:#82bc9a;
+    --moss-100:#152b20;
+    --ochre:#d9a842;
+    --ochre-100:#332810;
+    --bar-track:#211e18;
+    --bar-fill:#8ea7d4;
+    --bar-edge:#d5e0f2;
+    --term-bg:#0a0908;
+    --term-bar:#151310;
+    --term-rule:#38332b;
+    --cell-tex-fail:rgba(18,17,14,.62);
+    --cell-tex-timeout:rgba(18,17,14,.72);
+    --cell-tex-error:rgba(242,239,230,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12110e;
+  --raised:#1b1915;
+  --sunken:#17150f;
+  --ink:#f2efe6;
+  --faded:#a49c8f;
+  --rule:#3f3a31;
+  --rule-soft:#2b2721;
+  --inverse-text:#14120e;
+  --vermilion:#e08b76;
+  --vermilion-100:#3a1e17;
+  --indigo:#9db6e0;
+  --indigo-100:#1b2537;
+  --moss:#82bc9a;
+  --moss-100:#152b20;
+  --ochre:#d9a842;
+  --ochre-100:#332810;
+  --bar-track:#211e18;
+  --bar-fill:#8ea7d4;
+  --bar-edge:#d5e0f2;
+  --term-bg:#0a0908;
+  --term-bar:#151310;
+  --term-rule:#38332b;
+  --cell-tex-fail:rgba(18,17,14,.62);
+  --cell-tex-timeout:rgba(18,17,14,.72);
+  --cell-tex-error:rgba(242,239,230,.45);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-ui);
+  font-size:15px;
+  line-height:1.5;
+  margin:0;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,h5{margin:0;font-weight:400}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--indigo);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+a:hover{color:var(--vermilion)}
+:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.label{font-family:var(--f-ui);font-size:11px;font-weight:600;line-height:1.4;letter-spacing:.08em;text-transform:uppercase}
+.mono{font-family:var(--f-mono);font-size:13px;line-height:1.5;font-variant-numeric:tabular-nums}
+.ed{font-family:var(--f-display);font-size:17px;line-height:1.62;max-width:66ch}
+.faded{color:var(--faded)}
+.eyebrow{color:var(--vermilion)}
+
+/* ---------- header ---------- */
+.hdr{border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:20}
+.hdr .wrap{display:flex;align-items:center;gap:20px;padding-top:15px;padding-bottom:15px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-size:21px;font-weight:500;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+.brand:hover{color:var(--vermilion)}
+.nav{display:flex;gap:18px;align-items:center;margin-left:auto;font-size:14px;flex-wrap:wrap}
+.nav a{color:var(--faded);text-decoration:none}
+.nav a:hover{color:var(--vermilion);text-decoration:underline}
+.nav a[aria-current="page"]{color:var(--ink);text-decoration:underline;text-decoration-color:var(--vermilion);text-underline-offset:5px;text-decoration-thickness:2px}
+.btn{
+  display:inline-block;font-family:var(--f-ui);font-size:13px;font-weight:600;
+  background:var(--ink);color:var(--inverse-text);border:1px solid var(--ink);border-radius:3px;
+  padding:8px 14px;text-decoration:none;cursor:pointer;line-height:1.4;
+}
+.nav a.btn{color:var(--inverse-text)}
+.nav a.btn:hover{background:var(--vermilion);border-color:var(--vermilion);color:var(--inverse-text);text-decoration:none}
+.nav a.btn[aria-current="page"]{text-decoration:none}
+
+/* ---------- routes ---------- */
+main{padding:52px 0 40px}
+.route[hidden]{display:none}
+.page-head{max-width:66ch}
+h1.display{font-family:var(--f-display);font-size:clamp(36px,5vw,58px);line-height:1.06;letter-spacing:-.01em;margin-top:10px}
+h1.title{font-family:var(--f-display);font-size:clamp(30px,3.6vw,40px);line-height:1.12;letter-spacing:-.01em}
+h2.sect{font-family:var(--f-display);font-size:26px;line-height:1.2;margin-bottom:8px}
+h3.sub{font-family:var(--f-display);font-size:20px;line-height:1.25;margin-bottom:6px}
+.lede{font-family:var(--f-display);font-size:20px;line-height:1.55;max-width:60ch;margin-top:16px;color:var(--faded)}
+.block{margin-top:40px}
+.block-rule{border-top:1px solid var(--rule);padding-top:28px}
+.spacer{height:8px}
+
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--rule);margin-top:40px}
+@media (max-width:800px){.twocol{grid-template-columns:1fr}}
+.twocol>div{padding:22px 28px 22px 0}
+.twocol>div+div{border-left:1px solid var(--rule);padding-left:28px}
+@media (max-width:800px){.twocol>div+div{border-left:0;border-top:1px solid var(--rule);padding-left:0}}
+
+.codeblock{
+  background:var(--sunken);border:1px solid var(--rule);border-radius:3px;
+  padding:12px 14px;overflow-x:auto;max-width:100%;
+}
+.codeblock code{font-family:var(--f-mono);font-size:12.5px;white-space:pre;display:block}
+
+.card{background:var(--raised);border:1px solid var(--rule);border-radius:4px;padding:24px;max-width:820px}
+.card-report{border-top:3px solid var(--vermilion)}
+
+.list-rule{list-style:none;margin:14px 0 0;padding:0;border-top:1px solid var(--rule-soft);max-width:820px}
+.list-rule li{border-bottom:1px solid var(--rule-soft);padding:11px 0;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.list-rule li .m{font-family:var(--f-mono);font-size:12.5px;color:var(--faded);margin-left:auto}
+
+/* ---------- venue chips ---------- */
+.venue{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--f-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid;border-radius:2px;padding:3px 7px;white-space:nowrap;
+}
+.venue .pat{width:9px;height:9px;border:1px solid;border-radius:1px;flex:0 0 auto}
+.v-self{color:var(--ochre);background:var(--ochre-100);border-color:var(--ochre)}
+.v-self .pat{border-color:var(--ochre);background:repeating-linear-gradient(45deg,var(--ochre) 0 2px,transparent 2px 4px)}
+.v-colo{color:var(--indigo);background:var(--indigo-100);border-color:var(--indigo)}
+.v-colo .pat{border-color:var(--indigo);background:var(--indigo)}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;margin-top:16px;border:1px solid var(--rule);border-radius:3px;max-width:100%}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{
+  font-family:var(--f-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--faded);background:var(--sunken);border-bottom:1px solid var(--rule);white-space:nowrap;
+}
+tbody td{font-size:13.5px}
+td.num,th.num{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+.tnote{font-size:13px;color:var(--faded);margin-top:12px;max-width:78ch}
+
+/* ---------- claim page ---------- */
+.leadnum{
+  display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
+  font-family:var(--f-display);font-size:clamp(44px,7vw,72px);line-height:1;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;margin-top:10px;
+}
+.leadnum .to{font-family:var(--f-ui);font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faded)}
+.leadnum .hi{color:var(--vermilion)}
+.markline{font-family:var(--f-mono);font-size:12.5px;color:var(--faded);margin-top:16px;line-height:1.75;max-width:80ch}
+.threeq{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);margin-top:40px}
+@media (max-width:900px){.threeq{grid-template-columns:1fr}}
+.threeq>div{padding:20px 24px 20px 0}
+.threeq>div+div{border-left:1px solid var(--rule);padding-left:24px}
+@media (max-width:900px){.threeq>div+div{border-left:0;border-top:1px solid var(--rule);padding-left:0}}
+details{border:1px solid var(--rule);border-radius:3px;background:var(--sunken);margin-top:14px;max-width:100%;overflow-x:auto}
+summary{cursor:pointer;padding:9px 12px;font-family:var(--f-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faded)}
+details .dbody{padding:0 12px 12px}
+
+/* ---------- terminal ---------- */
+.term{border:1px solid var(--term-rule);border-radius:4px;overflow:hidden;background:var(--term-bg);margin-top:14px;max-width:100%}
+.term .cap{
+  background:var(--term-bar);border-bottom:1px solid var(--term-rule);color:var(--term-faded);
+  font-family:var(--f-mono);font-size:12px;padding:7px 14px;
+}
+.term .body{background:var(--term-bg);color:var(--term-ink);padding:18px 16px}
+.term pre{
+  font-family:var(--f-mono);font-size:12.5px;line-height:1.65;margin:0;
+  color:var(--term-ink);overflow-x:auto;white-space:pre;
+}
+.term .cmd{color:#fff;font-weight:600}
+.term .out{color:var(--term-faded)}
+.term .ok{color:var(--term-green)}
+.term .hi{color:var(--term-accent)}
+
+/* ---------- steps ---------- */
+.steps{list-style:none;padding:0;margin:32px 0 0;counter-reset:step}
+.steps>li{border-top:1px solid var(--rule);padding:26px 0 30px}
+.steps>li>.n{
+  font-family:var(--f-mono);font-size:12.5px;color:var(--vermilion);font-weight:600;
+  display:block;margin-bottom:6px;
+}
+
+/* ---------- form ---------- */
+.field{max-width:560px}
+.field input{
+  width:100%;font-family:var(--f-mono);font-size:13px;
+  background:var(--raised);color:var(--ink);
+  border:1px solid var(--rule);border-radius:3px;padding:9px 10px;margin-top:6px;
+}
+.outcome{border:1px solid var(--rule);border-top-width:2px;border-radius:3px;padding:14px 16px;margin-top:14px;background:var(--raised);max-width:820px}
+.o-pass{border-top-color:var(--moss)}
+.o-fail{border-top-color:var(--vermilion)}
+.o-none{border-top-color:var(--ochre)}
+.outcome .st{font-family:var(--f-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.o-pass .st{color:var(--moss)}
+.o-fail .st{color:var(--vermilion)}
+.o-none .st{color:var(--ochre)}
+.outcome .mono{overflow-x:auto}
+
+/* ---------- board chart (board page) ---------- */
+/* The board is the chart: one shared task axis, then one row per sealed claim.
+   The name column and the total column are pinned and the strip of cells
+   scrolls between them. Each pinned cell spans every track so that
+   position:sticky has room to travel, but is held to the width of its own
+   column, so the strip slides under it. */
+.bscroll{overflow-x:auto;max-width:100%;margin-top:26px;border-top:1px solid var(--rule)}
+.bchart{
+  --nm-w:224px;--tot-w:128px;
+  display:grid;grid-template-columns:var(--nm-w) max-content var(--tot-w);
+  width:max-content;min-width:100%;
+}
+@media (max-width:760px){.bchart{--nm-w:150px;--tot-w:118px}}
+.bnamecell,.bpad-l,.btotcell,.bpad-r{
+  grid-column:1 / 4;min-width:0;position:sticky;z-index:2;
+  background:var(--paper);border-bottom:1px solid var(--rule-soft);
+}
+.bnamecell,.bpad-l{left:0;width:var(--nm-w);justify-self:start;border-right:1px solid var(--rule-soft)}
+.btotcell,.bpad-r{right:0;width:var(--tot-w);justify-self:end;border-left:1px solid var(--rule-soft)}
+.bnamecell{padding:13px 14px 13px 0;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.bnameline{display:flex;align-items:baseline;gap:8px}
+.bname{
+  font-family:var(--f-ui);font-size:13.5px;font-weight:600;line-height:1.3;text-align:left;min-width:0;
+  background:none;border:0;padding:0;margin:0;color:var(--ink);cursor:pointer;
+  text-decoration:underline;text-decoration-color:var(--rule);text-decoration-thickness:1px;text-underline-offset:3px;
+}
+.bname:hover{color:var(--vermilion);text-decoration-color:var(--vermilion)}
+.bname.is-open{text-decoration-color:var(--ink);text-decoration-thickness:2px}
+.bstripname{font-family:var(--f-ui);font-size:13px;font-weight:600;line-height:1.3;overflow-wrap:anywhere;min-width:0}
+.barm{font-family:var(--f-mono);font-size:12px;line-height:1.4;color:var(--faded)}
+.vmark{position:relative;display:inline-block;width:9px;height:9px;flex:0 0 auto;border:1.5px solid;border-radius:50%}
+.vm-self{border-color:var(--ochre);background:transparent}
+.vm-colo{border-color:var(--indigo);background:var(--indigo)}
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;white-space:nowrap;border:0;clip-path:inset(50%)}
+.btotcell{padding:13px 0 13px 14px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px}
+.btot{font-family:var(--f-mono);font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.btotu{
+  font-family:var(--f-ui);font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faded);white-space:nowrap;
+}
+@media (max-width:760px){
+  .btotcell{padding-left:10px}
+  .btotu{font-size:9.5px;letter-spacing:.04em}
+}
+/* On a phone the two pinned columns give the strip its room back: the unit
+   label sets on two lines rather than squeezing the cells out of view. */
+@media (max-width:560px){
+  .bchart{--nm-w:132px;--tot-w:84px}
+  .btotu{white-space:normal;text-align:right}
+}
+.baxis{grid-column:2;padding:10px 16px 0;border-bottom:1px solid var(--rule-soft)}
+.baxis-in{position:relative;height:20px}
+.ttick{position:absolute;top:0;font-family:var(--f-mono);font-size:11px;line-height:1.1;color:var(--faded);font-variant-numeric:tabular-nums}
+.ttick i{display:block;width:1px;height:5px;background:var(--rule);margin-top:2px}
+.bstrip{grid-column:2;display:flex;align-items:center;gap:2px;padding:13px 16px;border-bottom:1px solid var(--rule-soft)}
+.cell{
+  width:12px;height:22px;flex:0 0 auto;display:block;
+  padding:0;margin:0;border:0;border-radius:1px;
+  background-color:var(--rule-soft);
+}
+button.cell{-webkit-appearance:none;appearance:none;cursor:pointer}
+.c-pass{background-color:var(--moss)}
+.c-fail{
+  background-color:var(--vermilion);
+  background-image:repeating-linear-gradient(45deg,transparent 0 2px,var(--cell-tex-fail) 2px 4px);
+}
+.c-timeout{
+  background-color:var(--ochre);
+  background-image:radial-gradient(var(--cell-tex-timeout) 1.15px,transparent 1.25px);
+  background-size:5px 5px;background-position:center;
+}
+.c-error{
+  background-color:var(--rule);
+  background-image:
+    repeating-linear-gradient(45deg,transparent 0 2px,var(--cell-tex-error) 2px 3px),
+    repeating-linear-gradient(-45deg,transparent 0 2px,var(--cell-tex-error) 2px 3px);
+}
+.c-unrun{background-color:transparent;border:1px solid var(--rule)}
+.cell.is-open{outline:2px solid var(--ink);outline-offset:1px}
+.cell.is-open:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+
+.tlegend{
+  display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:16px;align-items:center;
+  border-top:1px solid var(--rule-soft);padding-top:14px;max-width:1000px;
+}
+.tlegend .it{display:inline-flex;align-items:center;gap:8px;font-size:13px}
+.tlegend .cell{width:12px;height:18px}
+.tlegend .n{font-family:var(--f-mono);font-size:12.5px;color:var(--faded);font-variant-numeric:tabular-nums}
+
+.tpanel{
+  margin-top:22px;max-width:820px;background:var(--raised);
+  border:1px solid var(--rule);border-top:2px solid var(--ink);border-radius:3px;padding:18px 20px 16px;
+}
+.tpanel.p-pass{border-top-color:var(--moss)}
+.tpanel.p-fail{border-top-color:var(--vermilion)}
+.tpanel.p-timeout{border-top-color:var(--ochre)}
+.tpanel.p-error{border-top-color:var(--rule)}
+.tpanel.p-unrun{border-top-color:var(--faded)}
+.tpanel .ptop{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.tpanel h3{font-family:var(--f-display);font-size:20px;line-height:1.25}
+.tclose{
+  margin-left:auto;font-family:var(--f-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:3px;
+  padding:5px 10px;cursor:pointer;line-height:1.4;
+}
+.tclose:hover{border-color:var(--ink)}
+.trow{
+  display:grid;grid-template-columns:200px minmax(0,1fr);gap:2px 18px;
+  padding:9px 0;border-bottom:1px solid var(--rule-soft);align-items:baseline;
+}
+.trow:last-of-type{border-bottom:0}
+@media (max-width:640px){.trow{grid-template-columns:1fr}}
+.trow .v{font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.trow .v.words{font-family:var(--f-ui);font-size:14px}
+.tfoot{font-family:var(--f-mono);font-size:12.5px;color:var(--faded);margin-top:14px;border-top:1px solid var(--rule-soft);padding-top:12px}
+
+/* ---------- board rows: the bar ---------- */
+/* The board is one picture: one row per sealed claim, and the row leads with
+   the result as a bar on a shared 0 to 89 axis. Every bar carries its two
+   written counts at the feet, so the reading never rides on colour. */
+.board-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px 28px;flex-wrap:wrap}
+.btn-sec{background:var(--raised);color:var(--ink);border-color:var(--rule)}
+a.btn-sec:hover{background:var(--raised);color:var(--vermilion);border-color:var(--vermilion)}
+
+.scope-line{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 20px;
+  margin-top:24px;color:var(--faded);font-size:13.5px;
+}
+.scope-line>span+span{border-left:1px solid var(--rule);padding-left:20px}
+.disc-inline{border:0;border-radius:0;background:none;margin:0;overflow:visible;margin-left:auto}
+.disc-inline>summary{
+  padding:0;font-family:var(--f-ui);font-size:13.5px;font-weight:400;letter-spacing:0;
+  text-transform:none;color:var(--indigo);text-decoration:underline;text-underline-offset:3px;
+}
+.disc-inline>summary:hover{color:var(--vermilion)}
+.disc-inline[open]{flex:1 1 100%;margin-left:0}
+@media (max-width:760px){.disc-inline{margin-left:0;flex:1 1 100%}}
+
+.crows{margin-top:26px;border-top:1px solid var(--rule)}
+.chead,.crow{display:grid;grid-template-columns:236px minmax(0,1fr) 108px 132px;column-gap:24px}
+.chead{
+  padding:15px 0 10px;color:var(--faded);align-items:start;
+  font-family:var(--f-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+}
+.chead .res{text-align:right}
+/* The axis is written once and told its own scale, so a 40-task board and an
+   89-task board are the same drawing at two sizes. */
+.paxis{
+  position:relative;height:16px;margin-top:9px;color:var(--faded);
+  font-family:var(--f-mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;
+  font-variant-numeric:tabular-nums;--t1:30;--t2:60;--full:89;
+}
+.paxis span{position:absolute;top:0;transform:translateX(-50%)}
+.paxis span:first-child{left:0;transform:none}
+.paxis span:nth-child(2){left:calc(var(--t1) / var(--full) * 100%)}
+.paxis span:nth-child(3){left:calc(var(--t2) / var(--full) * 100%)}
+.paxis span:last-child{right:0;transform:none}
+
+/* A board groups its rows by the claim they were sealed in. A claim with one
+   arm is a group of one; a claim comparing three systems is a group of three.
+   The group label is quiet: the row that carries the result is the bar. */
+.cgroup{
+  border-top:1px solid var(--rule);padding:18px 0 2px;
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;
+}
+.cgname{font-family:var(--f-ui);font-size:13px;font-weight:600;color:var(--ink)}
+.cgmeta{display:flex;flex-wrap:wrap;align-items:center;gap:7px 16px;font-size:12.5px;color:var(--faded)}
+.cgmeta .vmark{position:relative;top:1px}
+.cgrun{display:inline-flex;align-items:center;gap:7px}
+
+.crow{align-items:center;padding:20px 0;border-top:1px solid var(--rule-soft)}
+.crow.first-in-group{border-top:0;padding-top:14px}
+.cnamestatic{font-family:var(--f-ui);font-size:15px;font-weight:600;line-height:1.3}
+.cname{
+  font-family:var(--f-ui);font-size:15px;font-weight:600;line-height:1.3;text-align:left;
+  background:none;border:0;padding:0;margin:0;color:var(--ink);cursor:pointer;
+  text-decoration:underline;text-decoration-color:var(--rule);text-decoration-thickness:1px;text-underline-offset:3px;
+}
+.cname:hover{color:var(--vermilion);text-decoration-color:var(--vermilion)}
+.cname.is-open{text-decoration-color:var(--ink);text-decoration-thickness:2px}
+.cclaimant{font-size:12.5px;color:var(--faded);margin-top:4px}
+.crun{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--faded);margin-top:11px}
+.bartrack{height:24px;background:var(--bar-track);border:1px solid var(--rule-soft);position:relative;--denom:89}
+.barfill{height:100%;width:calc(var(--passed) / var(--denom) * 100%);background:var(--bar-fill);border-right:2px solid var(--bar-edge)}
+.bartrack.short{height:20px}
+.barnote{display:flex;justify-content:space-between;gap:14px;font-size:12.5px;color:var(--faded);margin-top:9px}
+.cscore{
+  text-align:right;font-family:var(--f-mono);font-size:26px;line-height:1.05;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.cscore small{display:block;font-family:var(--f-ui);font-size:11.5px;color:var(--faded);margin-top:6px;white-space:nowrap}
+.cact{display:flex}
+.cact .btn{width:100%;text-align:center;font-size:12px;padding:7px 10px}
+.chart-foot{
+  display:flex;justify-content:space-between;gap:14px 28px;flex-wrap:wrap;
+  border-top:1px solid var(--rule);padding-top:14px;font-size:12.5px;color:var(--faded);
+}
+@media (max-width:1040px){
+  .chead,.crow{grid-template-columns:190px minmax(0,1fr) 92px 118px;column-gap:16px}
+  .cscore{font-size:22px}
+}
+@media (max-width:760px){
+  .chead{display:none}
+  .crow{grid-template-columns:minmax(0,1fr) 104px;column-gap:16px;row-gap:14px}
+  .cid{grid-column:1;grid-row:1}
+  .cscore{grid-column:2;grid-row:1}
+  .cvis{grid-column:1 / 3;grid-row:2}
+  .cact{grid-column:1 / 3;grid-row:3}
+  .cact .btn{width:auto}
+  .chart-foot{display:block}
+  .chart-foot p+p{margin-top:6px}
+}
+
+/* the two disclosures under the rows */
+.disc-rule{border:0;border-bottom:1px solid var(--rule);border-radius:0;background:none;margin:0;overflow:visible}
+.disc-rule.first{border-top:1px solid var(--rule);margin-top:44px}
+.disc-rule>summary{
+  padding:17px 0;font-family:var(--f-ui);font-size:15px;font-weight:600;
+  letter-spacing:0;text-transform:none;color:var(--ink);
+}
+.disc-rule>summary:hover{color:var(--vermilion)}
+.disc-rule>summary .side{float:right;margin-left:20px;font-weight:400;font-size:12.5px;color:var(--faded)}
+@media (max-width:640px){.disc-rule>summary .side{float:none;display:block;margin:6px 0 0}}
+.disc-body{padding:0 0 26px}
+.closing{display:flex;justify-content:space-between;align-items:baseline;gap:14px 28px;flex-wrap:wrap;margin-top:46px}
+
+/* ---------- a claim page ---------- */
+.fictnote{
+  border:1px solid var(--ochre);border-left-width:3px;border-radius:2px;
+  background:var(--ochre-100);color:var(--ink);
+  padding:10px 14px;font-size:13.5px;margin-top:18px;max-width:820px;
+}
+.bignum{
+  font-family:var(--f-mono);font-size:clamp(40px,6.5vw,66px);line-height:1;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;margin-top:10px;
+}
+.bignum-sub{font-size:15px;color:var(--faded);margin-top:10px}
+/* A claim that carries several results leads with the finding in words, not
+   with one number blown up to stand for all of them. */
+.leadsay{
+  font-family:var(--f-display);font-size:clamp(22px,3vw,30px);line-height:1.26;
+  letter-spacing:-.01em;max-width:26ch;margin-top:16px;
+}
+.onboard{font-size:13.5px;margin-top:10px}
+
+/* ---------- find a claim ---------- */
+/* One listing shape for every record, real or fictional. No score column, no
+   sort control, nothing aligned as a comparable number across records. */
+.findbar{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:flex-end;margin-top:30px;max-width:900px}
+.findfield{display:flex;flex-direction:column;gap:6px;min-width:0}
+.findfield.grow{flex:1 1 300px}
+.findfield input,.findfield select{
+  font-family:var(--f-ui);font-size:14px;width:100%;
+  background:var(--raised);color:var(--ink);
+  border:1px solid var(--rule);border-radius:3px;padding:9px 10px;
+}
+.findcount{font-size:13px;color:var(--faded);margin-top:18px}
+.reclist{list-style:none;margin:8px 0 0;padding:0;border-top:1px solid var(--rule);max-width:900px}
+.rec{border-bottom:1px solid var(--rule-soft);padding:20px 0}
+.rec[hidden]{display:none}
+.rectop{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px}
+.rectitle{font-family:var(--f-display);font-size:20px;line-height:1.28}
+.rectag{
+  font-family:var(--f-ui);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid;border-radius:2px;padding:2px 7px;white-space:nowrap;
+}
+.tag-fict{color:var(--ochre);background:var(--ochre-100);border-color:var(--ochre)}
+.recmeta{font-size:13px;color:var(--faded);margin-top:9px}
+.recfind{font-family:var(--f-display);font-size:16.5px;line-height:1.55;margin-top:11px;max-width:72ch}
+.recboard{font-size:13px;margin-top:11px}
+.nomatch{
+  border:1px solid var(--rule);border-top:2px solid var(--ochre);border-radius:3px;
+  background:var(--raised);padding:18px 20px;margin-top:22px;max-width:820px;
+}
+.nomatch[hidden]{display:none}
+.btn-clear{
+  font-family:var(--f-ui);font-size:12px;font-weight:600;
+  background:var(--raised);color:var(--ink);border:1px solid var(--rule);border-radius:3px;
+  padding:7px 12px;cursor:pointer;line-height:1.4;margin-top:12px;
+}
+.btn-clear:hover{border-color:var(--vermilion);color:var(--vermilion)}
+
+/* ---------- home route ---------- */
+/* The site's own homepage, ported into this preview's tokens and components:
+   the hero with the published claim beside it, the three audiences, the two
+   levels of independence, the free check, and the closing conversation. The
+   chips are the preview's existing venue chips, carrying the homepage's own
+   words. */
+.hm-hero{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;align-items:center}
+@media (min-width:1020px){.hm-hero{grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);gap:56px}}
+.hm-copy{display:flex;flex-direction:column;align-items:flex-start;gap:22px;min-width:0}
+.hm-copy h1{max-width:14ch;margin-top:0}
+.hm-lede{margin-top:0;max-width:45ch}
+.hm-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.btn-lg{font-size:14px;padding:11px 18px}
+
+.hm-example{
+  background:var(--raised);border:1px solid var(--rule);border-top:3px solid var(--vermilion);
+  border-radius:4px;min-width:0;
+}
+.hm-example-head{padding:22px 24px;display:flex;flex-direction:column;gap:12px}
+.hm-example-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hm-example-label{display:inline-flex;align-items:center;gap:7px}
+.hm-example-head .sect{margin-bottom:0;max-width:19ch}
+.hm-example-sub{max-width:54ch;font-size:14.5px;line-height:1.55}
+.hm-example-find{
+  padding:20px 24px;border-top:1px solid var(--rule-soft);background:var(--sunken);
+  display:flex;flex-direction:column;gap:9px;
+}
+.hm-find{font-family:var(--f-display);font-size:19px;line-height:1.38;max-width:32ch}
+.hm-count{
+  padding:14px 24px;border-top:1px solid var(--rule-soft);
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.hm-count strong{font-family:var(--f-mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.hm-count span{font-size:13px;color:var(--faded)}
+.hm-example-foot{
+  padding:14px 24px;border-top:1px solid var(--rule-soft);
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13.5px;
+}
+
+.hm-h2{
+  font-family:var(--f-display);font-size:clamp(26px,3.4vw,34px);line-height:1.14;
+  letter-spacing:-.01em;max-width:19ch;
+}
+.hm-intro{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;min-width:0}
+.hm-intro .lede{margin-top:0;max-width:47ch}
+
+.hm-aud{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start}
+@media (min-width:800px){.hm-aud{grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:44px}}
+.hm-aud-list{border-top:2px solid var(--rule);min-width:0}
+.hm-aud-list article{
+  padding:18px 0;border-bottom:1px solid var(--rule-soft);
+  display:grid;grid-template-columns:minmax(0,1fr);gap:8px;
+}
+@media (min-width:800px){.hm-aud-list article{grid-template-columns:minmax(13rem,.84fr) minmax(0,1.16fr);gap:32px}}
+.hm-aud-list h3{font-family:var(--f-display);font-size:18px;line-height:1.3}
+.hm-aud-list p{font-size:15.5px;color:var(--faded);max-width:56ch}
+
+@media (min-width:800px){.hm-paths-intro{grid-template-columns:minmax(15rem,.75fr) minmax(0,1.25fr);gap:44px}}
+.hm-paths{margin-top:30px;border-top:2px solid var(--rule)}
+.hm-path{
+  padding:24px 0;border-bottom:1px solid var(--rule-soft);
+  display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;
+}
+@media (min-width:800px){.hm-path{grid-template-columns:minmax(15rem,.75fr) minmax(0,1.25fr);gap:44px;padding:28px 0}}
+/* The origin chip sits above its heading at every width: side by side, the
+   longer of the two chips wraps and the two rows stop matching. */
+.hm-path-head{display:flex;flex-direction:column;align-items:flex-start;gap:14px;min-width:0}
+.hm-path-head .sub{margin-bottom:0;max-width:19ch}
+.hm-path>p{max-width:60ch;min-width:0}
+
+.hm-verify{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;align-items:start}
+@media (min-width:880px){.hm-verify{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px}}
+.hm-verify-copy,.hm-verify-cmd{display:flex;flex-direction:column;align-items:flex-start;gap:14px;min-width:0}
+.hm-verify-cmd{width:100%;gap:9px}
+.hm-verify-cmd .codeblock{width:100%}
+.hm-npm{font-family:var(--f-mono);font-size:12px;color:var(--faded)}
+
+.hm-contact{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-items:center}
+@media (min-width:800px){.hm-contact{grid-template-columns:minmax(0,1fr) auto;gap:44px}}
+.hm-contact-copy{display:flex;flex-direction:column;gap:14px;min-width:0}
+.hm-contact>.btn{justify-self:start}
+@media (min-width:800px){.hm-contact>.btn{justify-self:end}}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule);margin-top:64px}
+footer .wrap{padding-top:22px;padding-bottom:56px}
+footer p{max-width:80ch}
+footer .prev{font-size:12.5px;color:var(--faded);margin-top:8px}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="#/">Colophon</a>
+    <nav class="nav" aria-label="Site">
+      <a href="#/boards/" data-nav="#/boards/">Boards</a>
+      <a href="#/find/" data-nav="#/find/">Find a claim</a>
+      <a href="#/docs/" data-nav="#/docs/">Docs</a>
+      <a class="btn" href="#/docs/">Seal a claim</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ HOME ============ -->
+<section class="route" id="r-home" data-route="#/" aria-labelledby="h-home">
+
+  <div class="hm-hero">
+    <div class="hm-copy">
+      <h1 class="display" id="h-home">Turn benchmark results into claims that hold up.</h1>
+      <p class="lede hm-lede">Your team knows what went into the result. Everyone else has to take your word for it. Colophon closes that gap with a public claim people can inspect for themselves.</p>
+      <p class="hm-actions">
+        <a class="btn btn-lg" href="#/claims/b/">See an example claim</a>
+        <a class="btn btn-sec btn-lg" href="mailto:ritsu.kai2000@gmail.com">Talk to Colophon</a>
+      </p>
+    </div>
+
+    <article class="hm-example" aria-labelledby="hm-example-title">
+      <div class="hm-example-head">
+        <div class="hm-example-meta">
+          <p class="label faded hm-example-label"><svg width="13" height="13" viewBox="0 0 32 32" fill="var(--vermilion)" aria-hidden="true"><rect x="12.5" y="1.5" width="7" height="7" transform="rotate(45 16 5)"></rect><rect x="2.5" y="19.5" width="7" height="7" transform="rotate(45 6 23)"></rect><rect x="22.5" y="19.5" width="7" height="7" transform="rotate(45 26 23)"></rect></svg>An example claim<span class="rectag tag-fict" style="margin-left:9px">Fictional example</span></p>
+          <span class="venue v-colo"><span class="pat"></span>Colophon-run</span>
+        </div>
+        <h2 class="sect" id="hm-example-title">example-agent 0.4 (fictional)</h2>
+        <p class="faded hm-example-sub">Terminal-Bench 2.1, full suite, 89 tasks</p>
+      </div>
+      <div class="hm-example-find">
+        <p class="label faded">What it found</p>
+        <p class="hm-find">Passed 68 of the 89 tasks, with every remaining task accounted for.</p>
+      </div>
+      <p class="hm-count"><strong>89 of 89</strong><span>planned tasks accounted for</span></p>
+      <div class="hm-example-foot">
+        <a href="#/claims/b/">Read the claim</a>
+        <a href="#/boards/terminal-bench-2.1/full/">See its board</a>
+      </div>
+    </article>
+  </div>
+
+  <section class="block block-rule" aria-labelledby="hm-aud-title">
+    <div class="hm-aud">
+      <div class="hm-intro">
+        <h2 class="hm-h2" id="hm-aud-title">For results that need to leave the room.</h2>
+        <p class="lede">A benchmark becomes valuable when people beyond its authors can rely on it.</p>
+      </div>
+      <div class="hm-aud-list">
+        <article>
+          <h3>You are publishing a benchmark</h3>
+          <p>Give the result a permanent place people can cite, inspect, and return to.</p>
+        </article>
+        <article>
+          <h3>You are making a performance claim</h3>
+          <p>Give customers, reviewers, and competitors something stronger than your word.</p>
+        </article>
+        <article>
+          <h3>You are relying on a result</h3>
+          <p>Put a clear public record behind a product, research, or procurement decision.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block block-rule" aria-labelledby="hm-paths-title">
+    <div class="hm-intro hm-paths-intro">
+      <h2 class="hm-h2" id="hm-paths-title">Independence that fits the claim.</h2>
+      <p class="lede">Choose the level of separation that gives your audience the confidence they need.</p>
+    </div>
+
+    <div class="hm-paths">
+      <article class="hm-path">
+        <div class="hm-path-head">
+          <span class="venue v-self"><span class="pat"></span>Self-run</span>
+          <h3 class="sub">Strong for most claims</h3>
+        </div>
+        <p class="ed">Keep the run with your team while giving readers a result they can inspect for themselves.</p>
+      </article>
+      <article class="hm-path">
+        <div class="hm-path-head">
+          <span class="venue v-colo"><span class="pat"></span>Independently run</span>
+          <h3 class="sub">When added distance matters</h3>
+        </div>
+        <p class="ed">Give readers confidence that the benchmark was run by someone separate from the claimant.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block block-rule hm-verify" aria-labelledby="hm-verify-title">
+    <div class="hm-verify-copy">
+      <h2 class="hm-h2" id="hm-verify-title">Anyone can check the claim.</h2>
+      <p class="lede hm-lede">Checking is free. It stays free.</p>
+      <p>Every claim page carries its own files and check command. <a href="#/claims/b/">See a claim page</a>.</p>
+    </div>
+    <div class="hm-verify-cmd">
+      <div class="codeblock"><code>npx @colophon-claims/verify@0.2 ./bundle</code></div>
+      <p class="hm-npm">The checker is available on npm.</p>
+    </div>
+  </section>
+
+  <section class="block block-rule hm-contact" aria-labelledby="hm-contact-title">
+    <div class="hm-contact-copy">
+      <h2 class="hm-h2" id="hm-contact-title">Where does your claim need to go?</h2>
+      <p class="lede hm-lede">Tell us what you are trying to establish and who needs to rely on it. We can talk through which path fits.</p>
+    </div>
+    <a class="btn btn-lg" href="mailto:ritsu.kai2000@gmail.com">Start a conversation</a>
+  </section>
+</section>
+
+<!-- ============ FIND A CLAIM ============ -->
+<!-- The old claims index browsed heterogeneous records for no stated reason.
+     This page has one job, retrieval, and gives every record the same listing
+     shape so nothing here reads as a ranking. #/claims/ still resolves here. -->
+<section class="route" id="r-find" data-route="#/find/" data-alias="#/claims/" aria-labelledby="h-find" hidden>
+  <div class="page-head">
+    <p class="label eyebrow">Find a claim</p>
+    <h1 class="title" id="h-find">Find a claim</h1>
+    <p class="lede">Every public claim listed on Colophon. Newest first. Order is recency, not merit.</p>
+  </div>
+
+  <div class="findbar">
+    <div class="findfield grow">
+      <label class="label faded" for="findq">Title, claimant or benchmark</label>
+      <input id="findq" type="search" autocomplete="off" placeholder="example-agent, Terminal-Bench, claimant B">
+    </div>
+    <div class="findfield">
+      <label class="label faded" for="findboard">Board</label>
+      <select id="findboard">
+        <option value="all">All</option>
+        <option value="tb">Terminal-Bench 2.1</option>
+        <option value="eb">Example-Bench 0.1</option>
+      </select>
+    </div>
+  </div>
+
+  <p class="findcount" id="findcount" role="status">4 claims listed.</p>
+
+  <ul class="reclist" id="reclist">
+    <li class="rec" data-board="tb" data-find="example-agent 0.3 fictional claimant a terminal-bench 2.1 agent tasks self-run">
+      <div class="rectop">
+        <h2 class="rectitle"><a href="#/claims/a/">example-agent 0.3 (fictional)</a></h2>
+        <span class="rectag tag-fict">Fictional example</span>
+      </div>
+      <p class="recmeta">Fictional claimant A &middot; Terminal-Bench 2.1, full suite, 89 tasks &middot; Self-run &middot; 2026-09-04</p>
+      <p class="recfind">Passed 61 of the 89 tasks, with every remaining task accounted for.</p>
+      <p class="recboard"><a href="#/boards/terminal-bench-2.1/full/">On the Terminal-Bench 2.1 board</a></p>
+    </li>
+
+    <li class="rec" data-board="tb" data-find="example-agent 0.4 fictional claimant b terminal-bench 2.1 agent tasks colophon-run">
+      <div class="rectop">
+        <h2 class="rectitle"><a href="#/claims/b/">example-agent 0.4 (fictional)</a></h2>
+        <span class="rectag tag-fict">Fictional example</span>
+      </div>
+      <p class="recmeta">Fictional claimant B &middot; Terminal-Bench 2.1, full suite, 89 tasks &middot; Colophon-run &middot; 2026-09-02</p>
+      <p class="recfind">Passed 68 of the 89 tasks, with every remaining task accounted for.</p>
+      <p class="recboard"><a href="#/boards/terminal-bench-2.1/full/">On the Terminal-Bench 2.1 board</a></p>
+    </li>
+
+    <li class="rec" data-board="tb" data-find="other-agent 1.1 fictional claimant c terminal-bench 2.1 agent tasks self-run">
+      <div class="rectop">
+        <h2 class="rectitle"><a href="#/claims/c/">other-agent 1.1 (fictional)</a></h2>
+        <span class="rectag tag-fict">Fictional example</span>
+      </div>
+      <p class="recmeta">Fictional claimant C &middot; Terminal-Bench 2.1, full suite, 89 tasks &middot; Self-run &middot; 2026-08-30</p>
+      <p class="recfind">Passed 54 of the 89 tasks, with every remaining task accounted for.</p>
+      <p class="recboard"><a href="#/boards/terminal-bench-2.1/full/">On the Terminal-Bench 2.1 board</a></p>
+    </li>
+
+    <li class="rec" data-board="eb" data-find="example-bench 0.1 fictional benchmark author d example-system x y z tasks self-run">
+      <div class="rectop">
+        <h2 class="rectitle"><a href="#/claims/d/">Example-Bench 0.1 (fictional): three systems on the same 40 tasks</a></h2>
+        <span class="rectag tag-fict">Fictional example</span>
+      </div>
+      <p class="recmeta">Fictional benchmark author D &middot; Example-Bench 0.1 (fictional), full suite, 40 tasks &middot; Self-run &middot; 2026-08-30</p>
+      <p class="recfind">Three systems on the same 40 tasks: 18 to 27 passed.</p>
+      <p class="recboard"><a href="#/boards/example-bench-0.1/full/">On the Example-Bench 0.1 board</a></p>
+    </li>
+  </ul>
+
+  <div class="nomatch" id="findnone" hidden>
+    <p class="label faded">No claim matches</p>
+    <p class="ed" style="font-size:15px;margin-top:8px">Nothing in this listing matches that search and that board.</p>
+    <button type="button" class="btn-clear" id="findclear">Clear the search</button>
+  </div>
+
+  <p class="tnote" style="margin-top:24px">Every record in this listing is a drawing for this design preview and is tagged as such. No evidence exists to download. Colophon does not rank claims against each other, and claims sealed on different benchmarks are never compared.</p>
+</section>
+
+<!-- ============ THREE FICTIONAL CLAIM PAGES ============ -->
+<!-- One template, filled from the same rows the board draws. -->
+<section class="route" id="r-claim-a" data-route="#/claims/a/" aria-labelledby="h-claim-a" hidden>
+  <div data-claim="a"></div>
+</section>
+<section class="route" id="r-claim-b" data-route="#/claims/b/" aria-labelledby="h-claim-b" hidden>
+  <div data-claim="b"></div>
+</section>
+<section class="route" id="r-claim-c" data-route="#/claims/c/" aria-labelledby="h-claim-c" hidden>
+  <div data-claim="c"></div>
+</section>
+
+<!-- ============ A BENCHMARK AUTHOR'S FIRST CLAIM ============ -->
+<!-- The same claim template carrying three results instead of one. The finding
+     leads in words; no single number is blown up to stand for the claim. This
+     claim is the one that opened its board. Fictional throughout. -->
+<section class="route" id="r-claim-d" data-route="#/claims/d/" aria-labelledby="h-claim-d" hidden>
+  <p class="mono faded"><a href="#/find/">Find a claim</a> &middot; <a href="#/boards/example-bench-0.1/full/">Example-Bench 0.1 board</a></p>
+  <div class="page-head" style="margin-top:14px">
+    <p class="label eyebrow">Claim</p>
+    <h1 class="title" id="h-claim-d">Example-Bench 0.1 (fictional): three systems on the same 40 tasks</h1>
+    <p class="onboard">On the board: <a href="#/boards/example-bench-0.1/full/">Example-Bench 0.1</a></p>
+  </div>
+  <p class="fictnote">A fictional example for this design preview. No evidence exists to download.</p>
+  <p style="margin-top:16px">Fictional benchmark author D &nbsp; <span class="mono faded">sealed 2026-08-30</span> &nbsp; <span class="venue v-self"><span class="pat"></span>Self-run</span></p>
+
+  <p class="leadsay">Three systems on the same 40 tasks: 18 to 27 passed.</p>
+
+  <p class="markline">Locked 2026-08-28 &middot; anchored ots:mock-7d21ba6c40e9 &middot; Self-run &middot; 40 of 40 planned tasks accounted for on each of the three systems</p>
+
+  <div class="block">
+    <h2 class="sect">The three results</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">System, as sealed</th>
+            <th scope="col">Tasks passed <span class="label faded" style="text-transform:none;letter-spacing:0;font-weight:400">shared axis, 0 to 40</span></th>
+            <th scope="col" class="num">Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>example-system X (fictional)</td>
+            <td><div class="bartrack short" style="--denom:40" aria-hidden="true"><div class="barfill" style="--passed:22"></div></div></td>
+            <td class="num">22 of 40</td>
+          </tr>
+          <tr>
+            <td>example-system Y (fictional)</td>
+            <td><div class="bartrack short" style="--denom:40" aria-hidden="true"><div class="barfill" style="--passed:27"></div></div></td>
+            <td class="num">27 of 40</td>
+          </tr>
+          <tr>
+            <td>example-system Z (fictional)</td>
+            <td><div class="bartrack short" style="--denom:40" aria-hidden="true"><div class="barfill" style="--passed:18"></div></div></td>
+            <td class="num">18 of 40</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tnote">Listed in the order the three systems were sealed, not in the order of their counts. The bars share one axis because the three systems ran the same 40 tasks under the same scorer inside this one claim. Every planned task is accounted for on every system: 40 of 40 three times, failures and timeouts included.</p>
+  </div>
+
+  <div class="threeq">
+    <div>
+      <p class="label faded">What exactly ran</p>
+      <p class="ed" style="font-size:15px;margin-top:12px"><b>Benchmark.</b> Example-Bench 0.1 (fictional) at full coverage: 40 tasks, written and fixed by this claimant, who is the benchmark's author.</p>
+      <p class="ed" style="font-size:15px;margin-top:10px"><b>Arms.</b> Three systems in one claim: example-system X (fictional), example-system Y (fictional), example-system Z (fictional). All three were named in the lock, before any result existed.</p>
+      <p class="ed" style="font-size:15px;margin-top:10px"><b>Scorer.</b> The benchmark's own scorer, pinned by digest, identical across the three systems.</p>
+      <p class="markline" style="margin-top:10px">benchmark digest sha256:mock-4b2e70d9a1c63f85 &middot; scorer pinned by digest &middot; coverage: full, 40 of 40 tasks</p>
+    </div>
+    <div>
+      <p class="label faded">Who ran it</p>
+      <p class="ed" style="font-size:15px;margin-top:12px">Self-run. The sealed disclosure says it in its own first line:</p>
+      <p class="ed" style="font-size:15px;margin-top:10px">"This is a local, self-run venue: the same operator controls task dispatch, execution, and evaluation."</p>
+      <p class="ed" style="font-size:15px;margin-top:10px">The claimant wrote the benchmark and ran it. Colophon did not write the benchmark, does not own it, and did not run it. Writing the tasks and running them are both the claimant's, and the record says so rather than smoothing it over.</p>
+    </div>
+    <div>
+      <p class="label faded">Why believe it</p>
+      <p class="ed" style="font-size:15px;margin-top:12px">Because you do not have to. Recompute all three results from the evidence with the free checker.</p>
+      <div class="codeblock" style="margin-top:12px"><code>npx @colophon-claims/verify@0.2.1 ./mock-6a15cd82</code></div>
+      <p class="ed" style="font-size:15px;margin-top:10px">The site ran that same check cold on 2026-08-31: 7 of 7 checks passed. Checking ends at the math, not at honesty.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2 class="sect">Every planned task, accounted for</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Outcome</th>
+            <th scope="col" class="num">example-system X</th>
+            <th scope="col" class="num">example-system Y</th>
+            <th scope="col" class="num">example-system Z</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Passed</td><td class="num">22</td><td class="num">27</td><td class="num">18</td></tr>
+          <tr><td>Failed</td><td class="num">14</td><td class="num">11</td><td class="num">18</td></tr>
+          <tr><td>Timed out</td><td class="num">3</td><td class="num">2</td><td class="num">3</td></tr>
+          <tr><td>Harness error</td><td class="num">1</td><td class="num">0</td><td class="num">1</td></tr>
+          <tr><td>Not run</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+          <tr><td>All planned tasks</td><td class="num">40</td><td class="num">40</td><td class="num">40</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tnote">No flag drops a row. A task with no attempt is counted as not run and says so. These are the outcome counts inside one claim, on one benchmark, not a comparison with anything sealed elsewhere.</p>
+  </div>
+
+  <div class="block">
+    <h2 class="sect">Evidence</h2>
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><td>Benchmark</td><td class="num" style="white-space:normal">sha256:mock-4b2e70d9a1c63f85</td><td>identical on every claim on this board</td></tr>
+          <tr><td>Run</td><td class="num" style="white-space:normal">sha256:mock-e93c07a5b6142dd8</td><td>120 native logs, unique to this claim</td></tr>
+          <tr><td>Bundle</td><td class="num" style="white-space:normal">sha256:mock-6a15cd820b7e94f3</td><td class="num">benchmark-product-public-bundle/7</td></tr>
+          <tr><td>Report</td><td class="num" style="white-space:normal">sha256:mock-c40b9e73a2581df6</td><td class="num">120 rows, 40 per system</td></tr>
+          <tr><td>Anchor</td><td class="num" style="white-space:normal">ots:mock-7d21ba6c40e9</td><td class="num">locked 2026-08-28</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tnote">The benchmark digest is the board's key and is the same on every claim sealed on Example-Bench 0.1. The run digest belongs to this claim alone. A fictional example for this design preview. No evidence exists to download. Every digest on this page begins with mock- and belongs to a fictional claimant.</p>
+
+    <p class="label faded" style="margin-top:24px">Verify it yourself</p>
+    <div class="codeblock" style="margin-top:10px"><code>npx @colophon-claims/verify@0.2.1 ./mock-6a15cd820b7e94f3</code></div>
+    <p class="ed" style="font-size:15px;margin-top:12px">Free, and it stays free. Verification opens no network connection, reads no account or API credential, and uploads nothing.</p>
+  </div>
+
+  <div class="block block-rule">
+    <h2 class="sect">This claim opened the board for Example-Bench 0.1.</h2>
+    <p class="ed">Colophon creates no benchmarks. A benchmark author brings one, locks it, and makes the first claim on it, and that first claim opens the board as a board of one. Anyone who seals a claim on the same locked benchmark joins it there.</p>
+    <p style="margin-top:16px"><a href="#/boards/example-bench-0.1/full/">See the Example-Bench 0.1 board</a></p>
+  </div>
+</section>
+
+<!-- ============ BOARDS INDEX ============ -->
+<section class="route" id="r-boards" data-route="#/boards/" aria-labelledby="h-boards" hidden>
+  <div class="page-head">
+    <p class="label eyebrow">Boards</p>
+    <h1 class="title" id="h-boards">Boards</h1>
+    <p class="lede">A board is a view over the claims sealed on one and the same locked benchmark, so two results on it came from the same fixed tasks and the same scorer. A board is not the claims' container; each claim has its own permanent page.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Benchmark</th>
+          <th scope="col">Coverage</th>
+          <th scope="col" class="num">Tasks</th>
+          <th scope="col">Claims</th>
+          <th scope="col" class="num">Most recent seal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="#/boards/terminal-bench-2.1/full/">Terminal-Bench 2.1</a></td>
+          <td>full</td>
+          <td class="num">89</td>
+          <td>3 claims, 3 results</td>
+          <td class="num">2026-09-04</td>
+        </tr>
+        <tr>
+          <td><a href="#/boards/example-bench-0.1/full/">Example-Bench 0.1 (fictional)</a></td>
+          <td>full</td>
+          <td class="num">40</td>
+          <td>1 claim, 3 results</td>
+          <td class="num">2026-08-30</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tnote">Boards are not ranked against each other, and neither are the claims on them. Colophon creates no benchmarks. A board opens when a benchmark author makes the first claim on a benchmark they brought, and it stays a board of one until someone seals a claim on that same locked benchmark.</p>
+  <p class="tnote" style="margin-top:10px">Looking for one particular claim? <a href="#/find/">Find a claim</a>.</p>
+
+  <div class="block block-rule">
+    <h2 class="sect">Put a claim on a board</h2>
+    <p class="ed">Seal the method, run it, bring the run back, publish the bundle, then hand the site the bundle's address. The site checks it cold with the same free command a stranger uses.</p>
+    <p style="margin-top:16px"><a href="#/boards/submit/">List a claim</a></p>
+  </div>
+</section>
+
+<!-- ============ ONE BOARD ============ -->
+<section class="route" id="r-board" data-route="#/boards/terminal-bench-2.1/full/" aria-labelledby="h-board" hidden>
+  <p class="mono faded"><a href="#/boards/">All boards</a></p>
+  <div class="board-head" style="margin-top:14px">
+    <div class="page-head">
+      <h1 class="title" id="h-board">Terminal-Bench 2.1</h1>
+      <p class="lede" style="margin-top:10px">How agents performed on the same 89 tasks.</p>
+    </div>
+    <p><a class="btn btn-sec" href="#/boards/submit/">List a claim</a></p>
+  </div>
+
+  <div class="scope-line">
+    <span>Full suite</span>
+    <span>Same tasks and scoring</span>
+    <span>All outcomes included</span>
+    <details class="disc-inline">
+      <summary>About this method</summary>
+      <p class="ed" style="font-size:15px;margin-top:10px">Board key: the locked benchmark, <span class="mono">sha256:mock-7f3a91c4d0e28b56</span> (its tasks, scoring and coverage). The claimant's agent is not part of the key, so every claim on the same benchmark lands here.</p>
+      <p class="markline" style="margin-top:10px">suite at upstream commit mock-8c41f0a2 &middot; scorer: the suite's own, pinned by digest &middot; benchmark digest sha256:mock-7f3a91c4d0e28b56</p>
+    </details>
+  </div>
+
+  <div class="crows">
+    <div class="chead" aria-hidden="true">
+      <span>Agent / claim</span>
+      <div>
+        <span>Tasks passed</span>
+        <div class="paxis"><span>0</span><span>30</span><span>60</span><span>89</span></div>
+      </div>
+      <span class="res">Result</span>
+      <span></span>
+    </div>
+    <div id="claimrows"></div>
+  </div>
+
+  <div class="chart-foot">
+    <p>Latest claims first. One run per claim.</p>
+    <p>A result for these tasks, not a ranking of overall ability.</p>
+  </div>
+
+  <div class="tpanel" id="rowpanel" role="region" aria-live="polite" tabindex="-1" hidden></div>
+
+  <details class="disc-rule first" id="taskdisc">
+    <summary>Explore the task-by-task results <span class="side">89 tasks, including failures and gaps</span></summary>
+    <div class="disc-body">
+      <p class="ed" style="font-size:15px;max-width:78ch">One cell is one of the 89 tasks the suite fixes, and every task is accounted for in the bundle behind it, failures and timeouts included. Open a cell for the sealed attempt.</p>
+      <div class="bscroll">
+        <div class="bchart" id="taskgrid"></div>
+      </div>
+      <div class="tlegend" id="tasklegend"></div>
+      <div class="tpanel" id="taskpanel" role="region" aria-live="polite" tabindex="-1" hidden></div>
+    </div>
+  </details>
+
+  <details class="disc-rule" id="methoddisc">
+    <summary>What makes these claims comparable? <span class="side">The method and its limits</span></summary>
+    <div class="disc-body">
+      <p class="ed" style="font-size:15px">A board is a view over the claims sealed on one and the same locked benchmark, so two results on it came from the same fixed tasks and the same scorer.</p>
+      <p class="ed" style="font-size:15px;margin-top:12px">Board key: the locked benchmark, <span class="mono">sha256:mock-7f3a91c4d0e28b56</span> (its tasks, scoring and coverage). The claimant's agent is not part of the key, so every claim on the same benchmark lands here.</p>
+      <p class="markline">suite at upstream commit mock-8c41f0a2 &middot; scorer: the suite's own, pinned by digest &middot; benchmark digest sha256:mock-7f3a91c4d0e28b56</p>
+      <p class="markline">A chart here never spans two boards. Full coverage and subset coverage of the same suite are two different locked benchmarks and sit on two different boards. Claims on different benchmarks are never compared.</p>
+    </div>
+  </details>
+
+  <div class="closing">
+    <div>
+      <h2 class="sect">A result you can point to.</h2>
+      <p class="ed" style="font-size:15px;margin-top:4px">Share your claim with its evidence a click away.</p>
+    </div>
+    <p><a href="#/claims/a/">See an example claim page</a></p>
+  </div>
+</section>
+
+<!-- ============ A BOARD OF ONE ============ -->
+<!-- The same drawing as the Terminal-Bench board at a different scale: head,
+     fact line, one shared axis, rows grouped by the claim they were sealed in,
+     foot lines, disclosures. It holds one claim, and it says so rather than
+     pretending to be a longer list. Fictional throughout. -->
+<section class="route" id="r-board-eb" data-route="#/boards/example-bench-0.1/full/" aria-labelledby="h-board-eb" hidden>
+  <p class="mono faded"><a href="#/boards/">All boards</a></p>
+  <div class="board-head" style="margin-top:14px">
+    <div class="page-head">
+      <h1 class="title" id="h-board-eb">Example-Bench 0.1 (fictional)</h1>
+      <p class="lede" style="margin-top:10px">How systems performed on the same 40 tasks.</p>
+    </div>
+    <p><a class="btn btn-sec" href="#/boards/submit/">List a claim</a></p>
+  </div>
+
+  <p class="fictnote">A fictional example for this design preview. The benchmark, its author and all three systems are drawings. No evidence exists to download.</p>
+
+  <div class="scope-line">
+    <span>Full suite</span>
+    <span>Same tasks and scoring</span>
+    <span>All outcomes included</span>
+    <details class="disc-inline">
+      <summary>About this method</summary>
+      <p class="ed" style="font-size:15px;margin-top:10px">Board key: the locked benchmark, <span class="mono">sha256:mock-4b2e70d9a1c63f85</span> (its tasks, scoring and coverage). The claimant's agent is not part of the key, so every claim on the same benchmark lands here.</p>
+      <p class="markline" style="margin-top:10px">benchmark written and locked by its author &middot; scorer: the benchmark's own, pinned by digest &middot; benchmark digest sha256:mock-4b2e70d9a1c63f85</p>
+    </details>
+  </div>
+
+  <div class="crows">
+    <div class="chead" aria-hidden="true">
+      <span>System / claim</span>
+      <div>
+        <span>Tasks passed</span>
+        <div class="paxis" style="--t1:10;--t2:20;--full:40"><span>0</span><span>10</span><span>20</span><span>40</span></div>
+      </div>
+      <span class="res">Result</span>
+      <span></span>
+    </div>
+    <div id="ebclaimrows"></div>
+  </div>
+
+  <div class="chart-foot">
+    <p>Latest claims first. One group is one sealed claim.</p>
+    <p>A result for these tasks, not a ranking of overall ability.</p>
+  </div>
+
+  <div class="block">
+    <p class="ed">This board opened with its benchmark author's claim. Anyone can seal a claim on the same locked benchmark and it joins here.</p>
+    <p style="margin-top:16px"><a class="btn" href="#/docs/">Seal a claim on this benchmark</a></p>
+  </div>
+
+  <details class="disc-rule first">
+    <summary>Outcome counts, system by system <span class="side">40 tasks each, failures and gaps included</span></summary>
+    <div class="disc-body">
+      <p class="ed" style="font-size:15px;max-width:78ch">Every one of the 40 tasks is accounted for on every system in the bundle behind this claim, failures and timeouts included. No flag drops a row.</p>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Outcome</th>
+              <th scope="col" class="num">example-system X</th>
+              <th scope="col" class="num">example-system Y</th>
+              <th scope="col" class="num">example-system Z</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Passed</td><td class="num">22</td><td class="num">27</td><td class="num">18</td></tr>
+            <tr><td>Failed</td><td class="num">14</td><td class="num">11</td><td class="num">18</td></tr>
+            <tr><td>Timed out</td><td class="num">3</td><td class="num">2</td><td class="num">3</td></tr>
+            <tr><td>Harness error</td><td class="num">1</td><td class="num">0</td><td class="num">1</td></tr>
+            <tr><td>Not run</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td>All planned tasks</td><td class="num">40</td><td class="num">40</td><td class="num">40</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tnote">All three columns belong to one claim, sealed together on one locked benchmark. The full record is on <a href="#/claims/d/">the claim's own page</a>.</p>
+    </div>
+  </details>
+
+  <details class="disc-rule">
+    <summary>What makes these claims comparable? <span class="side">The benchmark and its limits</span></summary>
+    <div class="disc-body">
+      <p class="ed" style="font-size:15px">A board is a view over the claims sealed on one and the same locked benchmark, so two results on it came from the same fixed tasks and the same scorer.</p>
+      <p class="ed" style="font-size:15px;margin-top:12px">Board key: the locked benchmark, <span class="mono">sha256:mock-4b2e70d9a1c63f85</span> (its tasks, scoring and coverage). The claimant's agent is not part of the key, so every claim on the same benchmark lands here.</p>
+      <p class="markline">benchmark written and locked by its author &middot; scorer: the benchmark's own, pinned by digest &middot; benchmark digest sha256:mock-4b2e70d9a1c63f85</p>
+      <p class="markline">Colophon did not write this benchmark and does not own it. The author brought it, locked it, and made the first claim on it. A chart here never spans two boards, and claims on different benchmarks are never compared.</p>
+    </div>
+  </details>
+
+  <div class="closing">
+    <div>
+      <h2 class="sect">A result you can point to.</h2>
+      <p class="ed" style="font-size:15px;margin-top:4px">Share your claim with its evidence a click away.</p>
+    </div>
+    <p><a href="#/claims/d/">See the claim behind this board</a></p>
+  </div>
+</section>
+
+<!-- ============ SUBMIT ============ -->
+<section class="route" id="r-submit" data-route="#/boards/submit/" aria-labelledby="h-submit" hidden>
+  <div class="page-head">
+    <p class="label eyebrow">Boards</p>
+    <h1 class="title" id="h-submit">List a sealed claim</h1>
+    <p class="lede">Give the site the address of a public bundle. It runs the published checker cold, the same one you can run, and lists what passes.</p>
+  </div>
+
+  <div class="block field">
+    <label class="label faded" for="bundleurl">Bundle URL</label>
+    <input id="bundleurl" type="text" value="https://example.invalid/mock-bundle/" readonly>
+    <p style="margin-top:16px"><button type="button" class="btn">Check and list</button></p>
+    <p class="tnote">No account. No email address. The bundle is public or it is nothing.</p>
+  </div>
+
+  <div class="block">
+    <h2 class="sect">What comes back</h2>
+
+    <div class="outcome o-pass">
+      <p class="st">Checked and listed</p>
+      <p class="mono" style="margin-top:8px">7 of 7 checks passed &middot; sealed method: Terminal-Bench 2.1 &middot; full &middot; listed on its board</p>
+    </div>
+
+    <div class="outcome o-fail">
+      <p class="st">Refused</p>
+      <p class="mono" style="margin-top:8px">check failed: evidence-closure. 3 of 89 rows name a record this bundle does not contain: mock-1f04, mock-2b77, mock-9ce1.</p>
+      <p class="ed" style="font-size:15px;margin-top:10px">Nothing is listed. Fix the bundle and submit again.</p>
+    </div>
+
+    <div class="outcome o-none">
+      <p class="st">Refused</p>
+      <p class="ed" style="font-size:15px;margin-top:8px">This bundle's method matches no board. A new board opens on first claim if the method is a sealed suite or a sealed custom method.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICE ============ -->
+<section class="route" id="r-service" data-route="#/service/" aria-labelledby="h-service" hidden>
+  <div class="page-head">
+    <p class="label eyebrow">A Colophon run</p>
+    <h1 class="title" id="h-service">Have Colophon run it.</h1>
+    <p class="lede">The same sealed method, run on a venue Colophon controls. The method is locked and anchored the same way. The numbers are computed the same way. The bundle is checked with the same free command, by the same seven checks.</p>
+  </div>
+
+  <div class="block">
+    <h2 class="sect">What changes</h2>
+    <p class="ed">Exactly three lines of the sealed disclosure change hands, from the claimant's word to Colophon's.</p>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" style="width:50%">Self-run says <span class="label faded" style="text-transform:none;letter-spacing:0;font-weight:400">the disclosure sealed into every self-run claim, verbatim</span></th>
+            <th scope="col" style="width:50%">Colophon-run says</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"This is a local, self-run venue: the same operator controls task dispatch, execution, and evaluation."</td>
+            <td>Colophon controlled task dispatch, execution and evaluation on a venue the claimant did not control.</td>
+          </tr>
+          <tr>
+            <td>"Pre-registration here is a discipline enforced by this tool, not a proof against the run's own owner. Nothing prevents the owner from having altered the record before publishing it."</td>
+            <td><span class="label faded">Unchanged</span><br>This line does not flip. The tool is still the thing enforcing pre-registration, and a reader still has to take the anchor rather than the operator's word.</td>
+          </tr>
+          <tr>
+            <td>"Run pinning on the harness, model, and loadout axes is enforced by an admission gate at dispatch time."</td>
+            <td>Run pinning on the harness, model and loadout axes was enforced by Colophon's admission gate at dispatch time, on a venue whose isolation policy Colophon set and can state.</td>
+          </tr>
+          <tr>
+            <td>"Cost figures, where present, are self-reported by this venue and were never independently settled."</td>
+            <td>Cost figures were recorded by Colophon on its own venue. They are not the claimant's report of them.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2 class="sect">What does not change</h2>
+    <p class="ed">The number lands where it lands. There is no badge, no score, and nothing on this page is for sale. Who paid is disclosed inside the bundle, before the run, not after the result is known.</p>
+  </div>
+
+  <div class="block">
+    <h2 class="sect">What this is not</h2>
+    <p class="ed">Not a certification. Not an endorsement. Not a widening of the evidence: the same seven checks run on the same bundle, and they still prove the math and not the honesty. A Colophon-run record answers one question that a self-run record cannot answer, and that is the only question it answers.</p>
+  </div>
+
+  <div class="block block-rule">
+    <h2 class="sect">Talk to us about a run</h2>
+    <p class="ed">Send the claim, the decision it supports, and the benchmark you have in mind. There is no pricing page and no form here; it starts as a conversation.</p>
+  </div>
+</section>
+
+<!-- ============ DOCS ============ -->
+<section class="route" id="r-docs" data-route="#/docs/" aria-labelledby="h-docs" hidden>
+  <div class="page-head">
+    <p class="label eyebrow">Docs</p>
+    <h1 class="title" id="h-docs">Seal a claim: bring your run</h1>
+    <p class="lede">Six steps. You run the benchmark on the harness you already use; Colophon reads that run into a sealed record and publishes it, and a stranger checks the record without asking you for anything.</p>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <span class="n">Step 1</span>
+      <h2 class="sect">Lock the method</h2>
+      <p class="ed">Fix what will be run, and what will count, before any result exists. The lock is timestamped by someone who is not you, and the commitment is pushed somewhere public.</p>
+      <div class="term">
+        <div class="cap">seal a claim</div>
+        <div class="body">
+<pre><span class="cmd">$ npx @colophon-claims/cli method terminal-bench-2.1</span>
+<span class="out">  method     terminal-bench-2.1</span>
+<span class="out">  coverage   full</span>
+<span class="out">  tasks      <span class="hi">89</span>, fixed by the suite, not by you</span>
+<span class="out">  scorer     the suite's own scorer, pinned by digest</span>
+<span class="out">  suite      upstream commit mock-8c41f0a2</span>
+
+<span class="cmd">$ npx @colophon-claims/cli arm add --name "example-agent 0.3 (fictional)"</span>
+<span class="out">  arm 1 of 1   example-agent 0.3 (fictional)</span>
+<span class="out">  Supplied by the claimant. Colophon does not look inside it.</span>
+
+<span class="cmd">$ npx @colophon-claims/cli lock</span>
+<span class="out">  method digest   <span class="hi">sha256:mock-7f3a91c4d0e28b56</span></span>
+<span class="out">  locked at       2026-09-04T10:12:00Z</span>
+<span class="out">  The method is fixed before any result exists.</span>
+<span class="out">  Nothing in the sealed freeze moves once the run starts.</span>
+
+<span class="cmd">$ npx @colophon-claims/cli anchor</span>
+<span class="out">  submitted to OpenTimestamps   <span class="hi">ots:mock-pending</span></span>
+<span class="out">  calendar attestation          received</span>
+<span class="out">  Bitcoin attestation           follows in hours. Nothing waits on it.</span>
+
+<span class="cmd">$ npx @colophon-claims/cli freeze-repo export ./commitment</span>
+<span class="out">  wrote ./commitment    lock, anchor receipt, instrument digests</span>
+<span class="out">  Push this somewhere public. <span class="ok">The anchor proves when. The commit proves what.</span></span></pre>
+        </div>
+      </div>
+      <div class="block">
+        <h3 class="sub">What the anchor proves</h3>
+        <p class="ed">One thing. This exact method digest existed at this time, before any result existed. It does not prove the method is a good method, and it does not prove the claimant is honest. It removes one argument only, and it is the argument that gets made most: that the method was chosen after the number came back.</p>
+      </div>
+    </li>
+
+    <li>
+      <span class="n">Step 2</span>
+      <h2 class="sect">Run the benchmark on your harness</h2>
+      <p class="ed">Colophon is not in this step. It does not dispatch the tasks, it does not host the container, and it does not watch. It reads what comes out, and the record says so.</p>
+      <div class="term">
+        <div class="cap">the claimant's own machine</div>
+        <div class="body">
+<pre><span class="cmd">$ harbor run --dataset terminal-bench@2.1 --agent example-agent-0.3 --out ./jobs</span>
+<span class="out">  89 tasks dispatched</span>
+<span class="out">  89 tasks finished</span>
+<span class="out">  wrote ./jobs</span></pre>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <span class="n">Step 3</span>
+      <h2 class="sect">Bring it back</h2>
+      <p class="ed">The finished run is read against the slate you sealed in step 1. Every task has to be present once, every outcome has to come from the closed vocabulary, and every gap has to carry a stated reason. There is no flag that drops a row.</p>
+      <div class="term">
+        <div class="cap">bring the run back</div>
+        <div class="body">
+<pre><span class="cmd">$ npx @colophon-claims/cli run import --from harbor ./jobs</span>
+<span class="out">  reading ./jobs against the sealed slate</span>
+
+<span class="out">  every task present once            <span class="ok">89 of 89</span></span>
+<span class="out">  every outcome from the closed vocabulary</span>
+<span class="out">      pass                              61</span>
+<span class="out">      fail                              24</span>
+<span class="out">      timeout                            3</span>
+<span class="out">      error                              1</span>
+<span class="out">                                        <span class="hi">89</span></span>
+<span class="out">  every gap counted with a stated reason</span>
+<span class="out">      task mock-0412: timeout, reason: container exceeded 30m</span>
+<span class="out">  exclude flag                       <span class="ok">none offered, none accepted</span></span>
+
+<span class="out">  source dump digested and bound     <span class="hi">sha256:mock-b20d47e9f1c85a03</span></span>
+
+<span class="cmd">$ npx @colophon-claims/cli collect</span>
+<span class="out">  89 rows, 4 outcome classes, 0 rows dropped</span>
+
+<span class="cmd">$ npx @colophon-claims/cli report</span>
+<span class="out">  report written. The self-run disclosure is sealed with it.</span></pre>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <span class="n">Step 4</span>
+      <h2 class="sect">Publish and host the bundle</h2>
+      <p class="ed">The bundle is the whole record: the evidence, the logs, the report and the timestamp proof, under one digest. Put it somewhere public and permanent. Its address is the thing you hand to a doubter.</p>
+      <div class="term">
+        <div class="cap">publish the bundle</div>
+        <div class="body">
+<pre><span class="cmd">$ npx @colophon-claims/cli publish</span>
+<span class="out">  bundle    ./mock-bundle/</span>
+<span class="out">  digest    <span class="hi">sha256:mock-3d9ac10e7b46f582</span></span>
+<span class="out">  format    benchmark-product-public-bundle/7</span>
+<span class="out">  A brought run carries the import marker as its own capability.</span></pre>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <span class="n">Step 5</span>
+      <h2 class="sect">Anyone checks it</h2>
+      <p class="ed">One command, free, forever. It recomputes the numbers from the evidence in the bundle and runs seven checks: manifest, evidence-closure, trust, matrix-rederivation, report-verification, claim-consistency, integrity-anchors.</p>
+      <div class="codeblock" style="margin-top:14px"><code>npx @colophon-claims/verify@0.2.1 ./mock-3d9ac10e7b46f582</code></div>
+      <p class="ed" style="font-size:15px;margin-top:12px">That is the same command a stranger runs on the bundle you published. Verification opens no network connection, reads no account or API credential, and uploads nothing. <a href="#/find/">Find a claim</a>.</p>
+    </li>
+
+    <li>
+      <span class="n">Step 6</span>
+      <h2 class="sect">List it on its board</h2>
+      <p class="ed">Hand the site the bundle's address. The site runs the same published checker cold and lists what passes, next to every other claim sealed on the same method. No account, no email address.</p>
+      <p style="margin-top:16px"><a href="#/boards/submit/">List a claim</a></p>
+    </li>
+  </ol>
+
+  <div class="block block-rule">
+    <h2 class="sect">What a seal proves and what it does not</h2>
+    <p class="ed">A self-run report seals its own disclosure with it, and the disclosure is written to be read by someone who does not trust you. These are its first four lines, quoted from the disclosure sealed into every self-run claim:</p>
+    <ol class="ed" style="padding-left:22px;margin-top:14px">
+      <li style="margin-bottom:10px">"This is a local, self-run venue: the same operator controls task dispatch, execution, and evaluation."</li>
+      <li style="margin-bottom:10px">"Pre-registration here is a discipline enforced by this tool, not a proof against the run's own owner. Nothing prevents the owner from having altered the record before publishing it."</li>
+      <li style="margin-bottom:10px">"Run pinning on the harness, model, and loadout axes is enforced by an admission gate at dispatch time."</li>
+      <li>"Cost figures, where present, are self-reported by this venue and were never independently settled."</li>
+    </ol>
+    <p class="tnote">Item 2's second sentence is joined with a full stop here; the sealed record uses a dash. Item 3 is cut after "at dispatch time." Nothing else is changed.</p>
+
+    <p class="ed" style="margin-top:24px">Checking ends at the math, not at honesty. It confirms the record is closed, internally consistent, and unaltered since the anchor. It does not prove that the machine which produced the run was honest. A checked self-run bundle is still a self-run bundle, which is why the venue is written at the top of every claim page. If who ran it is the question you have to answer, <a href="#/service/">Colophon can run it instead</a>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="mono faded">Colophon publishes benchmark claims and the evidence behind them. Checking is free and stays free.</p>
+    <p class="prev">Design preview of the site's end state. Not the live site; every claim shown is fictional.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var sections = Array.prototype.slice.call(document.querySelectorAll('[data-route]'));
+  var navlinks = Array.prototype.slice.call(document.querySelectorAll('[data-nav]'));
+  var routes = {};
+  /* A section may answer to more than one address, so that an address the site
+     used to publish keeps resolving after the page it named was replaced.
+     #/claims/ is the old claims index and now resolves to Find a claim. */
+  sections.forEach(function(s){
+    routes[s.getAttribute('data-route')] = s;
+    var alias = s.getAttribute('data-alias');
+    if (alias) alias.split(/\s+/).forEach(function(a){ if (a) routes[a] = s; });
+  });
+
+  var current = null;
+
+  function resolve(){
+    var h = location.hash;
+    if (!h || h === '#' || h === '#/') return '#/';
+    if (routes[h]) return h;
+    if (routes[h + '/']) return h + '/';
+    return '#/';
+  }
+
+  function render(scroll){
+    var r = resolve();
+    if (r === current) return;
+    var sec = routes[r] || routes['#/'];
+    /* Navigation follows the section's own address, not the alias that reached
+       it, so an old address still lights the tab that owns the page now. */
+    var canon = sec ? sec.getAttribute('data-route') : '#/';
+    sections.forEach(function(s){ s.hidden = (s !== sec); });
+    navlinks.forEach(function(a){
+      var t = a.getAttribute('data-nav');
+      if (canon === t || (t !== '#/' && canon.indexOf(t) === 0)) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    current = r;
+    if (scroll) window.scrollTo(0, 0);
+  }
+
+  window.addEventListener('hashchange', function(){ render(true); });
+  render(false);
+})();
+</script>
+
+<script>
+/* Terminal-Bench 2.1 board: the board is the chart. One shared task axis, one row
+   per sealed claim, and two inline panels: the sealed claim behind a claimant's
+   name, the sealed attempt behind a cell. All outcomes are generated
+   deterministically from fixed counts, and every row's pass count is the result
+   that row publishes. Fictional throughout. */
+(function(){
+  var grid = document.getElementById('taskgrid');
+  var legend = document.getElementById('tasklegend');
+  var panel = document.getElementById('taskpanel');
+  var rowpanel = document.getElementById('rowpanel');
+  if (!grid || !legend || !panel || !rowpanel) return;
+
+  var TASKS = 89, CELL = 12, GAP = 2, BOARD = '#/boards/terminal-bench-2.1/full/';
+
+  var SELF_LINE = 'This is a local, self-run venue: the same operator controls task dispatch, execution, and evaluation.';
+  var COLO_LINE = 'Colophon controlled task dispatch, execution and evaluation on a venue the claimant did not control.';
+  var BENCH_DIGEST = 'sha256:mock-7f3a91c4d0e28b56';
+  var METHOD_LINE = 'suite at upstream commit mock-8c41f0a2 \u00b7 scorer: the suite\'s own, pinned by digest \u00b7 benchmark digest ' + BENCH_DIGEST;
+
+  var ROWS = [
+    { id:'a', who:'Fictional claimant A', arm:'example-agent 0.3 (fictional)', scored:61,
+      venue:'Self-run', vclass:'v-self', vmark:'vm-self', word:"claimant's word",
+      held:'the claimant controlled the machine', first:SELF_LINE,
+      locked:'2026-09-03', sealed:'2026-09-04', checked:'2026-09-04', bundle:'mock-3d9ac10e', seed:1031,
+      mix:[['fail',20],['timeout',5],['error',2],['unrun',1]] },
+    { id:'b', who:'Fictional claimant B', arm:'example-agent 0.4 (fictional)', scored:68,
+      venue:'Colophon-run', vclass:'v-colo', vmark:'vm-colo', word:"Colophon's",
+      held:'Colophon controlled the machine', first:COLO_LINE,
+      locked:'2026-09-01', sealed:'2026-09-02', checked:'2026-09-03', bundle:'mock-a71e4b02', seed:2087,
+      mix:[['fail',14],['timeout',4],['error',2],['unrun',1]] },
+    { id:'c', who:'Fictional claimant C', arm:'other-agent 1.1 (fictional)', scored:54,
+      venue:'Self-run', vclass:'v-self', vmark:'vm-self', word:"claimant's word",
+      held:'the claimant controlled the machine', first:SELF_LINE,
+      locked:'2026-08-29', sealed:'2026-08-30', checked:'2026-08-31', bundle:'mock-5e0c8fd6', seed:3049,
+      mix:[['fail',25],['timeout',6],['error',3],['unrun',1]] }
+  ];
+
+  var STATES = [
+    { key:'pass',    cls:'c-pass',    word:'Passed' },
+    { key:'fail',    cls:'c-fail',    word:'Failed' },
+    { key:'timeout', cls:'c-timeout', word:'Timed out' },
+    { key:'error',   cls:'c-error',   word:'Harness error' },
+    { key:'unrun',   cls:'c-unrun',   word:'Not run' }
+  ];
+  var STATE = {};
+  STATES.forEach(function(s){ STATE[s.key] = s; });
+
+  var REASONS = {
+    fail: ['tests failed: 2 of 5','tests failed: 1 of 3','tests failed: 4 of 7',
+           'tests failed: 3 of 6','the check script exited 1','expected file never written'],
+    timeout: ['container exceeded 30m','container exceeded 30m with the shell still open',
+              'container exceeded 30m during setup'],
+    error: ['container failed to start','the venue lost the container mid-task','image pull failed inside the venue'],
+    unrun: ['not attempted: the run ended before this task']
+  };
+
+  /* deterministic helpers */
+  function lcg(seed){ var s = seed >>> 0; return function(){ s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+  function shuffled(items, seed){
+    var a = items.slice(), rnd = lcg(seed), i, j, t;
+    for (i = a.length - 1; i > 0; i--){ j = Math.floor(rnd() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function expand(pairs){
+    var out = [];
+    pairs.forEach(function(p){ for (var i = 0; i < p[1]; i++) out.push(p[0]); });
+    return out;
+  }
+  function digits(str, n){
+    var h1 = 0x811c9dc5, h2 = 0x1b873593, i, c;
+    for (i = 0; i < str.length; i++){
+      c = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 16777619) >>> 0;
+      h2 = Math.imul(h2 + c * (i + 7), 2246822519) >>> 0;
+    }
+    var s = ('00000000' + h1.toString(16)).slice(-8) + ('00000000' + h2.toString(16)).slice(-8);
+    return s.slice(0, n);
+  }
+  function num(str){ return parseInt(digits(str, 7), 16); }
+
+  /* One class per task, fixing how many of the three claims passed it.
+     38 tasks pass on all three, 30 on two, 9 on one, 12 on none.
+     Per-claim totals fall out as 61, 68 and 54, the results in the table. */
+  var PASSERS = { '3':[0,1,2], 'p':[0,1], 'q':[0,2], 'r':[1,2], 'a':[0], 'b':[1], 'c':[2], '0':[] };
+  var classes = shuffled(expand([['3',38],['p',16],['q',4],['r',10],['a',3],['b',4],['c',2],['0',12]]), 20260904);
+
+  /* outcomes[row][task] */
+  var outcomes = ROWS.map(function(row, ri){
+    var out = new Array(TASKS), misses = [], i;
+    for (i = 0; i < TASKS; i++){
+      if (PASSERS[classes[i]].indexOf(ri) > -1) out[i] = 'pass';
+      else misses.push(i);
+    }
+    var pool = shuffled(expand(row.mix), row.seed);
+    misses.forEach(function(t, k){ out[t] = pool[k]; });
+    return out;
+  });
+
+  function attempt(ri, ti){
+    var row = ROWS[ri], key = outcomes[ri][ti], id = row.bundle + ':' + (ti + 1);
+    var reasons = REASONS[key], secs;
+    if (key === 'timeout') secs = 1800;
+    else if (key === 'unrun') secs = 0;
+    else if (key === 'error') secs = 8 + (num(id + ':t') % 90);
+    else secs = 41 + (num(id + ':t') % 1180);
+    return {
+      row: row,
+      task: ti + 1,
+      key: key,
+      word: STATE[key].word,
+      reason: reasons ? reasons[num(id + ':r') % reasons.length] : null,
+      digest: 'sha256:mock-' + digits(id + ':d', 16),
+      log: 'native/harbor/mock-' + digits(id + ':l', 8) + '.jsonl',
+      clock: ('0' + Math.floor(secs / 60)).slice(-2) + ':' + ('0' + (secs % 60)).slice(-2)
+    };
+  }
+
+  /* ----- the chart ----- */
+  var stripWidth = TASKS * (CELL + GAP) - GAP;
+
+  function padCell(cls){
+    var d = document.createElement('div');
+    d.className = cls;
+    d.style.gridRow = '1';
+    d.setAttribute('aria-hidden', 'true');
+    return d;
+  }
+  grid.appendChild(padCell('bpad-l'));
+
+  var axis = document.createElement('div');
+  axis.className = 'baxis';
+  axis.style.gridRow = '1';
+  axis.setAttribute('aria-hidden', 'true');
+  var axisIn = document.createElement('div');
+  axisIn.className = 'baxis-in';
+  axisIn.style.width = stripWidth + 'px';
+  for (var n = 1; n <= TASKS; n += 10){
+    var tk = document.createElement('span');
+    tk.className = 'ttick';
+    tk.style.left = ((n - 1) * (CELL + GAP)) + 'px';
+    tk.appendChild(document.createTextNode(String(n)));
+    tk.appendChild(document.createElement('i'));
+    axisIn.appendChild(tk);
+  }
+  axis.appendChild(axisIn);
+  grid.appendChild(axis);
+  grid.appendChild(padCell('bpad-r'));
+
+  var counts = { pass:0, fail:0, timeout:0, error:0, unrun:0 };
+  var strips = [];
+
+  ROWS.forEach(function(row, ri){
+    var gr = String(ri + 2);
+
+    var namecell = document.createElement('div');
+    namecell.className = 'bnamecell';
+    namecell.style.gridRow = gr;
+    namecell.innerHTML =
+      '<span class="bnameline">' +
+        '<span class="bstripname"></span>' +
+        '<span class="vmark"><span class="vh"></span></span>' +
+      '</span>' +
+      '<span class="barm"></span>';
+    namecell.querySelector('.bstripname').textContent = row.arm;
+    var mark = namecell.querySelector('.vmark');
+    mark.className = 'vmark ' + row.vmark;
+    mark.title = row.venue + ': ' + row.held;
+    mark.querySelector('.vh').textContent = row.venue;
+    namecell.querySelector('.barm').textContent = row.who;
+    grid.appendChild(namecell);
+
+    var strip = document.createElement('div');
+    strip.className = 'bstrip';
+    strip.style.gridRow = gr;
+    strip.setAttribute('role', 'group');
+    strip.setAttribute('aria-label', row.who + ', ' + row.arm + ', ' + row.venue + ', ' + row.scored + ' of ' + TASKS + ' tasks passed');
+    strip.style.width = (stripWidth + 32) + 'px';
+
+    for (var ti = 0; ti < TASKS; ti++){
+      var key = outcomes[ri][ti];
+      counts[key]++;
+      var a = attempt(ri, ti);
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cell ' + STATE[key].cls;
+      b.setAttribute('data-row', ri);
+      b.setAttribute('data-task', ti);
+      b.title = 'Task ' + (ti + 1) + ' \u00b7 ' + key + ' \u00b7 ' + a.digest.slice(7, 20);
+      b.setAttribute('aria-label', 'Task ' + (ti + 1) + ', ' + a.word + ', ' + row.who);
+      strip.appendChild(b);
+    }
+    grid.appendChild(strip);
+    strips.push(strip);
+
+    var tot = document.createElement('div');
+    tot.className = 'btotcell';
+    tot.style.gridRow = gr;
+    tot.innerHTML = '<span class="btot"></span><span class="btotu">scored / planned</span>';
+    tot.querySelector('.btot').textContent = row.scored + ' / ' + TASKS;
+    grid.appendChild(tot);
+  });
+
+  /* ----- legend ----- */
+  STATES.forEach(function(s){
+    var it = document.createElement('span');
+    it.className = 'it';
+    var sample = document.createElement('span');
+    sample.className = 'cell ' + s.cls;
+    sample.setAttribute('aria-hidden', 'true');
+    it.appendChild(sample);
+    var w = document.createElement('span');
+    w.textContent = s.word;
+    it.appendChild(w);
+    var c = document.createElement('span');
+    c.className = 'n';
+    c.textContent = counts[s.key] + ' of 267';
+    it.appendChild(c);
+    legend.appendChild(it);
+  });
+
+  /* ----- the two record panels ----- */
+  var openCell = null, openName = null;
+
+  function rowHTML(k, v, words){
+    return '<div class="trow"><span class="label faded">' + k + '</span>' +
+           '<span class="v' + (words ? ' words' : '') + '">' + v + '</span></div>';
+  }
+  function esc(s){
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function venueChip(row){
+    return '<span class="venue ' + row.vclass + '"><span class="pat"></span>' + esc(row.venue) + '</span>';
+  }
+
+  /* Only one panel is ever open. Closing hands focus back to whatever opened it. */
+  function clearPanels(){
+    if (openCell) openCell.classList.remove('is-open');
+    if (openName){ openName.classList.remove('is-open'); openName.setAttribute('aria-expanded', 'false'); }
+    openCell = null;
+    openName = null;
+    panel.hidden = true;
+    panel.innerHTML = '';
+    rowpanel.hidden = true;
+    rowpanel.innerHTML = '';
+  }
+
+  function closePanels(){
+    var back = openCell || openName;
+    clearPanels();
+    if (back) back.focus();
+  }
+
+  function openRow(btn){
+    var row = ROWS[+btn.getAttribute('data-row')];
+    clearPanels();
+    openName = btn;
+    btn.classList.add('is-open');
+    btn.setAttribute('aria-expanded', 'true');
+
+    rowpanel.className = 'tpanel';
+    rowpanel.innerHTML =
+      '<div class="ptop"><h3>Sealed claim \u00b7 ' + esc(row.who) + '</h3>' +
+      '<button type="button" class="tclose">Close</button></div>' +
+      '<div style="margin-top:14px">' +
+      rowHTML('Arm, as sealed', esc(row.arm), true) +
+      rowHTML('Result', esc(row.scored + ' / ' + TASKS)) +
+      rowHTML('Sealed', esc(row.sealed)) +
+      rowHTML('Venue', venueChip(row)) +
+      rowHTML('Who controlled the machine', esc(row.word), true) +
+      rowHTML('Pinning held', esc(row.word), true) +
+      rowHTML('Costs independently seen', esc(row.word), true) +
+      rowHTML('Checked', esc(row.checked)) +
+      rowHTML('Bundle', '<a href="#/claims/' + row.id + '/">' + esc(row.bundle) + '</a>') +
+      '</div>' +
+      '<p class="tfoot">Recomputable from this bundle.</p>';
+    rowpanel.hidden = false;
+    rowpanel.querySelector('.tclose').addEventListener('click', closePanels);
+  }
+
+  function openAttempt(cell){
+    var ri = +cell.getAttribute('data-row'), ti = +cell.getAttribute('data-task');
+    var a = attempt(ri, ti);
+    clearPanels();
+    openCell = cell;
+    cell.classList.add('is-open');
+
+    var html =
+      '<div class="ptop"><h3>Sealed attempt \u00b7 Task ' + a.task + ' \u00b7 ' + esc(a.row.who) + '</h3>' +
+      '<button type="button" class="tclose">Close</button></div>' +
+      '<div style="margin-top:14px">' +
+      rowHTML('Outcome', esc(a.word), true) +
+      (a.reason ? rowHTML('Reason', esc(a.reason), true) : '') +
+      rowHTML('Attempt record digest', esc(a.digest)) +
+      rowHTML('Native log', '<a href="' + BOARD + '">' + esc(a.log) + '</a>') +
+      rowHTML('Wall clock', esc(a.clock)) +
+      rowHTML('Venue', venueChip(a.row)) +
+      '</div>' +
+      '<p class="tfoot">Recomputable from the claim\'s bundle.</p>';
+
+    panel.className = 'tpanel p-' + a.key;
+    panel.innerHTML = html;
+    panel.hidden = false;
+    panel.querySelector('.tclose').addEventListener('click', closePanels);
+  }
+
+  grid.addEventListener('click', function(e){
+    var hit = e.target.closest ? e.target.closest('button.cell') : null;
+    if (hit) openAttempt(hit);
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && (openCell || openName)) closePanels();
+  });
+
+  grid.addEventListener('keydown', function(e){
+    var cell = e.target;
+    if (!cell.classList || !cell.classList.contains('cell')) return;
+    var ri = +cell.getAttribute('data-row'), ti = +cell.getAttribute('data-task'), nr = ri, nt = ti;
+    if (e.key === 'ArrowRight') nt = Math.min(TASKS - 1, ti + 1);
+    else if (e.key === 'ArrowLeft') nt = Math.max(0, ti - 1);
+    else if (e.key === 'ArrowDown') nr = Math.min(ROWS.length - 1, ri + 1);
+    else if (e.key === 'ArrowUp') nr = Math.max(0, ri - 1);
+    else if (e.key === 'Home') nt = 0;
+    else if (e.key === 'End') nt = TASKS - 1;
+    else return;
+    e.preventDefault();
+    strips[nr].children[nt].focus();
+  });
+
+  /* ----- the rows: a board is one picture, grouped by the claim ----- */
+  /* Both boards are drawn by the same code, so both read as one drawing: a
+     quiet group label for the sealed claim, then one bar row per arm that claim
+     sealed. A claim with one arm is a group of one; a benchmark author's first
+     claim comparing three systems is a group of three. The bars inside a group
+     share the board's axis because they share the board's locked benchmark. */
+  function pct(n){ return (n / TASKS * 100).toFixed(1); }
+  function pctOf(n, d){ return (n / d * 100).toFixed(1); }
+
+  function groupHead(g){
+    var el = document.createElement('div');
+    el.className = 'cgroup';
+    el.innerHTML =
+      '<p class="cgname">' + esc(g.who) + '</p>' +
+      '<p class="cgmeta">' +
+        '<span class="cgrun"><span class="vmark ' + g.vmark + '" aria-hidden="true"></span>' +
+          esc(g.venue) + '</span>' +
+        '<span>sealed ' + esc(g.sealed) + '</span>' +
+        '<a href="#/claims/' + g.id + '/">Open the claim</a>' +
+      '</p>';
+    return el;
+  }
+
+  function armRow(g, arm, ai, tasks){
+    var art = document.createElement('article');
+    art.className = 'crow' + (ai === 0 ? ' first-in-group' : '');
+    art.setAttribute('aria-label',
+      arm.name + ', ' + arm.scored + ' of ' + tasks + ' tasks passed, sealed by ' + g.who +
+      ', ' + g.venue + ', fictional example');
+    var nameHTML = (arm.ri === undefined)
+      ? '<p class="cnamestatic">' + esc(arm.name) + '</p>'
+      : '<button type="button" class="cname" data-row="' + arm.ri + '" aria-expanded="false" ' +
+        'aria-controls="rowpanel">' + esc(arm.name) + '</button>';
+    var actHTML = arm.share
+      ? '<div class="cact"><a class="btn btn-sec" href="#/claims/' + g.id + '/" ' +
+        'aria-label="Share the claim for ' + esc(arm.name) + '">Share claim</a></div>'
+      : '';
+    art.innerHTML =
+      '<div class="cid">' + nameHTML + '</div>' +
+      '<div class="cvis">' +
+        '<div class="bartrack" style="--denom:' + tasks + '" aria-hidden="true">' +
+          '<div class="barfill" style="--passed:' + arm.scored + '"></div></div>' +
+        '<p class="barnote"><span>' + arm.scored + ' passed</span>' +
+          '<span>' + (tasks - arm.scored) + ' did not pass</span></p>' +
+      '</div>' +
+      '<p class="cscore">' + pctOf(arm.scored, tasks) + '%<small>' + arm.scored +
+        ' of ' + tasks + ' tasks</small></p>' +
+      actHTML;
+    return art;
+  }
+
+  function drawBoard(box, tasks, groups){
+    if (!box) return;
+    groups.forEach(function(g){
+      box.appendChild(groupHead(g));
+      g.arms.forEach(function(arm, ai){ box.appendChild(armRow(g, arm, ai, tasks)); });
+    });
+  }
+
+  var rowsBox = document.getElementById('claimrows');
+  drawBoard(rowsBox, TASKS, ROWS.map(function(row, ri){
+    return {
+      id: row.id, who: row.who, venue: row.venue, vmark: row.vmark, sealed: row.sealed,
+      arms: [{ name: row.arm, scored: row.scored, ri: ri, share: true }]
+    };
+  }));
+  if (rowsBox){
+    rowsBox.addEventListener('click', function(e){
+      var hit = e.target.closest ? e.target.closest('button.cname') : null;
+      if (hit) openRow(hit);
+    });
+  }
+
+  /* The benchmark author's board: one claim, three systems, 40 tasks. */
+  drawBoard(document.getElementById('ebclaimrows'), 40, [{
+    id: 'd', who: 'Fictional benchmark author D', venue: 'Self-run', vmark: 'vm-self',
+    sealed: '2026-08-30',
+    arms: [
+      { name: 'example-system X (fictional)', scored: 22 },
+      { name: 'example-system Y (fictional)', scored: 27 },
+      { name: 'example-system Z (fictional)', scored: 18 }
+    ]
+  }]);
+
+  /* ----- three fictional claim pages, one template ----- */
+  function claimHTML(row){
+    var ots = 'ots:mock-' + digits(row.bundle + ':ots', 12);
+    var bundleDigest = 'sha256:mock-' + digits(row.bundle + ':bundle', 16);
+    var reportDigest = 'sha256:mock-' + digits(row.bundle + ':report', 16);
+    var runDigest = 'sha256:mock-' + digits(row.bundle + ':run', 16);
+    var m = {};
+    row.mix.forEach(function(pair){ m[pair[0]] = pair[1]; });
+    var fict = 'A fictional example for this design preview. No evidence exists to download.';
+
+    return '' +
+      '<p class="mono faded"><a href="#/find/">Find a claim</a> &middot; ' +
+        '<a href="' + BOARD + '">Terminal-Bench 2.1 board</a></p>' +
+      '<div class="page-head" style="margin-top:14px">' +
+        '<p class="label eyebrow">Claim</p>' +
+        '<h1 class="title" id="h-claim-' + row.id + '">' + esc(row.arm) + '</h1>' +
+        '<p class="onboard">On the board: <a href="' + BOARD + '">Terminal-Bench 2.1</a></p>' +
+      '</div>' +
+      '<p class="fictnote">' + fict + '</p>' +
+      '<p style="margin-top:16px">' + esc(row.who) + ' &nbsp; ' +
+        '<span class="mono faded">sealed ' + row.sealed + '</span> &nbsp; ' + venueChip(row) + '</p>' +
+
+      '<div class="block">' +
+        '<p class="label faded">Tasks passed on Terminal-Bench 2.1</p>' +
+        '<p class="bignum">' + pct(row.scored) + '%</p>' +
+        '<p class="bignum-sub">' + row.scored + ' of ' + TASKS + ' tasks</p>' +
+      '</div>' +
+      '<p class="markline">Locked ' + row.locked + ' \u00b7 anchored ' + ots + ' \u00b7 ' + esc(row.venue) +
+        ' \u00b7 ' + TASKS + ' of ' + TASKS + ' planned tasks accounted for</p>' +
+
+      '<div class="threeq">' +
+        '<div>' +
+          '<p class="label faded">What exactly ran</p>' +
+          '<p class="ed" style="font-size:15px;margin-top:12px"><b>Benchmark.</b> Terminal-Bench 2.1 at full coverage: the ' +
+            TASKS + ' tasks the suite fixes, not a subset chosen by the claimant.</p>' +
+          '<p class="ed" style="font-size:15px;margin-top:10px"><b>Arm.</b> ' + esc(row.arm) +
+            ', supplied by the claimant. Colophon does not look inside it.</p>' +
+          '<p class="ed" style="font-size:15px;margin-top:10px"><b>Scorer.</b> The suite\'s own scorer, pinned by digest.</p>' +
+          '<p class="markline" style="margin-top:10px">' + METHOD_LINE + '</p>' +
+        '</div>' +
+        '<div>' +
+          '<p class="label faded">Who ran it</p>' +
+          '<p class="ed" style="font-size:15px;margin-top:12px">' + esc(row.venue) +
+            '. The sealed disclosure says it in its own first line:</p>' +
+          '<p class="ed" style="font-size:15px;margin-top:10px">"' + esc(row.first) + '"</p>' +
+          '<p class="ed" style="font-size:15px;margin-top:10px">On this row, ' + esc(row.held) +
+            ', and the pinning and the cost figures are ' + esc(row.word) + '.</p>' +
+        '</div>' +
+        '<div>' +
+          '<p class="label faded">Why believe it</p>' +
+          '<p class="ed" style="font-size:15px;margin-top:12px">Because you do not have to. Recompute it from the evidence with the free checker.</p>' +
+          '<div class="codeblock" style="margin-top:12px"><code>npx @colophon-claims/verify@0.2.1 ./' + esc(row.bundle) + '</code></div>' +
+          '<p class="ed" style="font-size:15px;margin-top:10px">The site ran that same check cold on ' + row.checked +
+            ': 7 of 7 checks passed. Checking ends at the math, not at honesty.</p>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="block">' +
+        '<h2 class="sect">Every planned task, accounted for</h2>' +
+        '<div class="tablewrap"><table>' +
+          '<thead><tr><th scope="col">Outcome</th><th scope="col" class="num">Tasks</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td>Passed</td><td class="num">' + row.scored + '</td></tr>' +
+            '<tr><td>Failed</td><td class="num">' + m.fail + '</td></tr>' +
+            '<tr><td>Timed out</td><td class="num">' + m.timeout + '</td></tr>' +
+            '<tr><td>Harness error</td><td class="num">' + m.error + '</td></tr>' +
+            '<tr><td>Not run</td><td class="num">' + m.unrun + '</td></tr>' +
+            '<tr><td>All planned tasks</td><td class="num">' + TASKS + '</td></tr>' +
+          '</tbody>' +
+        '</table></div>' +
+        '<p class="tnote">No flag drops a row. A task with no attempt is counted as not run and says so.</p>' +
+      '</div>' +
+
+      '<div class="block">' +
+        '<h2 class="sect">Evidence</h2>' +
+        '<div class="tablewrap"><table><tbody>' +
+          '<tr><td>Benchmark</td><td class="num" style="white-space:normal">' + BENCH_DIGEST +
+            '</td><td>identical on every claim on this board</td></tr>' +
+          '<tr><td>Run</td><td class="num" style="white-space:normal">' + runDigest +
+            '</td><td>' + TASKS + ' native logs, unique to this claim</td></tr>' +
+          '<tr><td>Bundle</td><td class="num" style="white-space:normal">' + bundleDigest +
+            '</td><td class="num">benchmark-product-public-bundle/7</td></tr>' +
+          '<tr><td>Report</td><td class="num" style="white-space:normal">' + reportDigest +
+            '</td><td class="num">' + TASKS + ' rows</td></tr>' +
+          '<tr><td>Anchor</td><td class="num" style="white-space:normal">' + ots +
+            '</td><td class="num">locked ' + row.locked + '</td></tr>' +
+        '</tbody></table></div>' +
+        '<p class="tnote">The benchmark digest is the board\'s key and is the same on every claim ' +
+          'sealed on Terminal-Bench 2.1. The run digest belongs to this claim alone. ' + fict +
+          ' Every digest on this page begins with mock- and belongs to a fictional claimant.</p>' +
+      '</div>' +
+
+      '<div class="block"><p><a href="' + BOARD + '">Back to the Terminal-Bench 2.1 board</a></p></div>';
+  }
+
+  ROWS.forEach(function(row){
+    var host = document.querySelector('[data-claim="' + row.id + '"]');
+    if (host) host.innerHTML = claimHTML(row);
+  });
+})();
+</script>
+
+<script>
+/* Find a claim: retrieval, not browsing. The records are in the page already,
+   in one order, newest first; this only hides the ones that do not match. There
+   is no sort control and nothing to rank, so nothing here can reorder them. */
+(function(){
+  var q = document.getElementById('findq');
+  var board = document.getElementById('findboard');
+  var list = document.getElementById('reclist');
+  var count = document.getElementById('findcount');
+  var none = document.getElementById('findnone');
+  var clear = document.getElementById('findclear');
+  if (!q || !board || !list || !count || !none || !clear) return;
+
+  var recs = Array.prototype.slice.call(list.querySelectorAll('.rec'));
+
+  function haystack(rec){
+    return (rec.getAttribute('data-find') + ' ' + rec.textContent)
+      .toLowerCase().replace(/\s+/g, ' ');
+  }
+  recs.forEach(function(rec){ rec._hay = haystack(rec); });
+
+  function apply(){
+    var term = q.value.toLowerCase().replace(/\s+/g, ' ').trim();
+    var pick = board.value;
+    var shown = 0;
+    recs.forEach(function(rec){
+      var ok = (pick === 'all' || rec.getAttribute('data-board') === pick) &&
+               (term === '' || rec._hay.indexOf(term) > -1);
+      rec.hidden = !ok;
+      if (ok) shown++;
+    });
+    none.hidden = shown > 0;
+    count.textContent = shown === 0
+      ? 'No claim matches.'
+      : (shown === 1 ? '1 claim listed.' : shown + ' claims listed.');
+  }
+
+  q.addEventListener('input', apply);
+  board.addEventListener('change', apply);
+  clear.addEventListener('click', function(){
+    q.value = '';
+    board.value = 'all';
+    apply();
+    q.focus();
+  });
+  apply();
+})();
+</script>
