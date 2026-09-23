@@ -134,12 +134,11 @@ export default function Home() {
               </article>
               <article className="home-path">
                 <div className="home-path__heading">
-                  <span className="claim-origin claim-origin--independent">Independently run</span>
+                  <span className="claim-origin claim-origin--colophon">Colophon-run</span>
                   <h3>When added distance matters</h3>
                 </div>
                 <p>
-                  Give readers confidence that the benchmark was run by someone separate from the
-                  claimant.
+                  Colophon runs your locked benchmark and seals the result, so the claim names who ran it.
                 </p>
               </article>
             </div>
