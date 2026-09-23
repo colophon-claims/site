@@ -640,7 +640,7 @@ main {
   background-color: var(--verdict-incomplete-bg);
   background-image: var(--texture-attested);
 }
-.claim-origin--independent {
+.claim-origin--colophon {
   color: var(--verdict-attested);
   background: var(--verdict-attested-bg);
 }
