@@ -365,9 +365,8 @@ export function EvidenceReportPage({ report }: { report: EvidenceReportData }) {
               report.verification.checks.map(
                 (check) => VERIFICATION_LABELS[check] ?? check.replaceAll("-", " "),
               ),
-            )}. Protocol identifiers under <code>https://spec.jinn.network/</code> are names; that
-            origin is not hosted yet. Verification uses the exact platform bytes installed from
-            npm.
+            )}. Identifiers inside the record files are internal names, not addresses to visit.
+            Checking uses the exact code installed from npm; no network fetch is involved.
           </p>
           <div className="bundle-identity">
             <span>Canonical report envelope</span>
@@ -420,7 +419,6 @@ export function EvidenceReportPage({ report }: { report: EvidenceReportData }) {
             { label: "Method", value: "Paired A−B on the pre-declared informative subset" },
             { label: "Venue", value: "Self-run; one operator designed, ran, graded, and sealed" },
             { label: "Sealed", value: formatUtc(report.reportedAt) },
-            { label: "Attribution", value: "Built on Jinn, by Jinn contributors." },
           ]}
         />
       </main>
