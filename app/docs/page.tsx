@@ -75,11 +75,34 @@ const PUBLISHED_PARTS = [
 ];
 
 const VERIFIER_CHECKS = [
-  "Every file listed by the bundle is present and unchanged.",
-  "The evidence records cover the result the report presents.",
-  "The supplied signatures match the published records.",
-  "The result table can be rebuilt from the evidence.",
-  "The readable report and machine-readable claim agree.",
+  {
+    name: "manifest",
+    gloss: "Every file listed by the bundle is present and unchanged.",
+  },
+  {
+    name: "evidence-closure",
+    gloss: "The evidence records cover the result the report presents.",
+  },
+  {
+    name: "trust",
+    gloss: "The bundle's signatures are valid and match the keys that made them.",
+  },
+  {
+    name: "matrix-rederivation",
+    gloss: "The result table can be rebuilt from the evidence.",
+  },
+  {
+    name: "report-verification",
+    gloss: "The published report is the exact document that was signed.",
+  },
+  {
+    name: "claim-consistency",
+    gloss: "The readable report and the machine-readable claim agree.",
+  },
+  {
+    name: "integrity-anchors",
+    gloss: "Any timestamp proofs the bundle carries match the bytes they claim to cover.",
+  },
 ];
 
 const LIMITS = [
@@ -195,10 +218,14 @@ export default function Docs() {
                 </p>
               </div>
               <pre className="codeblock">
-                <code>npx @colophon-claims/verify@0.1 ./bundle</code>
+                <code>npx @colophon-claims/verify@0.2.1 ./bundle</code>
               </pre>
               <ul className="docs-check-list">
-                {VERIFIER_CHECKS.map((item) => <li key={item}>{item}</li>)}
+                {VERIFIER_CHECKS.map((item) => (
+                  <li key={item.name}>
+                    <code>{item.name}</code>: {item.gloss}
+                  </li>
+                ))}
               </ul>
               <p className="docs-note">
                 The verifier is a convenience, not a requirement. A reader can inspect the JSON,
