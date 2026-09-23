@@ -85,7 +85,7 @@ const VERIFIER_CHECKS = [
   },
   {
     name: "trust",
-    gloss: "The bundle's signatures are valid and match the keys that made them.",
+    gloss: "The public keys in the bundle are the ones its signed records name, one key per signer.",
   },
   {
     name: "matrix-rederivation",
@@ -93,11 +93,11 @@ const VERIFIER_CHECKS = [
   },
   {
     name: "report-verification",
-    gloss: "The published report is the exact document that was signed.",
+    gloss: "The signed report covers this result table, and its numbers recompute from it.",
   },
   {
     name: "claim-consistency",
-    gloss: "The readable report and the machine-readable claim agree.",
+    gloss: "The machine-readable claim is rebuilt from the signed records and matches them exactly.",
   },
   {
     name: "integrity-anchors",
@@ -220,6 +220,9 @@ export default function Docs() {
               <pre className="codeblock">
                 <code>npx @colophon-claims/verify@0.2.1 ./bundle</code>
               </pre>
+              <p className="docs-note">
+                For the published report&apos;s format, the checker runs these seven checks.
+              </p>
               <ul className="docs-check-list">
                 {VERIFIER_CHECKS.map((item) => (
                   <li key={item.name}>
