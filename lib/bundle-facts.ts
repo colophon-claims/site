@@ -151,6 +151,16 @@ export function claimant(report: QualifiedReportData): Claimant {
   return owner === null ? { kind: "not-stated", value: null } : { kind: "signing-key", value: owner };
 }
 
+/**
+ * The run record's close time (run.json `closeAt`). The build has already
+ * checked that it is the seal time the reading record gives, to the second.
+ */
+export function runCloseAt(report: QualifiedReportData): string {
+  const closeAt = sealedFacts(report).run.closeAt;
+  if (typeof closeAt !== "string") throw new Error(`${report.slug}: run.json carries no close time`);
+  return closeAt;
+}
+
 /** The key benchmark.json names as the method's author, or null. */
 export function methodAuthor(report: QualifiedReportData): string | null {
   return nonEmpty(sealedFacts(report).method.author);

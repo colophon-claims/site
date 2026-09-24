@@ -51,6 +51,15 @@ test("'Who ran it' quotes the first line of the sealed venue disclosure", () => 
   );
 });
 
+test("the 'who chose the tasks' line states what the population record says", () => {
+  const labels = report.population.labels;
+  assert.match(labels, /candidate pool contained 664 items/u);
+  assert.match(labels, /hand-reviewed 255 items/u);
+  assert.match(labels, /excluded 137 candidates/u);
+  assert.match(labels, /final 80\/80\/80 class balance/u);
+  assert.equal(report.population.items, 240);
+});
+
 test("the lead range is the range the claim reports, each end with its own denominator", () => {
   const arms = [...report.result.perArm].sort((left, right) =>
     Number(left.agreement.estimate) - Number(right.agreement.estimate));

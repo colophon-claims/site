@@ -11,6 +11,7 @@ import {
   methodItemCount,
   methodName,
   methodVersion,
+  runCloseAt,
   shortKey,
   type Claimant,
 } from "@/lib/bundle-facts";
@@ -61,25 +62,31 @@ const TASK_CHOOSER_VALUE: Record<TaskChooser, string> = {
 };
 
 const TASK_CHOOSER_OTHERS: Record<TaskChooser, string> = {
-  claimant: "Not a fixed public set, not drawn by lottery:",
-  "fixed-public-set": "Not chosen by the claimant, not drawn by lottery:",
-  lottery: "Not chosen by the claimant, not a fixed public set:",
+  claimant: "Not a fixed public set, not drawn by lottery.",
+  "fixed-public-set": "Not chosen by the claimant, not drawn by lottery.",
+  lottery: "Not chosen by the claimant, not a fixed public set.",
 };
 
 const TASK_CHOICE: Record<string, { chooser: TaskChooser; basis: (report: QualifiedReportData) => string }> = {
-  // population.labels: the operator screened a 664-item candidate pool,
-  // hand-reviewed flagged and sampled items, and excluded and replaced 137
-  // candidates to keep the class balance. The claimant chose the 240.
+  // The posted design (question.designUrl) samples the questions with the
+  // claimant's own seeded script. population.labels: a pinned model screened a
+  // 664-item candidate pool, the operator hand-reviewed 255, and 137 were
+  // excluded and replaced to keep the 80/80/80 class balance. No outside draw
+  // fixed the 240, so the claimant chose them.
   "locomo-judge-report": {
     chooser: "claimant",
     basis: (report) => {
-      const pool = /candidate pool contained ([\d,]+) items/u.exec(report.population.labels)?.[1];
-      const replaced = /excluded ([\d,]+) candidates/u.exec(report.population.labels)?.[1];
-      if (pool === undefined || replaced === undefined) {
-        throw new Error(`${report.slug}: population.labels no longer states the pool and the exclusions`);
+      const labels = report.population.labels;
+      const pool = /candidate pool contained ([\d,]+) items/u.exec(labels)?.[1];
+      const reviewed = /hand-reviewed ([\d,]+) items/u.exec(labels)?.[1];
+      const replaced = /excluded ([\d,]+) candidates/u.exec(labels)?.[1];
+      const balance = /final ([\d/]+) class balance/u.exec(labels)?.[1];
+      if (pool === undefined || reviewed === undefined || replaced === undefined || balance === undefined) {
+        throw new Error(`${report.slug}: population.labels no longer states the pool, the review and the exclusions`);
       }
-      return `the operator screened ${pool} candidates down to these ${report.population.items},`
-        + ` replacing ${replaced} exclusions to keep the answer classes balanced.`;
+      return `Questions sampled by the claimant's seeded script; a model screened a ${pool}-item pool,`
+        + ` the operator hand-reviewed ${reviewed}, and ${replaced} were excluded and replaced to keep the`
+        + ` ${balance} balance.`;
     },
   },
 };
@@ -117,6 +124,10 @@ function formatMegabytes(bytes: number): string {
 
 function formatDate(timestamp: string): string {
   return timestamp.slice(0, 10);
+}
+
+function formatUtc(timestamp: string): string {
+  return `${timestamp.slice(0, 10)} ${timestamp.slice(11, 19)} UTC`;
 }
 
 function formatUtcMinute(timestamp: string): string {
@@ -558,12 +569,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
   if (!report.verification.command.includes("<bundle-dir>")) {
     throw new Error(`${report.slug}: the recorded check command names no bundle folder`);
   }
+  // One folder name everywhere: the archive unpacks to a folder named by the
+  // evidence ID, and every instruction renames it to `bundle` first.
   const checkCommand = report.verification.command.replace("<bundle-dir>", "./bundle");
-  const exactCheckCommand = report.verification.command.replace(
-    "<bundle-dir>",
-    `./${report.digests.bundleIdentity}`,
-  );
-  const compatibleCheckCommand = report.verification.compatibleCommand.replace("<bundle-dir>", "./bundle");
   const disclosure = report.disclosure;
   const narrative = new Map((report.narrative ?? []).map((s: NarrativeSection) => [s.slot, s]));
   const prose = (slot: string) => {
@@ -621,8 +629,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
       : [
           `curl -fLO '${archive.url}'`,
           `tar -xzf '${bundleArchiveName}'`,
+          `mv '${report.digests.bundleIdentity}' bundle`,
         ]),
-    exactCheckCommand,
+    checkCommand,
   ].join("\n");
   const citation = [
     `${report.title}.`,
@@ -667,11 +676,13 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               <span>{range.lowText}</span> <span className="claim-number-to">to</span>{" "}
               <span>{range.highText}</span>
             </p>
-            <p className="claim-denominators">
-              {range.low.numerator} of {range.low.denominator} to {range.high.numerator} of{" "}
-              {range.high.denominator} answers, {measureWords(report.result.methodStatement)}.
-            </p>
-            <p className="claim-moved">{whatMovedIt(report.result.primary)}</p>
+            <div className="claim-result-lines">
+              <p className="claim-denominators">
+                {range.low.numerator} of {range.low.denominator} to {range.high.numerator} of{" "}
+                {range.high.denominator} answers, {measureWords(report.result.methodStatement)}.
+              </p>
+              <p className="claim-moved">{whatMovedIt(report.result.primary)}</p>
+            </div>
           </section>
 
           <div className="claim-seal" role="group" aria-label="Seal">
@@ -681,7 +692,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
             </svg>
             <ul>
               <li>
-                Method posted <a href={report.question.designUrl}><time dateTime={report.question.postedOn}>{report.question.postedOn}</time></a>
+                Design posted <a href={report.question.designUrl}><time dateTime={report.question.postedOn}>{report.question.postedOn}</time></a>
               </li>
               <li>
                 Sealed <time dateTime={report.reportedAt}>{formatUtcMinute(report.reportedAt)}</time>
@@ -770,8 +781,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                     </>
                   ) : (
                     <>
-                      <a href={archive.url}>Download the bundle</a> ({archive.size}) and unpack it into a
-                      folder named <code>bundle</code>.
+                      <a href={archive.url}>Download the bundle</a> ({archive.size}) and unpack it. It
+                      unpacks to one folder named by its evidence ID; rename that folder to{" "}
+                      <code>bundle</code>.
                     </>
                   )}
                 </li>
@@ -791,7 +803,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           </div>
 
           <section id="bundle" className="claim-evidence" aria-labelledby="claim-evidence-title">
-            <h2 id="claim-evidence-title" className="claim-label">Evidence</h2>
+            <h2 id="claim-evidence-title" className="claim-hidden-heading">Evidence</h2>
             <dl className="claim-evidence-row">
               <div className="claim-evidence-id">
                 <dt>Evidence ID</dt>
@@ -833,8 +845,8 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                 <pre className="codeblock claim-steps-code">{exactSteps}</pre>
                 <p className="code-note">
                   Needs Node 22 or newer. The checker reports {report.verification.checks.length} checks:{" "}
-                  <code>{report.verification.checks.join(", ")}</code>. Older releases of the checker refuse
-                  this format; any 0.2 release reads it: <code>{compatibleCheckCommand}</code>.
+                  <code>{report.verification.checks.join(", ")}</code>. Releases before 0.2.1 refuse this
+                  format, 0.2.0 included, so run the exact version above.
                 </p>
 
                 <h3 className="narrative-heading">Other IDs</h3>
@@ -851,7 +863,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
                     label="Run record"
                     file={<a href={`${bundleBase}/run.json`} download>run.json</a>}
                     value={report.digests.runSha256}
-                    note="Unique to this claim. The timestamp proof covers it."
+                    note={`Unique to this claim. The timestamp proof covers it. Its close time, ${formatUtc(runCloseAt(report))}, is the sealed time printed above.`}
                   />
                   <IdRow
                     label="Report"
@@ -975,8 +987,9 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
         <div className="claim-report-intro">
           <p className="claim-label">The claimant&apos;s report</p>
           <p className="claim-report-note">
-            Below is the claimant&apos;s own report, in the order and words its reading record gives,
-            with Colophon&apos;s charts and tables of the sealed numbers. The lead above is Colophon&apos;s.
+            Below is the claimant&apos;s report. Its prose is taken from the claimant&apos;s reading
+            record; the headings, charts, tables and the short notes around them are Colophon&apos;s,
+            drawn from the sealed numbers. The lead above is Colophon&apos;s.
           </p>
           <p className="claim-revision">
             Wording revised <time dateTime={WORDING_REVISED}>{WORDING_REVISED}</time>. The sealed evidence
