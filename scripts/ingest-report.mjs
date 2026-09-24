@@ -27,8 +27,9 @@ import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const EVIDENCE_FORMAT = "benchmark-product-public-bundle/5";
-/** The anchored binary-qualification closure: the legacy member list plus
- * `qualification.json`, plus one `anchors/<sha256>.bin` per carried anchor. */
+/** The anchored binary-qualification closure: the sixteen fixed members of
+ * the retired /1 closure, plus `qualification.json`, plus one
+ * `anchors/<sha256>.bin` per carried anchor. */
 const QUALIFIED_FORMAT = "benchmark-product-public-bundle/7";
 /** The same closure carrying a sealed six-variable disclosure-specification
  * record at `records/<sha256>.bin`, plus the `disclosure` claim section. */
@@ -47,7 +48,8 @@ const EVIDENCE_REQUIRED_FILES = [
 ];
 
 /**
- * The /7 and /8 member list: the legacy sixteen with `qualification.json` added.
+ * The /7 and /8 member list: the sixteen fixed members of the retired /1
+ * closure, with `qualification.json` added.
  *
  * The public reading record is NOT in this list. It reaches the site one of two
  * ways: sealed into the bundle as a `presentation.json` member, on a closure
@@ -815,4 +817,3 @@ console.log(`  identity: ${bundleIdentity}`);
 if (data.presentationSource !== undefined) {
   console.log(`  reading:  ${data.presentationSource.carriage} (sha256:${data.presentationSource.sha256})`);
 }
-if (data.fixture) console.log("  marked as FIXTURE");

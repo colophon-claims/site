@@ -143,8 +143,12 @@ export function ReportSummaryCard({
     );
   }
 
-  // Exhaustive: every ReportData variant is handled above. A format this
-  // component does not recognize fails the static build rather than
-  // rendering silently.
-  throw new Error(`Unsupported report format: ${(report as ReportData).format}`);
+  // Exhaustive: every ReportData variant is handled above, and the `never`
+  // assignment below fails `tsc` if a new one is ever added without a
+  // matching type guard, so a format this component does not recognize
+  // fails the static build rather than rendering silently. The cast only
+  // serves the runtime message, for data that reaches this branch despite
+  // the static type (e.g. a hand-edited data/reports/*.json).
+  const unhandled: never = report;
+  throw new Error(`Unsupported report format: ${(unhandled as ReportData).format}`);
 }

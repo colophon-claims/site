@@ -37,6 +37,10 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
   if (isEvidenceReport(report)) return <EvidenceReportPage report={report} />;
   // Static export: an unsupported format fails `npm run build`, never a
   // visitor's browser. No public route can render a format this dispatch
-  // does not recognize.
-  throw new Error(`Unsupported report format: ${(report as ReportData).format}`);
+  // does not recognize. The `never` assignment also fails `tsc` if a new
+  // ReportData member is ever added without a matching type guard above;
+  // the cast only serves the runtime message, for data that reaches this
+  // branch despite the static type (e.g. a hand-edited data/reports/*.json).
+  const unhandled: never = report;
+  throw new Error(`Unsupported report format: ${(unhandled as ReportData).format}`);
 }
