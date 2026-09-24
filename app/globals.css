@@ -20,9 +20,16 @@
 html {
   min-width: 320px;
   background: var(--surface-page);
+  scroll-padding-top: calc(77px + var(--space-4));
 }
 main {
   overflow: clip;
+}
+
+@media (max-width: 639px) {
+  html {
+    scroll-padding-top: calc(115px + var(--space-4));
+  }
 }
 
 /* ---------- layout primitives ---------- */
