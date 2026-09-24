@@ -2,10 +2,9 @@
 /**
  * Ingests one immutable Colophon public bundle into the static site.
  *
- *   node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--fixture]
+ *   node scripts/ingest-report.mjs <bundle-dir> --slug <slug>
  *
  * Supported formats:
- *   - benchmark-product-public-bundle/1 (legacy application bundle)
  *   - benchmark-product-public-bundle/5 (evidence-native claim bundle)
  *   - benchmark-product-public-bundle/7 (anchored binary-qualification bundle)
  *   - benchmark-product-public-bundle/8 (the same, plus a sealed six-variable
@@ -27,35 +26,15 @@ import {
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const LEGACY_FORMAT = "benchmark-product-public-bundle/1";
 const EVIDENCE_FORMAT = "benchmark-product-public-bundle/5";
-/** The anchored binary-qualification closure: the legacy member list plus
- * `qualification.json`, plus one `anchors/<sha256>.bin` per carried anchor. */
+/** The anchored binary-qualification closure: the sixteen fixed members of
+ * the retired /1 closure, plus `qualification.json`, plus one
+ * `anchors/<sha256>.bin` per carried anchor. */
 const QUALIFIED_FORMAT = "benchmark-product-public-bundle/7";
 /** The same closure carrying a sealed six-variable disclosure-specification
  * record at `records/<sha256>.bin`, plus the `disclosure` claim section. */
 const DISCLOSED_FORMAT = "benchmark-product-public-bundle/8";
 
-const LEGACY_FIXED_FILES = [
-  "static-bundle.json",
-  "benchmark.json",
-  "run.json",
-  "matrix.json",
-  "report.json",
-  "report-envelope.json",
-  "claim-package.json",
-  "verdicts.json",
-  "evidence.json",
-  "verification/assembly.jsonl",
-  "trust/public-keys.json",
-  "index.html",
-  "badge.svg",
-  "social-card.svg",
-  "README.md",
-  "share.txt",
-];
-
-const LEGACY_OPTIONAL_FILES = ["verification/cancel-requested.json"];
 const EVIDENCE_REQUIRED_FILES = [
   "README.md",
   "analysis-manifest.json",
@@ -69,7 +48,8 @@ const EVIDENCE_REQUIRED_FILES = [
 ];
 
 /**
- * The /7 and /8 member list: the legacy sixteen with `qualification.json` added.
+ * The /7 and /8 member list: the sixteen fixed members of the retired /1
+ * closure, with `qualification.json` added.
  *
  * The public reading record is NOT in this list. It reaches the site one of two
  * ways: sealed into the bundle as a `presentation.json` member, on a closure
@@ -203,7 +183,6 @@ const args = process.argv.slice(2);
 let bundleArg;
 let slug;
 let presentationArg;
-let fixture = false;
 for (let index = 0; index < args.length; index += 1) {
   if (args[index] === "--slug") {
     slug = args[index + 1];
@@ -211,8 +190,6 @@ for (let index = 0; index < args.length; index += 1) {
   } else if (args[index] === "--presentation") {
     presentationArg = args[index + 1];
     index += 1;
-  } else if (args[index] === "--fixture") {
-    fixture = true;
   } else if (bundleArg === undefined) {
     bundleArg = args[index];
   } else {
@@ -220,7 +197,7 @@ for (let index = 0; index < args.length; index += 1) {
   }
 }
 if (bundleArg === undefined || slug === undefined) {
-  fail("usage: node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--presentation <file>] [--fixture]");
+  fail("usage: node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--presentation <file>]");
 }
 if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) {
   fail(`slug must be lowercase [a-z0-9-], got: ${slug}`);
@@ -263,9 +240,9 @@ const manifestPath = join(bundleDir, "bundle.json");
 if (!existsSync(manifestPath)) fail(`no bundle.json manifest in ${bundleDir}`);
 const manifestBytes = readFileSync(manifestPath);
 const manifest = readJson("bundle.json");
-const SUPPORTED_FORMATS = [LEGACY_FORMAT, EVIDENCE_FORMAT, QUALIFIED_FORMAT, DISCLOSED_FORMAT];
+const SUPPORTED_FORMATS = [EVIDENCE_FORMAT, QUALIFIED_FORMAT, DISCLOSED_FORMAT];
 if (!SUPPORTED_FORMATS.includes(manifest.format)) {
-  fail(`unknown bundle format: ${manifest.format}`);
+  fail(`unsupported bundle format: ${manifest.format}. Supported formats: ${SUPPORTED_FORMATS.join(", ")}`);
 }
 const isQualified = manifest.format === QUALIFIED_FORMAT || manifest.format === DISCLOSED_FORMAT;
 if (!Array.isArray(manifest.files) || manifest.files.length === 0) {
@@ -304,19 +281,7 @@ for (const entry of manifest.files) {
   }
 }
 
-if (manifest.format === LEGACY_FORMAT) {
-  for (const fixed of LEGACY_FIXED_FILES) {
-    if (!manifestPaths.has(fixed)) fail(`fixed member missing from manifest: ${fixed}`);
-  }
-  if (![...manifestPaths].some((path) => /^records\/[a-f0-9]{64}\.bin$/.test(path))) {
-    fail("bundle carries no records/<sha256>.bin evidence members");
-  }
-  for (const path of manifestPaths) {
-    const isFixed = LEGACY_FIXED_FILES.includes(path) || LEGACY_OPTIONAL_FILES.includes(path);
-    const isRecord = /^records\/[a-f0-9]{64}\.bin$/.test(path);
-    if (!isFixed && !isRecord) fail(`manifest carries a member outside the legacy format: ${path}`);
-  }
-} else if (isQualified) {
+if (isQualified) {
   for (const fixed of QUALIFIED_FIXED_FILES) {
     if (!manifestPaths.has(fixed)) fail(`fixed member missing from manifest: ${fixed}`);
   }
@@ -363,57 +328,7 @@ const files = [
   ...manifest.files.map(({ path, bytes, sha256: digest }) => ({ path, bytes, sha256: digest })),
 ];
 
-function extractLegacy() {
-  const claim = readJson("claim-package.json");
-  const report = readJson("report.json");
-  const run = readJson("run.json");
-  const benchmark = readJson("benchmark.json");
-  if (claim.claimSchema !== "benchmark-product.claim-package/1") {
-    fail(`unknown legacy claim package schema: ${claim.claimSchema}`);
-  }
-  const title = typeof report.title === "string" ? report.title : `Report ${slug}`;
-  const isFixture = fixture || /fixture/i.test(title) || claim.fixture === true;
-  return {
-    format: LEGACY_FORMAT,
-    slug,
-    fixture: isFixture,
-    title,
-    summary: typeof report.summary === "string" ? report.summary : null,
-    taskSet: typeof benchmark.name === "string" ? benchmark.name : null,
-    taskCount: claim.scope.taskCount,
-    replicates: claim.scope.replicates,
-    venue: claim.scope.venue,
-    arms: claim.scope.arms,
-    method: claim.method,
-    lockedAt: typeof run.lockedAt === "string" ? run.lockedAt : null,
-    reportedAt: typeof report.reportedAt === "string" ? report.reportedAt : null,
-    headline: claim.headline,
-    completeness: claim.completeness,
-    attrition: claim.attrition,
-    conflicted: claim.conflicted,
-    assurance: claim.assurance,
-    disclosures: {
-      integrityTierCounts: claim.disclosures.integrityTierCounts,
-      pinningUnverifiableCounts: claim.disclosures.pinningUnverifiableCounts,
-    },
-    limitations: claim.limitations,
-    rehearsal: claim.rehearsal ?? null,
-    verification: claim.verification,
-    digests: {
-      bundleIdentity,
-      benchmarkSha256: claim.records.benchmarkSha256,
-      runSha256: claim.records.runSha256,
-      matrixSha256: claim.records.matrixSha256,
-      reportSha256: claim.records.reportSha256,
-      reportEnvelopeSha256: claim.records.reportEnvelopeSha256,
-    },
-    socialCardPath: "social-card.svg",
-    files,
-  };
-}
-
 function extractEvidenceNative() {
-  if (fixture) fail("--fixture is only valid for legacy test bundles");
   const claim = readJson("claim-package.json");
   const presentation = readJson("presentation.json");
   const reportEnvelopeBytes = readFileSync(join(bundleDir, "report-envelope.json"));
@@ -598,7 +513,6 @@ function readDisclosureRecord(section) {
 }
 
 function extractQualified() {
-  if (fixture) fail("--fixture is only valid for legacy test bundles");
   const disclosed = manifest.format === DISCLOSED_FORMAT;
   const claim = readJson("claim-package.json");
   const qualification = readJson("qualification.json");
@@ -876,11 +790,9 @@ function extractQualified() {
   };
 }
 
-const data = manifest.format === LEGACY_FORMAT
-  ? extractLegacy()
-  : isQualified
-    ? extractQualified()
-    : extractEvidenceNative();
+const data = isQualified
+  ? extractQualified()
+  : extractEvidenceNative();
 
 for (const path of ["bundle.json", ...manifestPaths]) {
   const from = join(bundleDir, ...path.split("/"));
@@ -905,4 +817,3 @@ console.log(`  identity: ${bundleIdentity}`);
 if (data.presentationSource !== undefined) {
   console.log(`  reading:  ${data.presentationSource.carriage} (sha256:${data.presentationSource.sha256})`);
 }
-if (data.fixture) console.log("  marked as FIXTURE");

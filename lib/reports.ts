@@ -1,7 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
-export const LEGACY_BUNDLE_FORMAT = "benchmark-product-public-bundle/1" as const;
 export const EVIDENCE_BUNDLE_FORMAT = "benchmark-product-public-bundle/5" as const;
 export const QUALIFIED_BUNDLE_FORMAT = "benchmark-product-public-bundle/7" as const;
 export const DISCLOSED_BUNDLE_FORMAT = "benchmark-product-public-bundle/8" as const;
@@ -21,48 +20,6 @@ interface ReportDataBase {
   reportedAt: string | null;
   socialCardPath: string | null;
   files: BundleFile[];
-}
-
-export interface HeadlineArm {
-  n: number;
-  pass?: number;
-  passRate: string;
-  wilsonInterval: { low: string; high: string };
-}
-
-export interface LegacyReportData extends ReportDataBase {
-  format: typeof LEGACY_BUNDLE_FORMAT;
-  taskSet: string | null;
-  taskCount: number;
-  replicates: number;
-  venue: string;
-  arms: { armId: string; pinning: Record<string, unknown> }[];
-  method: { id: string; version: string; parameters: Record<string, unknown>; preregistered: boolean };
-  lockedAt: string | null;
-  headline: Record<string, HeadlineArm>;
-  completeness: { expected: number; judged: number };
-  attrition: Record<string, number>;
-  conflicted: { count: number; cellKeys: string[] };
-  assurance: {
-    preset: string;
-    resolved: { independence: string; minVerdicts: number; distinctEvaluator: boolean; verdictRule: string };
-    disclosure: string;
-  };
-  disclosures: {
-    integrityTierCounts: Record<string, number>;
-    pinningUnverifiableCounts: Record<string, number>;
-  };
-  limitations: string[];
-  rehearsal: { previewCount: number; timestamps: string[] } | null;
-  verification: { command: string; checks: string[]; trustRoot: string };
-  digests: {
-    bundleIdentity: string;
-    benchmarkSha256: string;
-    runSha256: string;
-    matrixSha256: string;
-    reportSha256: string;
-    reportEnvelopeSha256: string;
-  };
 }
 
 export interface EvidenceReportData extends ReportDataBase {
@@ -501,7 +458,6 @@ export interface GroupedReportData {
 }
 
 export type ReportData =
-  | LegacyReportData
   | EvidenceReportData
   | QualifiedReportData
   | GroupedReportData;
