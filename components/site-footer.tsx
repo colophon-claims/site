@@ -44,7 +44,7 @@ export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Reports</span>
-          <Link href="/reports/">All reports</Link>
+          <Link href="/find/">Find a claim</Link>
           {reports.map((r) => (
             <Link key={r.slug} href={`/reports/${r.slug}/`}>
               {r.title}

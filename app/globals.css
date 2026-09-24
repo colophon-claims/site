@@ -927,84 +927,6 @@ main {
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
-/* ---------- reports index ---------- */
-.reports-index-hero {
-  border-bottom: var(--border-hair) solid var(--rule);
-}
-.reports-index-hero .container {
-  padding-top: var(--space-13);
-  padding-bottom: var(--space-11);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-.reports-index-hero h1 {
-  margin: 0;
-  font: var(--type-hero);
-  font-size: clamp(var(--text-4xl), 8vw, var(--text-5xl));
-  letter-spacing: var(--tracking-tight);
-}
-.reports-index-hero p {
-  margin: 0;
-  max-width: 52ch;
-  font: var(--type-body);
-  font-size: var(--text-lg);
-  color: var(--text-secondary);
-}
-.reports-index-section .container {
-  padding-top: var(--space-11);
-  padding-bottom: var(--space-13);
-}
-.reports-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-11);
-}
-.reports-entry {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-6);
-}
-.reports-entry-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-6);
-  font: var(--type-data);
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-}
-.reports-entry-link {
-  color: inherit;
-  text-decoration: none;
-  min-width: 0;
-}
-.reports-entry-link:visited {
-  color: inherit;
-}
-.reports-entry-link:hover .featured-report-card {
-  border-color: var(--rule-heavy);
-}
-.reports-index-note,
-.reports-empty {
-  margin: var(--space-9) 0 0;
-  max-width: var(--measure);
-  font: var(--type-body);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-}
-@media (min-width: 800px) {
-  .reports-entry {
-    grid-template-columns: 10rem minmax(0, 46rem);
-    gap: var(--space-10);
-    align-items: start;
-  }
-  .reports-entry-meta {
-    flex-direction: column;
-    justify-content: flex-start;
-    padding-top: var(--space-6);
-  }
-}
-
 /* ---------- narrative product guide ---------- */
 .docs-layout {
   max-width: var(--page-max);
@@ -3839,7 +3761,7 @@ tbody + tbody .board-group {
   flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--space-5) var(--space-8);
-  max-width: 900px;
+  max-width: var(--report-max);
 }
 .find-field {
   display: flex;
@@ -3848,7 +3770,7 @@ tbody + tbody .board-group {
   min-width: 0;
 }
 .find-field-grow {
-  flex: 1 1 280px;
+  flex: 1 1 var(--measure-short);
 }
 .find-field label {
   font: var(--type-label);
@@ -3916,6 +3838,16 @@ tbody + tbody .board-group {
   font: var(--type-data);
   color: var(--text-primary);
 }
+/* The dot before each meta item after the claimant is that item's own
+   ::before, not a separate flex child, so it can never sit alone on a line
+   or start one split from the text it introduces: it wraps with its own
+   item, or not at all. */
+.find-row-meta-item::before {
+  content: "\00B7";
+  content: "\00B7" / "";
+  margin-right: var(--space-4);
+  color: var(--text-faint);
+}
 .find-row-finding {
   margin: var(--space-4) 0 0;
   max-width: var(--measure);
@@ -3928,13 +3860,34 @@ tbody + tbody .board-group {
   font-size: var(--text-sm);
   color: var(--text-secondary);
 }
+/* The vendored copy control keeps its value visible and selectable without
+   script, the same fix the claim page and the board carry for it
+   (.claim-page .copy-command, .board-page .copy-command): a long value wraps
+   inside the control rather than setting the row's minimum width, so nothing
+   runs past a 320px screen. */
+.find-row .copy-command {
+  max-width: 100%;
+}
+.find-row .copy-command__code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .find-row .copy-command {
+    flex-direction: column;
+  }
+  .find-row .copy-command__button {
+    border-top: var(--border-hair) solid var(--rule-strong);
+    border-left: 0;
+  }
+}
 
 .find-empty {
-  max-width: 620px;
+  max-width: var(--measure);
   margin-top: var(--space-2);
   padding: var(--space-6) var(--space-7);
   border: var(--border-hair) solid var(--rule);
-  border-top: var(--border-slab) solid var(--ochre-500);
+  border-top: var(--border-slab) solid var(--rule-accent);
   background: var(--surface-card);
 }
 .find-empty-title {
@@ -3944,7 +3897,7 @@ tbody + tbody .board-group {
   text-transform: uppercase;
   color: var(--text-primary);
 }
-.find-empty p {
+.find-empty p:not(.find-empty-title) {
   margin: var(--space-3) 0 0;
   font: var(--type-ui);
   font-size: var(--text-sm);

@@ -51,20 +51,28 @@ test("the row's claimant is the signing key both records name, the same fact the
 test("/find/ renders with no script: the row, its facts, and the live count", { skip }, () => {
   const html = staticHtml("find/index.html");
   const text = staticText("find/index.html");
+  const run = JSON.parse(member("run.json").toString("utf8"));
+  const method = JSON.parse(member("benchmark.json").toString("utf8"));
+  const finding = report.result.primary.split(/(?<=\.)\s+/u)[0];
+  // The row's own words for the venue, tied to the sealed record's own kind
+  // rather than a literal: only self-run has a mapped label today.
+  assert.equal(run.venue.kind, "self-run");
+  const venueLabel = "Self-run";
+
   assert.ok(text.includes("Find a claim"));
   assert.ok(text.includes("Every public claim listed on Colophon, newest first. The order is by date, not merit."));
   assert.match(html, /<h2 class="find-row-title"><a href="\/reports\/locomo-judge-report\/">Judging the LoCoMo judges<\/a><\/h2>/u);
-  assert.ok(text.includes("LoCoMo judge report frozen bank, Full method, 240 items"));
-  assert.ok(text.includes("Self-run"));
+  assert.ok(text.includes(`${method.name}, Full method, ${method.items.length} items`));
+  assert.ok(text.includes(venueLabel));
   assert.ok(text.includes("Sealed 2026-08-29"));
   // The shortened key is on the row itself; the full key sits behind the
   // same collapsible disclosure the board and the claim page use.
   assert.match(html, /<code>z6Mkmz8SWi…pcZTm9<\/code>/u);
   assert.ok(text.includes("Method author and run owner"));
-  assert.ok(text.includes("did:key:z6Mkmz8SWiUshwDMszSqwzMngt7ScNmsEj7vZoFRLjpcZTm9"));
-  assert.ok(
-    text.includes("Changing only the grader moved agreement with the same correctness labels from 60.8% to 87.9%."),
-  );
+  assert.ok(text.includes(run.owner));
+  // The finding paragraph carries exactly the first sentence, no more.
+  const findingMatch = html.match(/<p class="find-row-finding">([^<]*)<\/p>/u);
+  assert.equal(findingMatch?.[1], finding);
   assert.match(html, new RegExp(`On the <a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a> board`, "u"));
   assert.match(html, /<p class="find-count" role="status" aria-live="polite">/u);
   assert.ok(text.includes("1 claim listed."));

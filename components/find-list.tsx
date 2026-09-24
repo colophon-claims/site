@@ -11,6 +11,11 @@ import type { FindRow } from "@/lib/find";
  * One shape for every record, whatever suite or method it ran: no shared
  * score axis, no bar, no sortable result column. A short finding in the
  * claim's own words may distinguish rows; it is words, not a score.
+ *
+ * The meta line's dot separators are each the CSS ::before of the item they
+ * introduce (.find-row-meta-item in globals.css), not a separate span: a dot
+ * can only wrap to a new line glued to its own item, never alone and never
+ * split from the text it separates.
  */
 export function FindList({ rows }: { rows: FindRow[] }) {
   return (
@@ -29,14 +34,13 @@ export function FindList({ rows }: { rows: FindRow[] }) {
           </h2>
           <div className="find-row-meta">
             <ClaimantKey who={row.claimant} authorIsClaimant={row.authorIsClaimant} />
-            <span className="claim-dot" aria-hidden="true">·</span>
-            <span>
+            <span className="find-row-meta-item">
               {row.suiteOrMethod}, {row.coverageText}
             </span>
-            <span className="claim-dot" aria-hidden="true">·</span>
-            <VenueChip venue={row.venue} />
-            <span className="claim-dot" aria-hidden="true">·</span>
-            <span>
+            <span className="find-row-meta-item">
+              <VenueChip venue={row.venue} />
+            </span>
+            <span className="find-row-meta-item">
               Sealed <time dateTime={row.sealedAt}>{row.sealedDate}</time>
             </span>
           </div>
