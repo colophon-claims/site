@@ -3,6 +3,7 @@ import { CompletenessBar, Footnote, Tag } from "@/components/ds";
 import { CopyCommand } from "@/components/copy-command";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { boardForClaim } from "@/lib/boards";
 import {
   boardKey,
   bundleSize,
@@ -594,6 +595,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
     throw new Error(`${report.slug}: bundle.json lists ${size.listedFiles} files, the read model counts ${report.memberCounts.total} with it`);
   }
   const key = boardKey(report);
+  const board = boardForClaim(report.slug);
   const method = methodName(report);
   const version = methodVersion(report);
   const methodItems = methodItemCount(report);
@@ -654,6 +656,12 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           <header className="claim-head">
             <nav className="claim-crumb" aria-label="Breadcrumb">
               <a href="/reports/">Reports</a>
+              {board !== null && (
+                <>
+                  {" "}<span className="claim-dot" aria-hidden="true">·</span>{" "}
+                  <a href={board.href}>{board.name}</a>
+                </>
+              )}
             </nav>
             <p className="claim-eyebrow">Claim</p>
             <h1>{report.title}</h1>
@@ -704,6 +712,12 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
               </li>
             </ul>
           </div>
+
+          {board !== null && (
+            <p className="claim-board">
+              On the board: <a href={board.href}>{board.name}</a>
+            </p>
+          )}
 
           <div className="claim-blocks">
             <section className="claim-block" aria-labelledby="claim-ran-title">

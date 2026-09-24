@@ -19,7 +19,8 @@ export function SiteHeader({
           <Mark size={22} />
           <span>Colophon</span>
         </Link>
-        <nav className="site-nav">
+        <nav className="site-nav" aria-label="Site">
+          <Link href="/boards/">Boards</Link>
           <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
           {!quiet && (

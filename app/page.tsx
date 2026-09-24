@@ -5,6 +5,7 @@ import { HomeFooter } from "@/components/home-footer";
 import { LinkButton } from "@/components/link-button";
 import { Mark } from "@/components/mark";
 import { SiteHeader } from "@/components/site-header";
+import { boardForClaim } from "@/lib/boards";
 import { getReport, isQualifiedReport } from "@/lib/reports";
 
 const CONTACT_EMAIL = "ritsu.kai2000@gmail.com";
@@ -39,6 +40,7 @@ export default function Home() {
   }
 
   const reportHref = `/reports/${report.slug}/`;
+  const board = boardForClaim(report.slug);
 
   return (
     <>
@@ -90,6 +92,7 @@ export default function Home() {
               <footer className="home-example__foot">
                 <Link href={reportHref}>Read the report</Link>
                 <Link href={`${reportHref}#bundle`}>Download its files</Link>
+                {board !== null && <a href={board.href}>See its board</a>}
               </footer>
             </article>
           </div>

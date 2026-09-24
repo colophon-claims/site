@@ -8,12 +8,18 @@ import type { QualifiedReportData } from "@/lib/reports";
  * time from the published bundle itself (public/reports/<slug>/bundle/),
  * which is served byte for byte and never modified.
  *
- * Only three members are read: run.json and benchmark.json, for who owns the
- * run and wrote the method, and bundle.json, the bundle's file list, for its
- * size and file count. Each is hashed first and must match the digest the page
- * prints for it, so every fact taken from these bytes is tied to an ID a reader
- * can check. A mismatch throws and fails the build rather than printing a name,
- * a key or a size that the page's own IDs do not cover.
+ * The claim page reads three members: run.json and benchmark.json, for who
+ * owns the run and wrote the method, and bundle.json, the bundle's file list,
+ * for its size and file count. Each is hashed first and must match the digest
+ * the page prints for it, so every fact taken from these bytes is tied to an ID
+ * a reader can check. A mismatch throws and fails the build rather than
+ * printing a name, a key or a size that the page's own IDs do not cover.
+ *
+ * A board reads more of the same bundle through `sealedMember`: any member the
+ * file list names, hashed against the SHA-256 that list records for it (and
+ * against the page's own ID for it, where the read model prints one). The file
+ * list is itself tied to the evidence ID, so the chain ends at an ID the claim
+ * page prints.
  *
  * Nothing here infers a claimant from where the claim is hosted. The records
  * name a signing key or they name nothing.
@@ -23,12 +29,14 @@ interface RunRecord {
   owner?: unknown;
   closeAt?: unknown;
   venue?: { kind?: unknown };
+  arms?: unknown;
 }
 
 interface MethodRecord {
   author?: unknown;
   name?: unknown;
   version?: unknown;
+  description?: unknown;
   items?: unknown;
 }
 
@@ -182,16 +190,148 @@ export function methodItemCount(report: QualifiedReportData): number | null {
   return Array.isArray(items) ? items.length : null;
 }
 
+/** The locked method's own description (benchmark.json `description`), or null. */
+export function methodDescription(report: QualifiedReportData): string | null {
+  return nonEmpty(sealedFacts(report).method.description);
+}
+
+/**
+ * The digests of the items the locked method fixes, in the method's own order
+ * (benchmark.json `items[].task.digest.sha256`). Throws on an item it cannot
+ * read rather than dropping it.
+ */
+export function methodTaskDigests(report: QualifiedReportData): string[] {
+  const items = sealedFacts(report).method.items;
+  if (!Array.isArray(items)) throw new Error(`${report.slug}: benchmark.json lists no items`);
+  return items.map((item: { task?: { digest?: { sha256?: unknown } } }, index) => {
+    const digest = item?.task?.digest?.sha256;
+    if (typeof digest !== "string" || !/^[0-9a-f]{64}$/u.test(digest)) {
+      throw new Error(`${report.slug}: benchmark.json item ${index + 1} names no task digest`);
+    }
+    return digest;
+  });
+}
+
+/**
+ * One arm as the sealed run record pins it (run.json `arms[]`): its ID and the
+ * judge model, harness and grading prompt it was pinned to. The pinning keys
+ * are protocol identifiers; only their values are returned.
+ */
+export interface SealedArm {
+  armId: string;
+  model: string | null;
+  harness: { id: string; version: string } | null;
+  instrumentSha256: string | null;
+}
+
+export function runArms(report: QualifiedReportData): SealedArm[] {
+  const arms = sealedFacts(report).run.arms;
+  if (!Array.isArray(arms)) throw new Error(`${report.slug}: run.json lists no arms`);
+  return arms.map((arm: { armId?: unknown; pinning?: Record<string, unknown> }, index) => {
+    const armId = nonEmpty(arm?.armId);
+    if (armId === null) throw new Error(`${report.slug}: run.json arm ${index + 1} has no ID`);
+    const pinning = arm.pinning ?? {};
+    const model = pinning.model as { id?: unknown } | undefined;
+    const harness = pinning.harness as { id?: unknown; version?: unknown } | undefined;
+    const instrument = Object.entries(pinning).find(([name]) => name.endsWith(".instrument"))?.[1];
+    return {
+      armId,
+      model: nonEmpty(model?.id),
+      harness: nonEmpty(harness?.id) !== null && nonEmpty(harness?.version) !== null
+        ? { id: String(harness?.id), version: String(harness?.version) }
+        : null,
+      instrumentSha256: typeof instrument === "string" ? instrument.replace(/^sha256:/u, "") : null,
+    };
+  });
+}
+
 /**
  * What a board for this claim is keyed on. An official suite is keyed on its
- * suite identity; a method that is no official suite, like every method a
- * published claim carries today, is keyed on the digest of its locked method.
+ * suite identity, whatever coverage a claim declared; a method that is no
+ * official suite is keyed on the digest of its locked method. The claimant's
+ * agent is never part of either key. No read model records a suite identity
+ * yet, so every published claim today is keyed on its locked method.
  */
 export type BoardKey =
+  | { kind: "official-suite"; suite: string }
   | { kind: "locked-method"; digest: string };
 
 export function boardKey(report: QualifiedReportData): BoardKey {
   return { kind: "locked-method", digest: report.digests.benchmarkSha256 };
+}
+
+/**
+ * The venue as the sealed run record names it, in the two words the site uses:
+ * Self-run (the claimant controlled dispatch, execution and evaluation) or
+ * Colophon-run (Colophon did, on a venue the claimant did not control). Only
+ * the kinds a published record has used are mapped; any other kind fails the
+ * build rather than print a venue no record states. Neither word says the
+ * record proved the parties independent.
+ */
+export type VenueLabel = "Self-run" | "Colophon-run";
+
+const VENUE_LABELS: Record<string, VenueLabel> = {
+  "self-run": "Self-run",
+};
+
+export function venueLabel(venue: string): VenueLabel {
+  const label = VENUE_LABELS[venue];
+  if (label === undefined) {
+    throw new Error(`no reader label for venue ${venue}; add one before publishing this claim`);
+  }
+  return label;
+}
+
+/**
+ * The bundle's own file list as a map from path to SHA-256. bundle.json is
+ * read through the same hash check as above, against the evidence ID.
+ */
+const listedCache = new Map<string, Map<string, string>>();
+
+function listedFiles(report: QualifiedReportData): Map<string, string> {
+  const cached = listedCache.get(report.slug);
+  if (cached !== undefined) return cached;
+  const manifest = JSON.parse(
+    readTied(report, "bundle.json", report.digests.bundleIdentity, "evidence ID").toString("utf8"),
+  ) as ManifestRecord;
+  const listed = new Map<string, string>();
+  for (const file of (Array.isArray(manifest.files) ? manifest.files : []) as { path?: unknown; sha256?: unknown }[]) {
+    if (typeof file?.path !== "string" || typeof file.sha256 !== "string") {
+      throw new Error(`${report.slug}: bundle.json lists a file with no path or SHA-256`);
+    }
+    listed.set(file.path, file.sha256);
+  }
+  listedCache.set(report.slug, listed);
+  return listed;
+}
+
+/** The SHA-256 the bundle's file list records for a path, or null if it lists no such file. */
+export function listedDigest(report: QualifiedReportData, path: string): string | null {
+  return listedFiles(report).get(path) ?? null;
+}
+
+/**
+ * A member the bundle's file list names, read only after its bytes hash to the
+ * SHA-256 that list records for it. Where the read model prints its own ID for
+ * the member (the run record, the method, the result matrix, the report), the
+ * list's entry must be that same ID.
+ */
+const PRINTED_IDS: Record<string, (report: QualifiedReportData) => string> = {
+  "run.json": (report) => report.digests.runSha256,
+  "benchmark.json": (report) => report.digests.benchmarkSha256,
+  "matrix.json": (report) => report.digests.matrixSha256,
+  "report.json": (report) => report.digests.reportSha256,
+  "report-envelope.json": (report) => report.digests.reportEnvelopeSha256,
+};
+
+export function sealedMember(report: QualifiedReportData, path: string): Buffer {
+  const listed = listedDigest(report, path);
+  if (listed === null) throw new Error(`${report.slug}: bundle.json lists no ${path}`);
+  const printed = PRINTED_IDS[path]?.(report);
+  if (printed !== undefined && printed !== listed) {
+    throw new Error(`${report.slug}: bundle.json lists ${path} as ${listed}, the page prints ${printed}`);
+  }
+  return readTied(report, path, listed, `file-list entry for ${path}`);
 }
 
 /**
