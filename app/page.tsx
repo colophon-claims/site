@@ -115,10 +115,8 @@ export default function Home() {
         <section className="home-section home-paths" aria-labelledby="paths-title">
           <div className="container">
             <div className="home-section__intro home-paths__intro">
-              <h2 id="paths-title">Independence that fits the claim.</h2>
-              <p>
-                Choose the level of separation that gives your audience the confidence they need.
-              </p>
+              <h2 id="paths-title">Choose who runs the benchmark.</h2>
+              <p>Run it yourself, or have Colophon run it. The published claim says which.</p>
             </div>
 
             <div className="home-paths__list">
