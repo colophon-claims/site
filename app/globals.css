@@ -3068,3 +3068,680 @@ main {
   font-weight: var(--weight-semibold);
   color: var(--text-primary);
 }
+
+/* ---------- boards (issue 20) ----------
+   The boards index and one board: a view over the claims sealed on one suite
+   or one locked method, never a ranking. Tables are rules, not stripes. A bar
+   is a plain filled track on the board's shared axis with every part written
+   out beneath it, so colour never carries a result. The board title is the
+   only display type; digests, dates and keys are mono. Flat surfaces, no
+   shadows, and no motion beyond the token transitions already on links.
+   Nothing here edits a rule above: the header's wrap and the claim page's
+   board line are additions. */
+
+/* Header: Boards joins the nav. On a narrow screen the nav drops under the
+   wordmark instead of running past the edge. */
+.site-header-inner {
+  flex-wrap: wrap;
+  row-gap: 0;
+}
+.site-nav {
+  flex-wrap: wrap;
+  row-gap: 0;
+}
+.site-footer-report-inner nav {
+  flex-wrap: wrap;
+}
+
+/* The claim page's lead names the board it sits on, under the seal line. */
+.claim-board {
+  margin: 0;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* The venue chip's second word. Solid swatch: run by the platform, not
+   attested by the claimant. No record uses it yet. */
+.claim-venue--colophon-run {
+  color: var(--verdict-attested);
+  background: var(--verdict-attested-bg);
+}
+.claim-venue--colophon-run::before {
+  background: currentColor;
+}
+
+.board-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-13);
+}
+.board-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.board-head h1 {
+  margin: 0;
+  max-width: 28ch;
+  font: var(--type-title);
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-snug);
+  text-wrap: balance;
+}
+@media (min-width: 700px) {
+  .board-head h1 {
+    font-size: var(--text-3xl);
+  }
+}
+.board-lede {
+  margin: 0;
+  max-width: var(--measure);
+  font: var(--type-body);
+  color: var(--text-secondary);
+}
+.board-page code {
+  font: var(--type-data);
+  font-size: var(--text-xs);
+}
+.board-digest {
+  overflow-wrap: anywhere;
+}
+.board-page .copy-command {
+  max-width: 100%;
+}
+.board-page .copy-command__code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .board-page .copy-command {
+    flex-direction: column;
+  }
+  .board-page .copy-command__button {
+    border-top: var(--border-hair) solid var(--rule-strong);
+    border-left: 0;
+  }
+}
+
+/* The fact line, with "About this method" at its end. */
+.board-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-8);
+  padding: var(--space-4) 0;
+  border-top: var(--border-hair) solid var(--rule);
+  border-bottom: var(--border-hair) solid var(--rule);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.board-fact-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.board-fact-line li:not(:last-child)::after {
+  content: "\00B7";
+  content: "\00B7" / "";
+  padding: 0 var(--space-3);
+  color: var(--text-faint);
+}
+.board-about > summary {
+  cursor: pointer;
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--ink-300);
+}
+.board-about > summary:hover {
+  color: var(--link-hover);
+}
+.board-about[open] {
+  flex-basis: 100%;
+}
+.board-about-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  border: var(--border-hair) solid var(--rule);
+  background: var(--surface-inset);
+}
+.board-about-body p {
+  margin: 0;
+  max-width: var(--measure);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.board-claims {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+.board-count {
+  margin: 0;
+  max-width: var(--measure);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* The table scrolls inside its own frame on a narrow screen; the page never
+   does. The frame is positioned so the table's screen-reader-only labels stay
+   inside it rather than widening the page. */
+.board-table-scroll,
+.board-page .table-scroll {
+  position: relative;
+}
+.board-table-scroll {
+  overflow-x: auto;
+  border-top: var(--border-heavy) solid var(--rule-heavy);
+  border-bottom: var(--border-hair) solid var(--rule);
+}
+.board-table {
+  width: 100%;
+  min-width: 54rem;
+  border-collapse: collapse;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.board-table thead th {
+  padding: var(--space-4) var(--space-5) var(--space-3);
+  border-bottom: var(--border-hair) solid var(--rule-strong);
+  text-align: left;
+  vertical-align: bottom;
+  font: var(--type-label);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.board-table thead th.board-col-rate {
+  text-align: right;
+}
+.board-table thead th.board-col-bar {
+  white-space: normal;
+}
+.board-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: var(--transition-ui);
+}
+.board-sort:hover {
+  color: var(--link-hover);
+}
+.board-table th[aria-sort="ascending"] .board-sort,
+.board-table th[aria-sort="descending"] .board-sort {
+  color: var(--text-primary);
+}
+.board-sort-mark path {
+  fill: currentColor;
+  opacity: 0.3;
+}
+.board-sort-mark--ascending .board-sort-up,
+.board-sort-mark--descending .board-sort-down {
+  opacity: 1;
+}
+.board-sort-mark--ascending .board-sort-down,
+.board-sort-mark--descending .board-sort-up {
+  opacity: 0;
+}
+/* The shared axis, written once under the bar column's heading. */
+.board-axis {
+  position: relative;
+  display: block;
+  height: 14px;
+  margin-top: var(--space-2);
+  font: var(--type-data);
+  font-size: var(--text-2xs);
+  letter-spacing: 0;
+  color: var(--text-faint);
+}
+.board-axis span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+.board-axis span:first-child {
+  transform: none;
+}
+.board-axis span:last-child {
+  transform: translateX(-100%);
+}
+
+/* One sealed claim: a quiet group line above its arms. */
+.board-group {
+  padding: var(--space-6) var(--space-5) var(--space-3);
+  text-align: left;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+tbody + tbody .board-group {
+  border-top: var(--border-hair) solid var(--rule-strong);
+}
+.board-group-title {
+  display: block;
+  font: var(--type-ui-strong);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+.board-group-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-6);
+  margin-top: var(--space-3);
+}
+.board-group time,
+.board-key code {
+  font: var(--type-data);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+}
+.board-key[open] {
+  flex-basis: 100%;
+}
+/* When the table scrolls sideways, the claim's own line stays in view. */
+.board-group-title,
+.board-group-meta {
+  position: sticky;
+  left: var(--space-5);
+  max-width: calc(100vw - 2 * var(--gutter) - 2 * var(--space-5));
+}
+
+/* One arm: one row. */
+.board-arm-row > th,
+.board-arm-row > td {
+  padding: var(--space-5);
+  border-top: var(--border-hair) solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+.board-arm {
+  width: 25%;
+  min-width: 15rem;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+}
+.board-arm-facts > summary {
+  cursor: pointer;
+  font: var(--type-ui-strong);
+  color: var(--text-primary);
+}
+.board-arm-facts > summary::marker {
+  color: var(--text-muted);
+}
+.board-arm-sealed {
+  display: block;
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+.board-arm-sealed code {
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
+}
+.board-arm-pins {
+  display: block;
+  margin-top: var(--space-3);
+  color: var(--text-muted);
+}
+.board-arm-pins code {
+  display: block;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.board-venue,
+.board-sealed,
+.board-share {
+  white-space: nowrap;
+}
+/* On a narrow screen the table scrolls inside its frame, and each row's name
+   stays pinned at the left edge so a bar is never read without its name. */
+@media (max-width: 1199px) {
+  .board-table .board-bar-column {
+    min-width: 12.5rem;
+  }
+  .board-table thead th,
+  .board-arm-row > th,
+  .board-arm-row > td {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  .board-table thead th.board-col-arm,
+  .board-arm {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    width: 10.5rem;
+    min-width: 10.5rem;
+    background: var(--surface-page);
+    border-right: var(--border-hair) solid var(--rule);
+  }
+}
+.board-sealed time {
+  font: var(--type-data);
+  font-size: var(--text-xs);
+}
+.board-coverage {
+  min-width: 7rem;
+}
+.board-marker {
+  font: var(--type-ui-strong);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+}
+.board-bar-column {
+  width: 30%;
+  min-width: 15rem;
+}
+.board-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-1);
+}
+.board-bar-track {
+  display: flex;
+  width: calc(var(--board-track, 1) * 100%);
+  height: var(--bar-height-lg);
+  border: var(--border-hair) solid var(--rule-strong);
+  border-radius: var(--bar-radius);
+  background: var(--surface-page);
+  overflow: hidden;
+}
+.board-bar-part {
+  flex-basis: 0;
+  min-width: 0;
+}
+.board-bar-part + .board-bar-part {
+  border-left: var(--border-hair) solid var(--rule-strong);
+}
+.board-bar-part--passed {
+  background: var(--text-secondary);
+}
+.board-bar-part--excluded {
+  color: var(--text-muted);
+  background-color: var(--verdict-incomplete-bg);
+  background-image: var(--texture-missing);
+  background-size: var(--texture-missing-size);
+}
+.board-bar-counts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-5);
+  width: calc(var(--board-track, 1) * 100%);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+.board-rate {
+  text-align: right;
+  white-space: nowrap;
+}
+.board-rate-value {
+  font: var(--type-data);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+.board-rate-of {
+  display: block;
+  font: var(--type-data);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.board-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-8);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.board-foot p,
+.board-note {
+  margin: 0;
+}
+.board-note {
+  max-width: var(--measure);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* The disclosures under the table. */
+.board-disclosures {
+  display: flex;
+  flex-direction: column;
+}
+.board-disclosure > summary {
+  display: list-item;
+}
+.board-disclosure-side {
+  display: block;
+  margin-top: var(--space-1);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.board-reading {
+  margin: 0;
+  max-width: var(--measure);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.board-tasks-claim {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+  padding-top: var(--space-5);
+  border-top: var(--border-hair) solid var(--rule);
+}
+.board-tasks-title {
+  font: var(--type-ui-strong);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+.board-tasks-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-6);
+  margin: 0;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.board-tasks-meta time {
+  font: var(--type-data);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+}
+.board-tasks-key {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.board-tasks-key > div {
+  display: contents;
+}
+.board-tasks-key dd {
+  margin: 0;
+}
+.board-tally th[scope="row"] {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: var(--border-hair) solid var(--rule);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--text-secondary);
+  white-space: normal;
+}
+.board-tally td {
+  padding: var(--space-4) var(--space-6);
+}
+.board-tally tr:last-child th,
+.board-tasks-table tr:last-child th {
+  border-bottom: none;
+}
+.board-tally thead code,
+.board-tasks-table thead code {
+  text-transform: none;
+  letter-spacing: normal;
+}
+.board-tasks-table {
+  font-size: var(--text-xs);
+}
+.board-tasks-table th,
+.board-tasks-table td {
+  padding: var(--space-3) var(--space-4);
+}
+.board-tasks-table tbody th {
+  vertical-align: top;
+  border-bottom: var(--border-hair) solid var(--rule);
+  font: var(--type-data);
+  font-size: var(--text-xs);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--text-secondary);
+}
+.board-task-n {
+  display: inline-block;
+  min-width: 3ch;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.board-task-label {
+  white-space: nowrap;
+}
+.board-task {
+  min-width: 8.5rem;
+}
+.board-task > details > summary {
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+.board-task > details > summary::marker {
+  color: var(--text-faint);
+}
+/* A small mark beside the written outcome, for scanning a long column. The
+   word carries the outcome; the mark only repeats it: solid for agreed,
+   empty for did not, dotted for excluded. */
+.board-task > details > summary::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--space-3);
+  border: var(--border-hair) solid var(--text-muted);
+  vertical-align: 0;
+}
+.board-task--passed > details > summary::before {
+  background: var(--text-secondary);
+}
+.board-task--excluded > details > summary::before {
+  color: var(--text-muted);
+  background-image: var(--texture-missing);
+  background-size: 3px 3px;
+}
+.board-task details > p {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  white-space: normal;
+}
+.board-calls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: call;
+}
+.board-calls > li::before {
+  counter-increment: call;
+  content: counter(call) " ";
+  font: var(--type-data);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+
+/* The boards index. */
+.boards-table {
+  min-width: 36rem;
+}
+.boards-table th[scope="row"] {
+  min-width: 12rem;
+  padding: var(--space-6);
+  border-bottom: var(--border-hair) solid var(--rule);
+  font: var(--type-ui-strong);
+  font-size: var(--text-base);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--text-primary);
+  white-space: normal;
+}
+.boards-key {
+  display: block;
+  margin-top: var(--space-2);
+  font: var(--type-data);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+.board-foot-line {
+  margin: calc(var(--space-8) * -1 + var(--space-4)) 0 0;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.board-notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.board-notes p {
+  margin: 0;
+  max-width: var(--measure);
+  font: var(--type-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}

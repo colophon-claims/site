@@ -16,6 +16,7 @@ export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
         <div className="site-footer-report-inner">
           <p><strong>Colophon</strong> publishes the evidence and limitations with the result.</p>
           <nav aria-label="Report footer">
+            <Link href="/boards/">Boards</Link>
             <Link href="/reports/">Reports</Link>
             <Link href="/docs/#verification">Verification guide</Link>
           </nav>
@@ -36,6 +37,7 @@ export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Product</span>
+          <Link href="/boards/">Boards</Link>
           <Link href="/reports/">Reports</Link>
           <Link href="/docs/">Docs</Link>
           <a href="/#contact">Bring a claim</a>
