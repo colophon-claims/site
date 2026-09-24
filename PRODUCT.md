@@ -16,7 +16,7 @@ People who have a benchmark and a number, and now have to get someone to believe
 
 Colophon turns a benchmark claim from "trust me" into "check me." The method is locked before the run, timestamped by someone who isn't you. Every result is counted, failures included. The whole thing can be recomputed by any stranger with one command, free, forever. When a number is doubted, the reader doesn't argue; they hand over the seal.
 
-Two ways in: seal your own run, or have Colophon run it so "who ran it" is answered by someone independent. Checking is free and stays free. Nothing on the site is for sale; the closing section invites a conversation only.
+One way in: lock the method, run the benchmark on the harness you already use, and bring the run back to be sealed and published. Colophon offers no managed service and does not run benchmarks for claimants. A published claim names who ran it, Self-run or Colophon-run; the label says who ran it and claims nothing about independence. Checking is free and stays free. Nothing on the site is for sale; the closing section invites a conversation only.
 
 Success: a visitor with a benchmark understands in ten seconds that they can seal a claim here and walk away with something a stranger can check, and then does it.
 
@@ -40,7 +40,7 @@ Anything that reads as a pitch. The closing section invites a conversation; it n
 
 - The reader's problem first. Every section starts from "my number is about to be doubted," not from the machinery.
 - Practice what you preach. Every number on the site is itself checkable; the site never asks for trust it doesn't earn on the page.
-- Honest about limits. What a seal proves and what it doesn't (a run you did yourself versus one someone independent did) is said plainly, because the honesty is the credibility.
+- Honest about limits. What a seal proves and what it doesn't (it names who ran the benchmark; it does not establish that they were independent of the claimant) is said plainly, because the honesty is the credibility.
 - Show the seal, don't describe it. A real sealed claim on the page beats a paragraph about sealing.
 - Nothing promised that doesn't exist.
 - No insider vocabulary. If a word needs the system's manual to be understood, it does not appear on the page. Say what it does in the reader's words, or show it. Very, very clear.
