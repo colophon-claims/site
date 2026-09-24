@@ -21,7 +21,7 @@ export function SiteHeader({
         </Link>
         <nav className="site-nav" aria-label="Site">
           <Link href="/boards/">Boards</Link>
-          <Link href="/reports/">Reports</Link>
+          <Link href="/find/">Find a claim</Link>
           <Link href="/docs/">Docs</Link>
           {!quiet && (
             <span className="site-nav-cta">

@@ -10,7 +10,7 @@ export function HomeFooter() {
         </div>
         <nav className="home-footer__nav" aria-label="Footer">
           <Link href="/boards/">Boards</Link>
-          <Link href="/reports/">Reports</Link>
+          <Link href="/find/">Find a claim</Link>
           <Link href="/docs/">Docs</Link>
           <a href="mailto:ritsu.kai2000@gmail.com">ritsu.kai2000@gmail.com</a>
         </nav>

@@ -3786,3 +3786,189 @@ tbody + tbody .board-group {
 .board-table th[aria-sort="ascending"] .board-sort-label {
   color: var(--text-primary);
 }
+
+/* ---------- find a claim (issue 21) ----------
+   A lookup across every listed claim, newest first: one listing shape per
+   claim, a search box and a board filter that only ever hide or show what
+   the server already rendered, never a shared score axis. The eyebrow, the
+   claim title type, the dot separator, the venue chip and the claimant-key
+   disclosure reuse the claim page's and the board's own classes as they
+   already render (.claim-eyebrow, .claim-dot, .claim-venue, .claim-key).
+   Nothing here edits a rule above. */
+.find-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-13);
+}
+.find-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.find-head h1 {
+  margin: 0;
+  max-width: 20ch;
+  font: var(--type-title);
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-snug);
+  text-wrap: balance;
+}
+@media (min-width: 700px) {
+  .find-head h1 {
+    font-size: var(--text-3xl);
+  }
+}
+.find-lede {
+  margin: 0;
+  max-width: var(--measure);
+  font: var(--type-body);
+  color: var(--text-secondary);
+}
+
+.find-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.find-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-5) var(--space-8);
+  max-width: 900px;
+}
+.find-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.find-field-grow {
+  flex: 1 1 280px;
+}
+.find-field label {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.find-field input,
+.find-field select {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-hair) solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+}
+
+.find-count {
+  margin: 0;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.find-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--border-hair) solid var(--rule);
+}
+.find-row {
+  padding: var(--space-6) 0;
+  border-bottom: var(--border-hair) solid var(--rule);
+}
+.find-row[hidden] {
+  display: none;
+}
+.find-row-title {
+  margin: 0;
+  font: var(--type-title);
+  font-size: var(--text-lg);
+  letter-spacing: var(--tracking-snug);
+}
+.find-row-title a {
+  color: var(--text-primary);
+}
+.find-row-title a:hover {
+  color: var(--link-hover);
+}
+.find-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  margin-top: var(--space-3);
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.find-row-meta time {
+  font: var(--type-data);
+  color: var(--text-primary);
+}
+.find-row-finding {
+  margin: var(--space-4) 0 0;
+  max-width: var(--measure);
+  font: var(--type-body);
+  color: var(--text-primary);
+}
+.find-row-board {
+  margin: var(--space-3) 0 0;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.find-empty {
+  max-width: 620px;
+  margin-top: var(--space-2);
+  padding: var(--space-6) var(--space-7);
+  border: var(--border-hair) solid var(--rule);
+  border-top: var(--border-slab) solid var(--ochre-500);
+  background: var(--surface-card);
+}
+.find-empty-title {
+  margin: 0;
+  font: var(--type-label);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+.find-empty p {
+  margin: var(--space-3) 0 0;
+  font: var(--type-ui);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.find-clear {
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-hair) solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font: var(--type-ui-strong);
+  cursor: pointer;
+}
+.find-clear:hover {
+  border-color: var(--text-accent);
+  color: var(--text-accent);
+}
+
+.find-foot-note {
+  margin: 0;
+  max-width: var(--measure);
+  font: var(--type-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}

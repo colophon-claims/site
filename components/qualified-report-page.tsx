@@ -655,7 +655,7 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
         <div className="claim-lead">
           <header className="claim-head">
             <nav className="claim-crumb" aria-label="Breadcrumb">
-              <a href="/reports/">Reports</a>
+              <a href="/find/">Find a claim</a>
               {board !== null && (
                 <>
                   {" "}<span className="claim-dot" aria-hidden="true">·</span>{" "}

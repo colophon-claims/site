@@ -77,7 +77,7 @@ export default function BoardsIndex() {
               a board of one until another listed claim shares that suite or method.
             </p>
             <p>
-              Looking for one particular claim? <Link href="/reports/">Every listed claim is under Reports</Link>.
+              Looking for one particular claim? <Link href="/find/">Find a claim</Link>.
             </p>
           </div>
         </div>
