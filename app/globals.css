@@ -3434,6 +3434,11 @@ tbody + tbody .board-group {
     padding-left: var(--space-4);
     padding-right: var(--space-4);
   }
+  /* Anything focused inside the frame scrolls clear of the pinned column. */
+  .board-table-scroll {
+    scroll-padding-left: calc(10.5rem + var(--space-4));
+    scroll-padding-right: var(--space-4);
+  }
   .board-table thead th.board-col-arm,
   .board-arm {
     position: sticky;
@@ -3443,6 +3448,32 @@ tbody + tbody .board-group {
     min-width: 10.5rem;
     background: var(--surface-page);
     border-right: var(--border-hair) solid var(--rule);
+  }
+}
+/* On a phone the pinned column narrows, and its contents wrap to fit it, so
+   the scrolling part keeps room for a whole heading beside it. */
+@media (max-width: 480px) {
+  .board-table-scroll {
+    scroll-padding-left: calc(8rem + var(--space-4));
+  }
+  .board-table thead th.board-col-arm,
+  .board-arm {
+    width: 8rem;
+    min-width: 8rem;
+    max-width: 8rem;
+  }
+  .board-table thead th.board-col-arm,
+  .board-table thead th.board-col-bar {
+    white-space: normal;
+  }
+  .board-table thead th.board-col-arm .board-sort,
+  .board-table thead th.board-col-bar .board-sort {
+    max-width: 7.5rem;
+    text-align: left;
+  }
+  .board-arm-pins code {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
 .board-sealed time {

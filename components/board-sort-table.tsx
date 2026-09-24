@@ -146,7 +146,15 @@ export function BoardSortTable({
                   aria-sort={column.sortable ? state : undefined}
                 >
                   {column.sortable && enhanced ? (
-                    <button type="button" className="board-sort" onClick={() => choose(column)}>
+                    <button
+                      type="button"
+                      className="board-sort"
+                      onClick={() => choose(column)}
+                      // On a narrow screen the table scrolls sideways under a
+                      // pinned first column; bring the focused heading fully
+                      // into the frame's clear part (its scroll-padding).
+                      onFocus={(event) => event.currentTarget.scrollIntoView({ block: "nearest", inline: "nearest" })}
+                    >
                       <span>{column.label}</span>
                       <SortMark state={state} />
                     </button>
