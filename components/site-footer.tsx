@@ -17,7 +17,7 @@ export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
           <p><strong>Colophon</strong> publishes the evidence and limitations with the result.</p>
           <nav aria-label="Report footer">
             <Link href="/boards/">Boards</Link>
-            <Link href="/reports/">Reports</Link>
+            <Link href="/find/">Find a claim</Link>
             <Link href="/docs/#verification">Verification guide</Link>
           </nav>
           <span>© 2026 Colophon</span>
@@ -38,13 +38,13 @@ export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
         <div className="site-footer-col">
           <span className="site-footer-head">Product</span>
           <Link href="/boards/">Boards</Link>
-          <Link href="/reports/">Reports</Link>
+          <Link href="/find/">Find a claim</Link>
           <Link href="/docs/">Docs</Link>
           <a href="/#contact">Bring a claim</a>
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Reports</span>
-          <Link href="/reports/">All reports</Link>
+          <Link href="/find/">Find a claim</Link>
           {reports.map((r) => (
             <Link key={r.slug} href={`/reports/${r.slug}/`}>
               {r.title}

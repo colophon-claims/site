@@ -223,25 +223,24 @@ test("the pages keep to the site's copy rules", { skip }, () => {
   }
 });
 
-test("the boards index lists the board, most recent seal first, and sends a claim lookup to Reports", { skip }, () => {
+test("the boards index lists the board, most recent seal first, and sends a claim lookup to Find a claim", { skip }, () => {
   const html = staticHtml("boards/index.html");
   assert.match(html, new RegExp(`<a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>`, "u"));
   const text = staticText("boards/index.html");
   assert.ok(text.includes("Board Coverages on it Claims Most recent seal"));
   assert.ok(text.includes("Full method, 240 items 1 claim, 6 grading prompts 2026-08-29"));
   assert.ok(text.includes("Boards are not ranked against each other, and neither are the claims on them."));
-  assert.match(html, /Looking for one particular claim\? <a href="\/reports\/">/u);
-  assert.doesNotMatch(html, /href="\/find\//u);
+  assert.match(html, /Looking for one particular claim\? <a href="\/find\/">Find a claim<\/a>/u);
 });
 
 test("the header, the claim page and the homepage card link to the board", { skip }, () => {
-  for (const path of ["index.html", "docs/index.html", "reports/index.html", `reports/${slug}/index.html`, "boards/index.html"]) {
-    assert.match(staticHtml(path), /<nav class="site-nav" aria-label="Site"><a href="\/boards\/">Boards<\/a><a href="\/reports\/">Reports<\/a><a href="\/docs\/">Docs<\/a>/u, path);
+  for (const path of ["index.html", "docs/index.html", "find/index.html", "reports/index.html", `reports/${slug}/index.html`, "boards/index.html"]) {
+    assert.match(staticHtml(path), /<nav class="site-nav" aria-label="Site"><a href="\/boards\/">Boards<\/a><a href="\/find\/">Find a claim<\/a><a href="\/docs\/">Docs<\/a>/u, path);
   }
   const claimPage = staticHtml(`reports/${slug}/index.html`);
   assert.match(claimPage, new RegExp(`On the board: <a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>`, "u"));
   const crumb = claimPage.match(/<nav class="claim-crumb" aria-label="Breadcrumb">(.*?)<\/nav>/su)?.[1] ?? "";
-  assert.match(crumb, /^<a href="\/reports\/">Reports<\/a>/u);
+  assert.match(crumb, /^<a href="\/find\/">Find a claim<\/a>/u);
   assert.match(crumb, new RegExp(`<a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>$`, "u"));
   assert.match(staticHtml("index.html"), new RegExp(`<a href="/boards/${boardSlug}/">See its board</a>`, "u"));
 });
