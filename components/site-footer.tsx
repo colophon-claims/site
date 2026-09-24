@@ -3,9 +3,9 @@ import { listReports } from "@/lib/reports";
 
 /** Footer per the surface copy §7. Adapted from the vendored site ui_kit's
  * SiteFooter (vendor/design-system/reference/ui_kits/site/Site.jsx).
- * "Built on Jinn." appears exactly twice on a page: the infrastructure note
- * and the legal line, both here. Links are real or absent. There are no pending
- * placeholders on a public page. */
+ * The note above the legal line says what a reader can rely on: the format is
+ * open and documented, and checking a claim needs nothing from Colophon.
+ * Links are real or absent. There are no pending placeholders on a public page. */
 export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
   const reports = listReports();
   const report = reports[0];
@@ -58,9 +58,8 @@ export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
       </div>
       <div className="site-footer-legal">
         <p className="site-footer-infra">
-          Colophon runs benchmark executions on Jinn infrastructure. Jinn provides the execution,
-          evidence and verification layers; Colophon defines the benchmark method, the evaluation
-          policy, the accounting and the published report. <strong>Built on Jinn, by Jinn contributors.</strong>
+          Sealed claims are published in an open, documented format. Checking one needs nothing
+          from Colophon.
         </p>
         <div className="site-footer-line">
           <span>© 2026 Colophon</span>
