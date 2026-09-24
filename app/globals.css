@@ -3745,3 +3745,13 @@ tbody + tbody .board-group {
   font-size: var(--text-sm);
   color: var(--text-muted);
 }
+/* A sortable heading before the script runs: plain text, no control. */
+.board-sort-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+.board-table th[aria-sort="descending"] .board-sort-label,
+.board-table th[aria-sort="ascending"] .board-sort-label {
+  color: var(--text-primary);
+}

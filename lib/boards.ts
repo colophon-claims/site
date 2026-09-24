@@ -558,7 +558,10 @@ export function claimTasks(board: Board, claim: BoardClaim): ClaimTasks {
   const key = (task: string, arm: string, replicate: number) => `${task}/${arm}/${replicate}`;
 
   // The result matrix: every planned call.
-  const matrix = JSON.parse(sealedMember(report, "matrix.json").toString("utf8")) as { cells?: MatrixCall[] };
+  const matrix = JSON.parse(sealedMember(report, "matrix.json").toString("utf8")) as {
+    cells?: MatrixCall[];
+    attrition?: { perArm?: Record<string, { expected?: unknown; judged?: unknown }> };
+  };
   if (!Array.isArray(matrix.cells) || matrix.cells.length !== report.accounting.cells.expected) {
     throw new Error(`${report.slug}: matrix.json does not list the ${report.accounting.cells.expected} planned calls`);
   }
@@ -716,6 +719,25 @@ export function claimTasks(board: Board, claim: BoardClaim): ClaimTasks {
   const unreadable = tallies.reduce((sum, tally) => sum + tally.callsUnreadable, 0);
   if (unreadable !== report.accounting.parserNeutral.calls) {
     throw new Error(`${report.slug}: ${unreadable} unreadable calls in the trace, the accounting says ${report.accounting.parserNeutral.calls}`);
+  }
+  // Calls planned and judged, arm by arm, against the result matrix's own
+  // attrition record, and in total against the read model's accounting.
+  for (const tally of tallies) {
+    const sealed = matrix.attrition?.perArm?.[tally.armId];
+    if (sealed?.expected !== tally.callsPlanned || sealed?.judged !== tally.callsJudged) {
+      throw new Error(
+        `${report.slug}: arm ${tally.armId} has ${tally.callsJudged} of ${tally.callsPlanned} calls judged, the result`
+        + ` matrix records ${String(sealed?.judged)} of ${String(sealed?.expected)}`,
+      );
+    }
+  }
+  const judgedCalls = tallies.reduce((sum, tally) => sum + tally.callsJudged, 0);
+  const plannedCalls = tallies.reduce((sum, tally) => sum + tally.callsPlanned, 0);
+  if (judgedCalls !== report.accounting.cells.judged || plannedCalls !== report.accounting.cells.expected) {
+    throw new Error(
+      `${report.slug}: ${judgedCalls} of ${plannedCalls} calls judged across the arms, the accounting says`
+      + ` ${report.accounting.cells.judged} of ${report.accounting.cells.expected}`,
+    );
   }
 
   const result = { claim, replicates, rows, tallies };

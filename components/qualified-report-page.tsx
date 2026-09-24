@@ -656,6 +656,12 @@ export function QualifiedReportPage({ report }: { report: QualifiedReportData })
           <header className="claim-head">
             <nav className="claim-crumb" aria-label="Breadcrumb">
               <a href="/reports/">Reports</a>
+              {board !== null && (
+                <>
+                  {" "}<span className="claim-dot" aria-hidden="true">·</span>{" "}
+                  <a href={board.href}>{board.name}</a>
+                </>
+              )}
             </nav>
             <p className="claim-eyebrow">Claim</p>
             <h1>{report.title}</h1>

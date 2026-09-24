@@ -177,6 +177,8 @@ export function BoardTable({ board }: { board: Board }) {
     })),
   }));
   const subsetRows = board.claims.some((claim) => claim.arms.some((arm) => arm.coverage.kind === "subset"));
+  const scope = board.key.kind === "official-suite" ? "suite" : "method";
+  const units = board.key.kind === "official-suite" ? "tasks" : words.coverageUnit;
 
   return (
     <>
@@ -190,8 +192,8 @@ export function BoardTable({ board }: { board: Board }) {
       </div>
       {subsetRows && (
         <p className="board-note">
-          <span aria-hidden="true">*</span> Marked rows ran part of the suite, as their seal declares. Their
-          percentage is out of the tasks they planned, not the full suite.
+          <span aria-hidden="true">*</span> Marked rows ran part of the {scope}, as their seal declares. Their
+          percentage is out of the {units} they planned, not the full {scope}.
         </p>
       )}
     </>

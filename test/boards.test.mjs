@@ -139,6 +139,13 @@ test("every planned call is judged in the result matrix and traced to a native l
   assert.equal(logs.size, 4320);
   assert.equal(unreadable, report.accounting.parserNeutral.calls);
   assert.equal(unreadable, 22);
+  for (const arm of RECORD_ORDER) {
+    assert.deepEqual(
+      [matrix.attrition.perArm[arm].expected, matrix.attrition.perArm[arm].judged],
+      [720, report.accounting.cells.judged / RECORD_ORDER.length],
+      arm,
+    );
+  }
 });
 
 const out = join(siteRoot, "out");
@@ -163,7 +170,11 @@ test("the board renders in date-sealed order with no script, arms in the record'
   const sorts = [...html.matchAll(/aria-sort="([^"]+)"/gu)].map((match) => match[1]);
   assert.equal(sorts.filter((value) => value === "descending").length, 1);
   assert.equal(sorts.filter((value) => value === "none").length, 5);
-  assert.match(html, /<th scope="col" class="board-col-sealed" aria-sort="descending"><button type="button"/u);
+  assert.match(html, /<th scope="col" class="board-col-sealed" aria-sort="descending"><span class="board-sort-label">Date sealed<\/span>/u);
+  const head = html.slice(html.indexOf('<table class="board-table">'), html.indexOf("</thead>"));
+  assert.doesNotMatch(head, /<button/u, "no sort control before the script can run it");
+  assert.equal((head.match(/aria-sort="descending"/gu) ?? []).length, 1);
+  assert.equal((head.match(/aria-sort="none"/gu) ?? []).length, 5);
 });
 
 test("every bar part and every rate is written out, with its denominator", { skip }, () => {
@@ -227,6 +238,10 @@ test("the header, the claim page and the homepage card link to the board", { ski
   for (const path of ["index.html", "docs/index.html", "reports/index.html", `reports/${slug}/index.html`, "boards/index.html"]) {
     assert.match(staticHtml(path), /<nav class="site-nav" aria-label="Site"><a href="\/boards\/">Boards<\/a><a href="\/reports\/">Reports<\/a><a href="\/docs\/">Docs<\/a>/u, path);
   }
-  assert.match(staticHtml(`reports/${slug}/index.html`), new RegExp(`On the board: <a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>`, "u"));
+  const claimPage = staticHtml(`reports/${slug}/index.html`);
+  assert.match(claimPage, new RegExp(`On the board: <a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>`, "u"));
+  const crumb = claimPage.match(/<nav class="claim-crumb" aria-label="Breadcrumb">(.*?)<\/nav>/su)?.[1] ?? "";
+  assert.match(crumb, /^<a href="\/reports\/">Reports<\/a>/u);
+  assert.match(crumb, new RegExp(`<a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>$`, "u"));
   assert.match(staticHtml("index.html"), new RegExp(`<a href="/boards/${boardSlug}/">See its board</a>`, "u"));
 });

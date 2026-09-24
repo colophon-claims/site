@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 /**
  * The board's table, with the reader's re-sort.
@@ -11,7 +11,9 @@ import { useState, type ReactNode } from "react";
  * page reads correctly with no script. This component only adds the re-sort:
  * a header button per column that holds a value, aria-sort on the sorted
  * column, and rows reordered inside each claim group as well as the groups
- * themselves. The chosen sort lives in this component's memory only. It is
+ * themselves. The buttons appear only once the script has run: the static
+ * HTML, and the page before it has loaded, carry plain header text, so no
+ * control is offered that cannot yet work. aria-sort is true either way. The chosen sort lives in this component's memory only. It is
  * not stored, not sent anywhere, not carried to another page, and it never
  * marks a top row.
  */
@@ -106,6 +108,10 @@ export function BoardSortTable({
   // null is the default order, exactly as the server rendered it.
   const [sort, setSort] = useState<Sort | null>(null);
   const [status, setStatus] = useState("");
+  // False on the server and in the first client render, so the two match;
+  // true once the script is running and a button can do what it says.
+  const [enhanced, setEnhanced] = useState(false);
+  useEffect(() => setEnhanced(true), []);
   const active = sort ?? DEFAULT_SORT;
   const ordered = sort === null
     ? groups
@@ -139,11 +145,13 @@ export function BoardSortTable({
                   className={column.className}
                   aria-sort={column.sortable ? state : undefined}
                 >
-                  {column.sortable ? (
+                  {column.sortable && enhanced ? (
                     <button type="button" className="board-sort" onClick={() => choose(column)}>
                       <span>{column.label}</span>
                       <SortMark state={state} />
                     </button>
+                  ) : column.sortable ? (
+                    <span className="board-sort-label">{column.label}</span>
                   ) : (
                     <span className="claim-hidden-heading">{column.label}</span>
                   )}
