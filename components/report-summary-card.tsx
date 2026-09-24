@@ -4,7 +4,6 @@ import {
   disclosureVariableLabel,
   formatPercent,
   formatRewardPpm,
-  formatUtc,
   isEvidenceReport,
   isGroupedReport,
   isQualifiedReport,
@@ -144,27 +143,8 @@ export function ReportSummaryCard({
     );
   }
 
-  return (
-    <article className="featured-report-card">
-      <div className="featured-report-head">
-        <div className="featured-report-eyebrow">
-          <Mark size={12} /> {label}
-        </div>
-        <h3>{report.title}</h3>
-        <p>
-          {report.taskSet} · {report.taskCount} tasks · {report.replicates} replicates per cell
-        </p>
-      </div>
-      <div className="featured-result featured-result-legacy">
-        <span>
-          Method locked {formatUtc(report.lockedAt)} · {shortDigest(report.digests.reportSha256)}
-        </span>
-        <span>{report.completeness.judged} of {report.completeness.expected} expected executions judged</span>
-      </div>
-      <div className="featured-report-foot">
-        <span>Self-run venue</span>
-        {report.fixture && <span>Fixture</span>}
-      </div>
-    </article>
-  );
+  // Exhaustive: every ReportData variant is handled above. A format this
+  // component does not recognize fails the static build rather than
+  // rendering silently.
+  throw new Error(`Unsupported report format: ${(report as ReportData).format}`);
 }

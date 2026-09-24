@@ -39,16 +39,15 @@ editing here. Source commit, date, and the re-vendor command are in
 ## Publishing a report
 
 A report starts as an immutable public bundle emitted locally by Colophon.
-The site accepts four formats:
+The site accepts three formats:
 
 | Format | What it is |
 |---|---|
-| `benchmark-product-public-bundle/1` | Legacy application bundle |
 | `benchmark-product-public-bundle/5` | Evidence-native claim bundle |
 | `benchmark-product-public-bundle/7` | Anchored binary-qualification bundle |
 | `benchmark-product-public-bundle/8` | The same, carrying a sealed six-variable disclosure-specification record |
 
-Every format except `/1` carries its public reading record in
+Every format carries its public reading record in
 `presentation.json`. To put any of them on the site:
 
 ```bash
