@@ -435,6 +435,27 @@ main {
   background: var(--surface-sunken);
   color: var(--text-primary);
 }
+/* .copy-command above clips its children to keep the button's square corners
+   inside the container's rounded ones. That same clip would cut off the
+   outer half of the default outward focus ring, so the button draws its
+   ring inward instead: same 2px weight, never clipped, no change to the
+   control's size. */
+.copy-command__button:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--focus-ring);
+}
+/* Reserves the button's exact box before hydration: identical min-width,
+   min-height, padding and border width, with the border and fill made
+   transparent so nothing here reads as a control. Its arrival after mount
+   swaps only color and content, never size, so the value never moves. */
+.copy-command__placeholder {
+  flex: 0 0 auto;
+  min-width: var(--space-13);
+  min-height: 44px;
+  padding: var(--space-4) var(--space-5);
+  border: 0;
+  border-left: var(--border-hair) solid transparent;
+}
 @media (min-width: 800px) {
   .verification-grid {
     grid-template-columns: minmax(0, 0.88fr) minmax(22rem, 1.12fr);
@@ -2850,6 +2871,10 @@ main {
     border-top: var(--border-hair) solid var(--rule-strong);
     border-left: 0;
   }
+  .claim-page .copy-command__placeholder {
+    border-top: var(--border-hair) solid transparent;
+    border-left: 0;
+  }
 }
 .claim-evidence {
   display: flex;
@@ -3084,6 +3109,10 @@ main {
   }
   .board-page .copy-command__button {
     border-top: var(--border-hair) solid var(--rule-strong);
+    border-left: 0;
+  }
+  .board-page .copy-command__placeholder {
+    border-top: var(--border-hair) solid transparent;
     border-left: 0;
   }
 }
@@ -3878,6 +3907,10 @@ tbody + tbody .board-group {
   }
   .find-row .copy-command__button {
     border-top: var(--border-hair) solid var(--rule-strong);
+    border-left: 0;
+  }
+  .find-row .copy-command__placeholder {
+    border-top: var(--border-hair) solid transparent;
     border-left: 0;
   }
 }
