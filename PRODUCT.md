@@ -14,9 +14,9 @@ People who have a benchmark and a number, and now have to get someone to believe
 
 ## Product Purpose
 
-Colophon turns a benchmark claim from "trust me" into "check me." The method is locked before the run, timestamped by someone who isn't you. Every result is counted, failures included. The whole thing can be recomputed by any stranger with one command, free, forever. When a number is doubted, the reader doesn't argue; they hand over the seal.
+Colophon turns a benchmark claim from "trust me" into "check me." The method is locked before the run, timestamped when it is locked. Every result is counted, failures included. The whole thing can be recomputed by any stranger with one command, free, forever. When a number is doubted, the reader doesn't argue; they hand over the seal.
 
-One way in: lock the method, run the benchmark on the harness you already use, and bring the run back to be sealed and published. Colophon offers no managed service and does not run benchmarks for claimants. A published claim names who ran it, Self-run or Colophon-run; the label says who ran it and claims nothing about independence. Checking is free and stays free. Nothing on the site is for sale; the closing section invites a conversation only.
+One way in: lock the method, run the benchmark on the harness you already use, and bring the run back to be sealed and published. Colophon does not run benchmarks for claimants today. A published claim names who ran it, Self-run or Colophon-run; the label says who ran it and claims nothing about independence. Checking is free and stays free. Nothing is for sale today. The site asks for no conversation: everything a claimant needs is on the page.
 
 Success: a visitor with a benchmark understands in ten seconds that they can seal a claim here and walk away with something a stranger can check, and then does it.
 
@@ -34,7 +34,7 @@ The AI-startup landing page: gradient hero, a "trusted by 10,000 teams" logo str
 
 Leaderboard and analytics dashboards. Ranking is the thing this product refuses to do; it must not look like one.
 
-Anything that reads as a pitch. The closing section invites a conversation; it never closes a sale.
+Anything that reads as a pitch. The page shows the thing working; it never asks for a conversation.
 
 ## Design Principles
 
