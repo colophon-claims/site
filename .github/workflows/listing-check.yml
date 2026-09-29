@@ -1,0 +1,33 @@
+# The listing pull request's re-check: the checker line the bundle sealed, run
+# cold on the committed copy, and a check that the pull request only adds this
+# one listing. The front door dispatches it on each listing branch, because a
+# pull request opened by a workflow does not start pull_request workflows.
+name: Listing re-check
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: The listing's slug
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  recheck:
+    name: Listing re-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Re-check the committed listing
+        env:
+          SLUG: ${{ inputs.slug }}
+        run: node scripts/front-door/recheck.mjs "$SLUG" origin/main

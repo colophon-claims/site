@@ -2,7 +2,11 @@
 /**
  * Ingests one immutable Colophon public bundle into the static site.
  *
- *   node scripts/ingest-report.mjs <bundle-dir> --slug <slug>
+ *   node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--listing <file>]
+ *
+ * --listing is how the front door's workflow (scripts/front-door/) passes what
+ * it knows about a listing and the bundle does not: when it was listed and
+ * where it was fetched from. The read model then carries a `listing` section.
  *
  * Supported formats:
  *   - benchmark-product-public-bundle/5 (evidence-native claim bundle)
@@ -183,12 +187,16 @@ const args = process.argv.slice(2);
 let bundleArg;
 let slug;
 let presentationArg;
+let listingArg;
 for (let index = 0; index < args.length; index += 1) {
   if (args[index] === "--slug") {
     slug = args[index + 1];
     index += 1;
   } else if (args[index] === "--presentation") {
     presentationArg = args[index + 1];
+    index += 1;
+  } else if (args[index] === "--listing") {
+    listingArg = args[index + 1];
     index += 1;
   } else if (bundleArg === undefined) {
     bundleArg = args[index];
@@ -197,7 +205,7 @@ for (let index = 0; index < args.length; index += 1) {
   }
 }
 if (bundleArg === undefined || slug === undefined) {
-  fail("usage: node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--presentation <file>]");
+  fail("usage: node scripts/ingest-report.mjs <bundle-dir> --slug <slug> [--presentation <file>] [--listing <file>]");
 }
 if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) {
   fail(`slug must be lowercase [a-z0-9-], got: ${slug}`);
@@ -793,6 +801,65 @@ function extractQualified() {
 const data = isQualified
   ? extractQualified()
   : extractEvidenceNative();
+
+/**
+ * The formats whose run.json the published checker parses as a Run record,
+ * which requires `closeAt`. On `/5` nothing checks a run.json, so it never
+ * dates a row.
+ */
+const RUN_RECORD_FORMATS = [QUALIFIED_FORMAT, DISCLOSED_FORMAT];
+const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;
+
+/**
+ * What a listing adds to the read model: where the bundle was fetched from,
+ * when it was listed, the board it belongs on, the venue its claim seals, and
+ * the date its row is ordered by, named by the field it came from.
+ */
+function listingSection(input) {
+  if (typeof input.listedAt !== "string" || !INSTANT.test(input.listedAt)) {
+    fail("--listing needs listedAt as a UTC instant");
+  }
+  if (typeof input.locator !== "string" || input.locator === "") fail("--listing needs the locator");
+  if (!["directory", "archive", "github-tree"].includes(input.syntax)) fail("--listing needs the locator syntax");
+  if (input.syntax === "github-tree" && !/^[a-f0-9]{40}$/.test(input.resolvedCommit ?? "")) {
+    fail("--listing needs the resolved commit for an owner/repo@ref:path locator");
+  }
+  const claim = readJson("claim-package.json");
+  // An official suite's board is keyed on the suite protocol the sealed
+  // selection names. The site cannot read that selection yet, so a bundle
+  // that claims a suite is refused rather than put on a guessed board.
+  if (claim.suiteComparability !== undefined) {
+    fail("the bundle claims an official suite; this site cannot key a suite board yet, so it is not listed");
+  }
+  let rowDate = { field: "listedAt", at: input.listedAt };
+  if (RUN_RECORD_FORMATS.includes(manifest.format) && manifestPaths.has("run.json")) {
+    const closeAt = readJson("run.json").closeAt;
+    if (typeof closeAt !== "string" || Number.isNaN(Date.parse(closeAt))) {
+      fail("run.json carries no closeAt");
+    }
+    if (Date.parse(closeAt) < Date.parse(input.listedAt)) rowDate = { field: "runCloseAt", at: closeAt };
+  }
+  return {
+    listedAt: input.listedAt,
+    locator: input.locator,
+    locatorSyntax: input.syntax,
+    resolvedCommit: input.resolvedCommit ?? null,
+    submission: typeof input.submission === "string" ? input.submission : null,
+    boardKey: { kind: "locked-method", digest: data.digests.benchmarkSha256 },
+    venue: typeof claim.venueHonesty?.venue === "string" ? claim.venueHonesty.venue : null,
+    rowDate,
+  };
+}
+
+if (listingArg !== undefined) {
+  let listingInput;
+  try {
+    listingInput = JSON.parse(readFileSync(resolve(listingArg), "utf8"));
+  } catch {
+    fail(`--listing names no readable JSON file: ${listingArg}`);
+  }
+  data.listing = listingSection(listingInput);
+}
 
 for (const path of ["bundle.json", ...manifestPaths]) {
   const from = join(bundleDir, ...path.split("/"));
