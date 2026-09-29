@@ -365,3 +365,59 @@ export function shortKey(did: string): string {
   const key = did.startsWith("did:key:") ? did.slice("did:key:".length) : did;
   return key.length <= 18 ? key : `${key.slice(0, 10)}…${key.slice(-6)}`;
 }
+
+/**
+ * The three lines the sealed claim package gives on who ran the benchmark and
+ * what was checked independently, quoted, not summarised: who controlled the
+ * machine, whether pinning held, and whether costs were independently seen.
+ * They are read from `venueHonesty.limits`, which carries other limits too,
+ * so each is found by what it says. A record where any of the three is
+ * missing, or said twice, fails the build rather than print a guess.
+ */
+export interface IndependenceLines {
+  machine: string;
+  pinning: string;
+  costs: string;
+}
+
+const INDEPENDENCE_TOPICS: Record<keyof IndependenceLines, RegExp> = {
+  machine: /\bcontrols?\b.*\bdispatch\b.*\bexecution\b.*\bevaluation\b/iu,
+  pinning: /\bpinning\b/iu,
+  costs: /\bcosts?\b/iu,
+};
+
+interface ClaimPackageVenue {
+  venueHonesty?: { venue?: unknown; limits?: unknown };
+}
+
+function claimPackageVenue(report: QualifiedReportData): ClaimPackageVenue {
+  return JSON.parse(sealedMember(report, "claim-package.json").toString("utf8")) as ClaimPackageVenue;
+}
+
+export function independenceLines(report: QualifiedReportData): IndependenceLines {
+  const limits = claimPackageVenue(report).venueHonesty?.limits;
+  if (!Array.isArray(limits) || limits.some((line) => typeof line !== "string")) {
+    throw new Error(`${report.slug}: claim-package.json carries no venueHonesty.limits`);
+  }
+  const pick = (topic: keyof IndependenceLines): string => {
+    const found = (limits as string[]).filter((line) => INDEPENDENCE_TOPICS[topic].test(line));
+    if (found.length !== 1) {
+      throw new Error(`${report.slug}: venueHonesty.limits has ${found.length} lines on ${topic}, not one`);
+    }
+    return found[0] as string;
+  };
+  return { machine: pick("machine"), pinning: pick("pinning"), costs: pick("costs") };
+}
+
+/**
+ * The venue as the sealed claim package states it (`venueHonesty.venue`). It
+ * must agree with the run record the page already checks it against.
+ */
+export function claimVenue(report: QualifiedReportData): VenueLabel {
+  const venue = claimPackageVenue(report).venueHonesty?.venue;
+  if (typeof venue !== "string" || venue !== report.execution.venue) {
+    throw new Error(`${report.slug}: claim-package.json names venue ${String(venue)}, the run record ${report.execution.venue}`);
+  }
+  return venueLabel(venue);
+}
+

@@ -1,5 +1,6 @@
 import { listBoards, type Board, type BoardClaim } from "@/lib/boards";
 import type { Claimant, VenueLabel } from "@/lib/bundle-facts";
+import { byRowDateDescending, type RowDate } from "@/lib/listing";
 import { isQualifiedReport, listReports } from "@/lib/reports";
 
 /**
@@ -22,8 +23,8 @@ export interface FindRow {
   suiteOrMethod: string;
   coverageText: string;
   venue: VenueLabel;
-  sealedAt: string;
-  sealedDate: string;
+  /** The row's date, as its board dates it. */
+  date: RowDate;
   /** The claim's own finding in words: the first sentence of its reported result. */
   finding: string;
   board: { slug: string; name: string; href: string };
@@ -55,8 +56,7 @@ function findRow(board: Board, claim: BoardClaim, finding: string): FindRow {
     suiteOrMethod: board.name,
     coverageText: claim.coverage.text,
     venue: claim.venue,
-    sealedAt: claim.sealedAt,
-    sealedDate: claim.sealedDate,
+    date: claim.date,
     finding,
     board: { slug: board.slug, name: board.name, href: board.href },
     searchText: [claim.title, board.name, claimantSearchText(claim.claimant)].join(" ").toLowerCase(),
@@ -87,7 +87,7 @@ export function findRows(): FindRow[] {
       rows.push(findRow(board, claim, firstSentence(report.result.primary)));
     }
   }
-  rowsCache = rows.sort((left, right) => right.sealedAt.localeCompare(left.sealedAt) || left.slug.localeCompare(right.slug));
+  rowsCache = rows.sort((left, right) => byRowDateDescending(left.date, right.date) || left.slug.localeCompare(right.slug));
   return rowsCache;
 }
 

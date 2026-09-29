@@ -1,6 +1,8 @@
 import {
   boardKey,
   claimant,
+  claimVenue,
+  independenceLines,
   listedDigest,
   methodAuthor,
   methodDescription,
@@ -10,11 +12,12 @@ import {
   methodVersion,
   runArms,
   sealedMember,
-  venueLabel,
   type BoardKey,
   type Claimant,
+  type IndependenceLines,
   type VenueLabel,
 } from "@/lib/bundle-facts";
+import { byRowDateDescending, rowDate, type RowDate } from "@/lib/listing";
 import { formatPercent, isQualifiedReport, listReports, type QualifiedReportData } from "@/lib/reports";
 
 /**
@@ -144,9 +147,12 @@ export interface BoardClaim {
   methodAuthor: string | null;
   authorIsClaimant: boolean;
   venue: VenueLabel;
-  /** The sealed time, which the build has checked is the run record's close time. */
-  sealedAt: string;
-  sealedDate: string;
+  /** The date the row is ordered by: the run's close, or the listing time where that is earlier (lib/listing). */
+  date: RowDate;
+  /** Who controlled the machine, whether pinning held, whether costs were seen: quoted from the claim package. */
+  independence: IndependenceLines;
+  /** The byte-exact bundle, served under the claim. */
+  bundleHref: string;
   coverage: Coverage;
   arms: BoardArm[];
 }
@@ -163,9 +169,9 @@ export interface Board {
   planned: number;
   words: BoardWords;
   lede: string;
-  /** Newest seal first. */
+  /** Newest row date first. */
   claims: BoardClaim[];
-  mostRecentSeal: string;
+  mostRecent: RowDate;
   coverages: string[];
 }
 
@@ -247,10 +253,6 @@ function reasonWords(code: unknown): string {
 }
 
 /* ---------- building the boards ---------- */
-
-function formatDate(timestamp: string): string {
-  return timestamp.slice(0, 10);
-}
 
 function coverageFor(board: { key: BoardKey }, planned: number, of: number): Coverage {
   if (planned === of) {
@@ -393,13 +395,14 @@ export function listBoards(): Board[] {
         claimant: who,
         methodAuthor: author,
         authorIsClaimant: who.kind === "signing-key" && author === who.value,
-        venue: venueLabel(report.execution.venue),
-        sealedAt: report.reportedAt,
-        sealedDate: formatDate(report.reportedAt),
+        venue: claimVenue(report),
+        date: rowDate(report),
+        independence: independenceLines(report),
+        bundleHref: `/reports/${report.slug}/bundle/`,
         coverage,
         arms: buildArms(report, coverage),
       };
-    }).sort((left, right) => right.sealedAt.localeCompare(left.sealedAt) || left.slug.localeCompare(right.slug));
+    }).sort((left, right) => byRowDateDescending(left.date, right.date) || left.slug.localeCompare(right.slug));
 
     const newest = claims[0];
     const oldest = claims[claims.length - 1];
@@ -419,13 +422,13 @@ export function listBoards(): Board[] {
       words,
       lede,
       claims,
-      mostRecentSeal: newest.sealedAt,
+      mostRecent: newest.date,
       coverages: [...new Set(claims.map((claim) => claim.coverage.text))],
     });
   }
 
   boardsCache = boards.sort((left, right) =>
-    right.mostRecentSeal.localeCompare(left.mostRecentSeal) || left.name.localeCompare(right.name));
+    byRowDateDescending(left.mostRecent, right.mostRecent) || left.name.localeCompare(right.name));
   return boardsCache;
 }
 

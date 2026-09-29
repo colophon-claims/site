@@ -41,7 +41,7 @@ export function FindList({ rows }: { rows: FindRow[] }) {
               <VenueChip venue={row.venue} />
             </span>
             <span className="find-row-meta-item">
-              Sealed <time dateTime={row.sealedAt}>{row.sealedDate}</time>
+              {row.date.label} <time dateTime={row.date.at}>{row.date.day}</time>
             </span>
           </div>
           <p className="find-row-finding">{row.finding}</p>
