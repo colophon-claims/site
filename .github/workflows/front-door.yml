@@ -1,0 +1,111 @@
+# The front door: a submission issue in, a listing pull request (or a refusal) out.
+#
+# Two jobs, so the bytes a stranger submitted never meet a token that can write:
+#   check  read-only. Fetches the locator, runs the checker line the bundle
+#          sealed with an empty npm cache, and projects it into a scratch copy.
+#   list   runs only this repository's own scripts on what check handed over:
+#          writes the listing, opens an append-only pull request, and comments
+#          the outcome on the submission issue.
+# Whether submissions are taken at all is scripts/front-door/door.mjs.
+name: Front door
+
+on:
+  issues:
+    types: [opened, reopened]
+
+permissions: {}
+
+jobs:
+  check:
+    if: contains(github.event.issue.labels.*.name, 'list-a-claim')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fetch and check the submitted bundle
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/front-door/check.mjs "$RUNNER_TEMP/front-door"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: front-door
+          path: ${{ runner.temp }}/front-door
+          retention-days: 3
+          if-no-files-found: error
+
+  list:
+    needs: check
+    # Runs whatever check did, so every submission gets an answer.
+    if: always() && needs.check.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: front-door
+          path: ${{ runner.temp }}/front-door
+      - name: List a passing claim
+        id: list
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/front-door"
+          result="$dir/result.json"
+          if [ ! -f "$result" ]; then
+            mkdir -p "$dir"
+            node --input-type=module -e 'const { INTERNAL_ERROR } = await import("./scripts/front-door/check.mjs"); console.log(JSON.stringify({ outcome: "refused", code: "internal-error", message: INTERNAL_ERROR }))' > "$result"
+          fi
+          if [ "$(jq -r .outcome "$result")" != pass ]; then exit 0; fi
+          # Anything below that fails leaves the result "pass" with no pull
+          # request; the answer step turns that into a refusal.
+          slug="$(node scripts/front-door/list.mjs "$dir")"
+          branch="listing/$slug-${ISSUE_NUMBER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git commit -q -m "List $slug from #$ISSUE_NUMBER"
+          git push origin "$branch"
+          printf 'Adds the listing for /reports/%s/, checked cold from the locator in #%s.\n\nThis pull request only adds files. Its re-check runs the same checker line on the committed copy.\n\nCloses #%s\n' \
+            "$slug" "$ISSUE_NUMBER" "$ISSUE_NUMBER" > "$RUNNER_TEMP/pr-body.md"
+          pr="$(gh pr create --base main --head "$branch" --title "List $slug" --body-file "$RUNNER_TEMP/pr-body.md")"
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+          gh workflow run listing-check.yml --ref "$branch" -f slug="$slug"
+          gh pr merge "$pr" --auto --squash || echo "::warning::auto-merge is not enabled on this repository"
+      - name: Answer on the issue
+        if: always()
+        env:
+          PR_URL: ${{ steps.list.outputs.pr }}
+        run: |
+          set -uo pipefail
+          result="$RUNNER_TEMP/front-door/result.json"
+          if [ "$(jq -r .outcome "$result" 2>/dev/null)" = pass ] && [ -z "$PR_URL" ]; then
+            jq '.outcome = "refused" | .code = "projector-refused" | .message = "The checker passed this bundle, but writing the listing failed, so nothing was listed. Open a new submission to try again."' \
+              "$result" > "$result.tmp" && mv "$result.tmp" "$result"
+          fi
+          node scripts/front-door/comment.mjs "$result" "$PR_URL" > "$RUNNER_TEMP/comment.md"
+          gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/comment.md"
+          if [ -z "$PR_URL" ]; then
+            gh issue close "$ISSUE_NUMBER" --reason "not planned"
+          fi

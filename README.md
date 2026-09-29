@@ -160,6 +160,37 @@ copied member matches its manifest byte-for-byte. The published LoCoMo judge
 report does not use this path: it is a single `/7` bundle, ingested as above,
 with its six grading prompts sealed as arms of one claim.
 
+## The front door (not open yet)
+
+The front door lists a claim without anyone at Colophon typing it in. A
+claimant opens the **List a sealed claim** issue form with one locator: an
+https URL of a bundle directory, an https URL of a zip or tarball of one, or
+`owner/repo@ref:path` on public GitHub. The `Front door` workflow then:
+
+1. fetches the locator as a stranger would, refusing private, local and
+   reserved destinations on every hop (`scripts/front-door/fetch.mjs`);
+2. runs the checker line the bundle sealed in `claim-package.json`, with
+   `npx --yes` and an empty npm cache. Only `@colophon-claims/verify` or
+   `@colophon-claims/check` at an exact release is run;
+3. on a pass, runs `scripts/ingest-report.mjs --listing`, which adds a
+   `listing` section to the read model (locator, resolved commit, listing
+   time, board key, venue, and the row's date named by its source field);
+4. opens a pull request that only adds this listing's files, dispatches the
+   `Listing re-check` workflow on it, and asks for auto-merge.
+
+A refusal is posted on the issue with the checker's own output, and nothing is
+listed. The first job runs with read-only permissions; only the second, which
+runs none of the submitted bytes, can write.
+
+The door is shut: `scripts/front-door/door.mjs` answers every submission with
+that, before fetching anything, until a bundle the sealing tool emits by
+default can pass the published checker and be projected here
+([Jinn-Network/mono#4760](https://github.com/Jinn-Network/mono/issues/4760)).
+Opening it is a reviewed change to that file, plus repository settings: allow
+auto-merge, and require the `Listing re-check` (from GitHub Actions) and Vercel
+checks on `main`, with branches up to date before merging, so a second listing
+of the same bundle is re-checked against the first once it has merged.
+
 ## Append-only URL policy
 
 Report URLs are immutable. The ingest script refuses to overwrite an existing

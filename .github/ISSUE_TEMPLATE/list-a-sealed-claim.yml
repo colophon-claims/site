@@ -1,0 +1,27 @@
+name: List a sealed claim
+description: Give the address of a public bundle. A job runs the checker the bundle names, cold, and lists it only if every check passes. Not open yet.
+title: "List a sealed claim"
+labels: ["list-a-claim"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Not open yet.** Until a bundle the sealing tool emits can pass the published checker and be listed here, every submission is answered with that and nothing is fetched. To publish a claim now, write to the address on [colophon.claims](https://colophon.claims/).
+
+        When it is open: a job fetches your bundle the way a stranger would, runs the checker line your bundle sealed with an empty npm cache, and lists the claim only if every check passes. If any check fails, the job posts the checker's own output here and lists nothing. No Colophon account, no email address, no upload: the bundle is public or it is nothing.
+  - type: input
+    id: locator
+    attributes:
+      label: Bundle locator
+      description: |
+        One of: an https URL of the bundle directory (the job reads bundle.json there and every file it lists); an https URL of a .zip, .tar.gz or .tar of that directory; or owner/repo@ref:path for a public GitHub repository, where the listing records the exact commit the ref resolved to.
+      placeholder: https://example.org/claims/my-claim/
+    validations:
+      required: true
+  - type: input
+    id: slug
+    attributes:
+      label: Proposed slug
+      description: Optional. The claim's address would be colophon.claims/reports/<slug>/. Lowercase letters, digits and single hyphens. If the bundle's reading record already names an address, that one is used. If this one is taken or left empty, the address is taken from the bundle's identity.
+    validations:
+      required: false
