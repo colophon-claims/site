@@ -49,7 +49,8 @@ function grandfatheredListing(slug: string): GrandfatheredListing | undefined {
 /** When the claim was listed on this site. A listed claim with no listing time fails the build. */
 export function listedAt(report: QualifiedReportData): string {
   const at = report.listing?.listedAt ?? grandfatheredListing(report.slug)?.listedAt;
-  if (at === undefined || Number.isNaN(Date.parse(at))) {
+  // A UTC instant only: a time with no zone would be read in the build host's.
+  if (at === undefined || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/u.test(at) || Number.isNaN(Date.parse(at))) {
     throw new Error(`${report.slug}: no listing time; list it through the front door or record it in data/listed-at.json`);
   }
   return at;

@@ -17,7 +17,7 @@ import {
   type IndependenceLines,
   type VenueLabel,
 } from "@/lib/bundle-facts";
-import { byRowDateDescending, listedAt, rowDate, type RowDate } from "@/lib/listing";
+import { byRowDateDescending, rowDate, type RowDate } from "@/lib/listing";
 import { formatPercent, isQualifiedReport, listReports, type QualifiedReportData } from "@/lib/reports";
 
 /**
@@ -149,8 +149,6 @@ export interface BoardClaim {
   venue: VenueLabel;
   /** The date the row is ordered by: the run's close, or the listing time where that is earlier (lib/listing). */
   date: RowDate;
-  /** When the claim was listed on this site. */
-  listedAt: string;
   /** Who controlled the machine, whether pinning held, whether costs were seen: quoted from the claim package. */
   independence: IndependenceLines;
   /** The byte-exact bundle, served under the claim. */
@@ -399,7 +397,6 @@ export function listBoards(): Board[] {
         authorIsClaimant: who.kind === "signing-key" && author === who.value,
         venue: claimVenue(report),
         date: rowDate(report),
-        listedAt: listedAt(report),
         independence: independenceLines(report),
         bundleHref: `/reports/${report.slug}/bundle/`,
         coverage,

@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
  * The board's table, with the reader's re-sort.
  *
  * The server hands every row over already rendered and already in the
- * default order: date sealed, newest first, and inside one sealed claim the
+ * default order: the row's date, newest first, and inside one sealed claim the
  * record's own arm order. That order is what the static HTML shows, so the
  * page reads correctly with no script. This component only adds the re-sort:
  * a header button per column that holds a value, aria-sort on the sorted
@@ -26,6 +26,8 @@ export interface BoardColumn {
   /** Sort by number rather than by text. */
   numeric: boolean;
   sortable: boolean;
+  /** Heading read by assistive technology only, for a column of links that needs no visible one. */
+  hiddenLabel?: boolean;
   className?: string;
   /** Ticks written under the heading, for the shared axis the bars sit on. */
   axis?: { ticks: number[]; max: number };
@@ -158,10 +160,10 @@ export function BoardSortTable({
                       <span>{column.label}</span>
                       <SortMark state={state} />
                     </button>
-                  ) : column.sortable ? (
-                    <span className="board-sort-label">{column.label}</span>
-                  ) : (
+                  ) : column.hiddenLabel ? (
                     <span className="claim-hidden-heading">{column.label}</span>
+                  ) : (
+                    <span className="board-sort-label">{column.label}</span>
                   )}
                   {column.axis !== undefined && (
                     <span className="board-axis" aria-hidden="true">

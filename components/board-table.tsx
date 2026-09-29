@@ -67,10 +67,10 @@ function GroupHeader({ claim, span }: { claim: BoardClaim; span: number }) {
           {claim.date.label} <time dateTime={claim.date.at}>{claim.date.day}</time>
         </span>
         <a href={claim.href}>Open the claim</a>
-        <a href={claim.bundleHref}>Bundle</a>
+        <a href={claim.bundleHref} aria-label={`Bundle: ${claim.title}`}>Bundle</a>
       </span>
       <details className="board-independence">
-        <summary>Who controlled the run, as its record says</summary>
+        <summary>What was not checked independently, in the claim&apos;s own words</summary>
         <ul>
           <li>{claim.independence.machine}</li>
           <li>{claim.independence.pinning}</li>
@@ -172,8 +172,9 @@ export function BoardTable({ board }: { board: Board }) {
       axis: { ticks: axisTicks(board.planned), max: board.planned },
     },
     { key: "rate", label: words.rateColumn, numeric: true, sortable: false, className: "board-col-rate" },
-    { key: "sealed", label: "Date", numeric: false, sortable: true, className: "board-col-sealed" },
-    { key: "claim", label: "Claim page", numeric: false, sortable: false, className: "board-col-share" },
+    // Sorted by the instant, not the text: a run's close carries milliseconds, a listing time does not.
+    { key: "sealed", label: "Date", numeric: true, sortable: true, className: "board-col-sealed" },
+    { key: "claim", label: "Claim page", numeric: false, sortable: false, hiddenLabel: true, className: "board-col-share" },
   ];
   const groups: BoardGroupData[] = board.claims.map((claim) => ({
     id: claim.slug,
@@ -187,7 +188,7 @@ export function BoardTable({ board }: { board: Board }) {
         coverage: arm.planned,
         passed: arm.passed,
         rate: arm.estimate,
-        sealed: claim.date.at,
+        sealed: Date.parse(claim.date.at),
       },
       content: <ArmRow arm={arm} claim={claim} board={board} />,
     })),

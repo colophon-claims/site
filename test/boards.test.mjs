@@ -172,9 +172,9 @@ test("the board renders in date order with no script, arms in the record's order
   // Arm, venue and coverage re-sort; the result columns never do.
   assert.equal(sorts.filter((value) => value === "none").length, 3);
   assert.match(html, /<th scope="col" class="board-col-sealed" aria-sort="descending"><span class="board-sort-label">Date<\/span>/u);
-  for (const column of ["board-col-bar", "board-col-rate"]) {
-    assert.match(html, new RegExp(`<th scope="col" class="${column}">`, "u"), `${column} carries no sort state`);
-  }
+  // They carry no sort state, and their headings stay visible.
+  assert.match(html, /<th scope="col" class="board-col-bar"><span class="board-sort-label">Agreed with the label<\/span>/u);
+  assert.match(html, /<th scope="col" class="board-col-rate"><span class="board-sort-label">Agreement<\/span>/u);
   const head = html.slice(html.indexOf('<table class="board-table">'), html.indexOf("</thead>"));
   assert.doesNotMatch(head, /<button/u, "no sort control before the script can run it");
   assert.equal((head.match(/aria-sort="descending"/gu) ?? []).length, 1);
@@ -263,6 +263,6 @@ test("each claim on a board is dated by its field, quotes its three independence
   }
   // The other two limits are not independence lines, and are not quoted on the row.
   for (const line of [limits[1], limits[4]]) assert.ok(!text.includes(line.replace(/\s+/gu, " ")), line.slice(0, 40));
-  assert.match(html, new RegExp(`<a href="/reports/${slug}/bundle/">Bundle</a>`, "u"));
+  assert.match(html, new RegExp(`<a href="/reports/${slug}/bundle/" aria-label="Bundle: Judging the LoCoMo judges">Bundle</a>`, "u"));
 });
 
