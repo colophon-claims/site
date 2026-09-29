@@ -36,6 +36,34 @@ The canonical copy lives in the Jinn mono; update by re-vendoring, never by
 editing here. Source commit, date, and the re-vendor command are in
 [`vendor/design-system/VENDORED.md`](vendor/design-system/VENDORED.md).
 
+## Pages
+
+`/` is the homepage: it features the one real published claim without
+reproducing it. `/docs/` explains how Colophon works and how to check a
+report.
+
+`/reports/<slug>/` is the claim page, the permanent address for one sealed
+claim and the destination a board or Find a claim links to. It leads with the
+number and its seal, then what exactly ran, who ran it, and why believe it,
+then the evidence row, with the claimant's own report unchanged below.
+
+`/boards/` lists every board; `/boards/<slug>/` is one board, a view over
+every checked claim sealed on one official suite, or on one locked method
+that is no official suite. A board is keyed on the suite's identity or the
+method's digest, never on the claimant's agent, and it is not a claim's
+parent or its permission to exist.
+
+`/find/` is Find a claim, a lookup over every publicly listed claim, newest
+first, with a search box and a board filter. The order is by date, not
+merit; it draws no comparison across suites or methods, and `/reports/`
+renders this same page.
+
+Facts a claim page or a board prints that the read model does not carry, such
+as the claimant's signing key, the method's sealed name, and the bundle's
+size, are read at build time from the bundle's own members by
+`lib/bundle-facts.ts`, each hash-checked against the read model's own digests
+before it reaches the page.
+
 ## Publishing a report
 
 A report starts as an immutable public bundle emitted locally by Colophon.
@@ -71,8 +99,10 @@ report's `/bundle/` directory.
 
 ### The anchored closures, `/7` and `/8`
 
-`/7` is the legacy member list plus `qualification.json`, plus one
-`anchors/<sha256>.bin` per carried integrity anchor. `/8` is `/7` plus a sealed
+`/7` carries a fixed set of manifest members (the bundle's core records,
+verdicts, verification, trust keys, and rendered assets) plus
+`qualification.json`, plus one `anchors/<sha256>.bin` per carried integrity
+anchor. `/8` is `/7` plus a sealed
 six-variable disclosure-specification record, travelling as an ordinary
 `records/<sha256>.bin` member and projected into the claim package's
 `disclosure` section.
@@ -105,27 +135,30 @@ Beyond the manifest, ingest checks what these formats add:
 the read model that claims it, and recomputes the published replicate-instability
 figure from the sealed item decisions instead of trusting it.
 
-The report page renders the six variables with their statuses as its opening
-section, and the anchors with the state embedded in each proof's own bytes.
-This site supplies no trust material and evaluates none, so an anchor reads as
-carried, never as verified.
+The claim page shows the six variables with their statuses in the claimant's
+own report body, and the full anchor list, with the state embedded in each
+proof's own bytes, behind the evidence row's disclosure. This site supplies
+no trust material and evaluates none, so an anchor reads as carried, never as
+verified.
 
 The read model for these formats lists the fixed members only. The complete
 manifest is `bundle.json`, served byte-exact under the report; these bundles
 carry tens of thousands of evidence records, and listing them all in the read
 model would put them on the page.
 
-The LoCoMo judge report is one run with three independently sealed analyses.
-Ingest those bundles as one permanent reader page with:
+Grouped ingest is a separate, available path for a run that seals three
+independent analyses, one binary-instrument, one pairwise-disagreement, and
+one paired-majority-delta bundle, as one permanent reader page:
 
 ```bash
-npm run ingest:grouped -- <binary-bundle> <pairwise-bundle> <paired-delta-bundle> --slug <slug> --title "LoCoMo judge report" --reported-at <RFC3339-UTC>
+npm run ingest:grouped -- <binary-bundle> <pairwise-bundle> <paired-delta-bundle> --slug <slug> --title "<title>" --reported-at <RFC3339-UTC>
 ```
 
-Grouped ingest requires one binary-instrument, one pairwise-disagreement, and
-one paired-majority-delta bundle. It refuses unless all three carry the same
-`runSha256` and `matrixSha256`, all three `reportSha256` values are distinct,
-and every copied member matches its manifest byte-for-byte.
+It refuses unless all three bundles carry the same `runSha256` and
+`matrixSha256`, all three `reportSha256` values are distinct, and every
+copied member matches its manifest byte-for-byte. The published LoCoMo judge
+report does not use this path: it is a single `/7` bundle, ingested as above,
+with its six grading prompts sealed as arms of one claim.
 
 ## Append-only URL policy
 
@@ -136,17 +169,23 @@ serving the old bytes.
 
 ## Page copy
 
-The landing page keeps the short v4 register and features the first real
-report without reproducing it. The public report title and slug come from the
+The homepage keeps the short v4 register and features the one real published
+claim without reproducing it. The public report title and slug come from the
 bundle's `presentation.json`; internal run labels stay confined to technical
 provenance and sealed source filenames. Public contact is
 `ritsu.kai2000@gmail.com`.
 
+The claim page leads with the number and its seal, then what exactly ran, who
+ran it, and why believe it, then the evidence row; the claimant's own report
+follows below, unchanged.
+
 The reader command shown publicly is
-`npx @colophon-claims/verify@0.1 ./bundle`. The public reader checks the
-manifest, evidence closure, artifacts, signatures, matrix, signed report, and
-claim consistency. The report also keeps the manifest, report envelope, claim
-package, digests, and source disclosures directly available.
+`npx @colophon-claims/verify@0.2.1 ./bundle` (npm's current latest; Node 22 or
+newer). For the published report's format, the checker runs seven checks, in
+order: manifest, evidence-closure, trust, matrix-rederivation,
+report-verification, claim-consistency, integrity-anchors. The report also
+keeps the manifest, report envelope, claim package, digests, and source
+disclosures directly available.
 
 Broader framework and execution copy belongs in Docs, not in a report's
 provenance. A report names only the stack that produced its evidence. Docs may
