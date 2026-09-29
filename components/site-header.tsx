@@ -7,7 +7,7 @@ import { LinkButton } from "./link-button";
  * spacing, real links instead of the kit's demo nav. */
 export function SiteHeader({
   quiet = false,
-  ctaLabel = "Bring a claim",
+  ctaLabel = "Publish a claim",
 }: {
   quiet?: boolean;
   ctaLabel?: string;
@@ -25,7 +25,7 @@ export function SiteHeader({
           <Link href="/docs/">Docs</Link>
           {!quiet && (
             <span className="site-nav-cta">
-              <LinkButton href="/#contact" variant="primary">{ctaLabel}</LinkButton>
+              <LinkButton href="/#publish" variant="primary">{ctaLabel}</LinkButton>
             </span>
           )}
         </nav>
