@@ -35,7 +35,8 @@ const data = JSON.parse(readFileSync(join(siteRoot, "data", "reports", `${slug}.
 // The base must not already list these bytes under another slug: two
 // submissions of one bundle can each pass their own check before either merges.
 const listedOnBase = spawnSync("git", ["grep", "-l", data.digests.bundleIdentity, base, "--", "data/reports/"], { cwd: siteRoot, encoding: "utf8" });
-if (listedOnBase.stdout.trim() !== "") fail(`duplicate-identity: ${base} already lists this bundle (${listedOnBase.stdout.trim()})`);
+if (listedOnBase.status !== 0 && listedOnBase.status !== 1) fail(`git grep failed: ${listedOnBase.stderr.trim()}`);
+if (listedOnBase.status === 0) fail(`duplicate-identity: ${base} already lists this bundle (${listedOnBase.stdout.trim()})`);
 const bundleDir = join(siteRoot, "public", "reports", slug, "bundle");
 const claim = JSON.parse(readFileSync(join(bundleDir, "claim-package.json"), "utf8"));
 const parsed = parseVerificationCommand(claim.verification?.command);

@@ -233,19 +233,27 @@ function preflightArchive(archivePath, kind) {
   // zipinfo prints a header and a trailer around one line per entry, each
   // starting with its permission string; tar prints only entry lines.
   const entryLines = kind === "zip" ? lines.filter((line) => /^[-dlbcps?][rwxsStT-]{9}/.test(line)) : lines;
-  if (entryLines.length > LIMITS.files) refuse("fetch-failed", `The archive holds more than ${LIMITS.files} entries.`);
+  const entryNames = names.stdout.split("\n").filter((line) => line !== "");
+  if (entryNames.length > LIMITS.files) refuse("fetch-failed", `The archive holds more than ${LIMITS.files} entries.`);
+  // Every entry must be accounted for by a Unix-style line, or the size cap
+  // below could be walked around.
+  if (entryLines.length !== entryNames.length) {
+    refuse("unknown-format", "The archive's entries could not all be read. Pack the bundle with a standard zip or tar tool.");
+  }
   let unpackedBytes = 0;
   for (const line of entryLines) {
     if (line[0] !== "-" && line[0] !== "d") {
       refuse("unknown-format", "The archive carries a link or special file. A bundle holds only plain files.");
     }
-    // Both listings give the entry's unpacked size as the third column
-    // (tar -tv) or fourth (zipinfo).
+    // The entry's unpacked size: the fourth column of zipinfo, or the first
+    // bare number after the owner in tar -tv.
     const columns = line.trim().split(/\s+/);
-    unpackedBytes += Number(kind === "zip" ? columns[3] : columns[2]) || 0;
+    const size = kind === "zip" ? columns[3] : columns.slice(2).find((column) => /^\d+$/.test(column));
+    if (size === undefined || !/^\d+$/.test(size)) refuse("unknown-format", "The archive does not state an entry's size.");
+    unpackedBytes += Number(size);
   }
   if (unpackedBytes > LIMITS.totalBytes) refuse("fetch-failed", `The archive unpacks to more than ${LIMITS.totalBytes} bytes.`);
-  for (const name of names.stdout.split("\n").filter((line) => line !== "")) {
+  for (const name of entryNames) {
     if (name.startsWith("/") || name.includes("\\") || name.split("/").includes("..")) {
       refuse("unknown-format", `The archive carries a path outside itself: ${name}`);
     }
