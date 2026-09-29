@@ -131,8 +131,8 @@ export default function Home() {
                   <h3>Lock the method first</h3>
                 </div>
                 <p>
-                  Fix the tasks, setups, repetitions and grading before the run, so the result
-                  cannot be tuned after the fact.
+                  Fix the tasks, setups, repetitions and grading before the run, so the method
+                  cannot be changed once results are in.
                 </p>
               </article>
               <article className="home-path">
@@ -167,10 +167,9 @@ export default function Home() {
             <div>
               <h2 id="publish-title">Publishing your own claim</h2>
               <p>
-                Checking a published claim is free today. Publishing your own becomes self-serve
-                once the sealing tool and the site&apos;s front door for listing a claim are released.
-                Until then, write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> to
-                publish.
+                Checking a published claim is free, and needs nothing from Colophon. Publishing your
+                own claim from this site is not available yet. Until it is, write to{" "}
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> to publish.
               </p>
             </div>
           </div>

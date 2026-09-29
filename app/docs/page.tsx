@@ -146,16 +146,15 @@ export default function Docs() {
           <section className="docs-hero" id="overview">
             <h1>How Colophon turns a benchmark result into a claim others can check.</h1>
             <p className="docs-lede">
-              Colophon locks the method before execution, accounts for every planned result, and
-              publishes the answer with its evidence and limits attached.
+              You lock the method before the run. Colophon seals it, accounts for every planned
+              result, and publishes the answer with its evidence and limits attached.
             </p>
             <p className="docs-thesis">
               A benchmark score is easy to publish. The difficult part is keeping the question,
               method, missing results, and limitations attached when the number travels.
             </p>
             <p className="docs-body">
-              Colophon seals a benchmark claim&apos;s method before the run, accounts for every planned
-              result, and publishes the claim so anyone can check it. It is for results that will inform a release, a customer claim, a choice between agent
+              Anyone can check a published claim, free. Colophon is for results that will inform a release, a customer claim, a choice between agent
               setups, or a technical argument that someone else needs to inspect.
             </p>
           </section>
@@ -245,8 +244,8 @@ export default function Docs() {
             <div className="docs-method-copy">
               <p>
                 You run the benchmark on Harbor, Inspect or your own harness and bring the finished
-                run back. Colophon does not run benchmarks for claimants today. Publishing is not
-                self-serve yet; until it is, write to{" "}
+                run back. Colophon does not run benchmarks for claimants today. Publishing your own
+                claim from this site is not available yet; until it is, write to{" "}
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
               </p>
               <p>
@@ -290,10 +289,9 @@ export default function Docs() {
             <div>
               <h2>Publishing your own claim</h2>
               <p>
-                Checking a published claim is free today. Publishing your own becomes self-serve
-                once the sealing tool and the site&apos;s front door for listing a claim are released.
-                Until then, write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> to
-                publish.
+                Checking a published claim is free, and needs nothing from Colophon. Publishing your
+                own claim from this site is not available yet. Until it is, write to{" "}
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> to publish.
               </p>
             </div>
           </section>
