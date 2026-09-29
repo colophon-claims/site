@@ -87,7 +87,7 @@ function ClaimTaskTables({ board, tasks }: { board: Board; tasks: ClaimTasks }) 
       <h3 id={titleId} className="board-tasks-title">{claim.title}</h3>
       <p className="board-tasks-meta">
         <VenueChip venue={claim.venue} />
-        <span>Sealed <time dateTime={claim.sealedAt}>{claim.sealedDate}</time></span>
+        <span>{claim.date.label} <time dateTime={claim.date.at}>{claim.date.day}</time></span>
         <a href={claim.href}>Open the claim</a>
       </p>
       <dl className="board-tasks-key">

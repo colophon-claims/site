@@ -338,6 +338,20 @@ export interface QualifiedReportData {
    * records; the complete manifest is `bundle.json`, served under the report. */
   canonicalFiles: BundleFile[];
   memberCounts: { total: number; records: number; anchors: number; native: number };
+  /** Written by the front door's ingest (`--listing`); absent on reports listed before it. */
+  listing?: ListingRecord;
+}
+
+/** What a listing adds to the read model, as scripts/ingest-report.mjs `--listing` writes it. */
+export interface ListingRecord {
+  listedAt: string;
+  locator: string;
+  locatorSyntax: "directory" | "archive" | "github-tree";
+  resolvedCommit: string | null;
+  submission: string | null;
+  boardKey: { kind: "locked-method"; digest: string };
+  venue: string | null;
+  rowDate: { field: "runCloseAt" | "listedAt"; at: string };
 }
 
 export interface BinaryRate {

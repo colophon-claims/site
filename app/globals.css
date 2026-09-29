@@ -3289,9 +3289,26 @@ tbody + tbody .board-group {
 .board-key[open] {
   flex-basis: 100%;
 }
+/* The claim package's own lines on who controlled the run, quoted. */
+.board-independence {
+  margin-top: var(--space-3);
+}
+.board-independence summary {
+  cursor: pointer;
+}
+.board-independence ul {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-5);
+  max-width: 72ch;
+  white-space: normal;
+}
+.board-independence li + li {
+  margin-top: var(--space-2);
+}
 /* When the table scrolls sideways, the claim's own line stays in view. */
 .board-group-title,
-.board-group-meta {
+.board-group-meta,
+.board-independence {
   position: sticky;
   left: var(--space-5);
   max-width: calc(100vw - 2 * var(--gutter) - 2 * var(--space-5));

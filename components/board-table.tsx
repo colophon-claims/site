@@ -5,14 +5,18 @@ import { shortKey, type Claimant, type VenueLabel } from "@/lib/bundle-facts";
 import type { Board, BoardArm, BoardClaim } from "@/lib/boards";
 
 /**
- * A board's rows, rendered on the server in the default order (date sealed,
+ * A board's rows, rendered on the server in the default order (the row's date,
  * newest first; inside one sealed claim, the record's own arm order). The
+ * row's date is the run's close or the listing time, whichever is earlier,
+ * and says which (lib/listing). The
  * client table only reorders what is rendered here.
  *
  * Each claim is one group: who sealed it, its venue, when, and a link to its
  * permanent page. Each arm is one row: the arm as sealed, its venue, its
  * coverage, a bar on the board's shared axis with every part written out
- * beneath it, the rate with its denominator, the seal date and the claim link.
+ * beneath it, the rate with its denominator, the row's date and the claim link.
+ * Only the arm, venue, coverage and date columns re-sort: the result is never a
+ * sort key, because a board is not a ranking.
  * Colour never carries a result: every part of every bar is also a written
  * count, and nothing is bold or badged for being highest.
  */
@@ -60,10 +64,19 @@ function GroupHeader({ claim, span }: { claim: BoardClaim; span: number }) {
         <ClaimantKey who={claim.claimant} authorIsClaimant={claim.authorIsClaimant} />
         <VenueChip venue={claim.venue} />
         <span>
-          Sealed <time dateTime={claim.sealedAt}>{claim.sealedDate}</time>
+          {claim.date.label} <time dateTime={claim.date.at}>{claim.date.day}</time>
         </span>
         <a href={claim.href}>Open the claim</a>
+        <a href={claim.bundleHref}>Bundle</a>
       </span>
+      <details className="board-independence">
+        <summary>Who controlled the run, as its record says</summary>
+        <ul>
+          <li>{claim.independence.machine}</li>
+          <li>{claim.independence.pinning}</li>
+          <li>{claim.independence.costs}</li>
+        </ul>
+      </details>
     </th>
   );
 }
@@ -128,7 +141,9 @@ function ArmRow({ arm, claim, board }: { arm: BoardArm; claim: BoardClaim; board
         <span className="board-rate-value">{arm.percent}</span>{" "}
         <span className="board-rate-of">({arm.passed} of {arm.scored})</span>
       </td>
-      <td className="board-sealed"><time dateTime={claim.sealedAt}>{claim.sealedDate}</time></td>
+      <td className="board-sealed">
+        {claim.date.label} <time dateTime={claim.date.at}>{claim.date.day}</time>
+      </td>
       <td className="board-share">
         <a href={claim.href} aria-label={`Share claim: ${claim.title}, ${arm.label}`}>Share claim</a>
       </td>
@@ -151,12 +166,13 @@ export function BoardTable({ board }: { board: Board }) {
       key: "passed",
       label: words.passedColumn,
       numeric: true,
-      sortable: true,
+      // The result is the claim's own; it is never a sort key.
+      sortable: false,
       className: "board-col-bar",
       axis: { ticks: axisTicks(board.planned), max: board.planned },
     },
-    { key: "rate", label: words.rateColumn, numeric: true, sortable: true, className: "board-col-rate" },
-    { key: "sealed", label: "Date sealed", numeric: false, sortable: true, className: "board-col-sealed" },
+    { key: "rate", label: words.rateColumn, numeric: true, sortable: false, className: "board-col-rate" },
+    { key: "sealed", label: "Date", numeric: false, sortable: true, className: "board-col-sealed" },
     { key: "claim", label: "Claim page", numeric: false, sortable: false, className: "board-col-share" },
   ];
   const groups: BoardGroupData[] = board.claims.map((claim) => ({
@@ -164,14 +180,14 @@ export function BoardTable({ board }: { board: Board }) {
     header: <GroupHeader claim={claim} span={columns.length} />,
     rows: claim.arms.map((arm) => ({
       id: arm.id,
-      sealed: claim.sealedAt,
+      sealed: claim.date.at,
       values: {
         arm: arm.label,
         venue: claim.venue,
         coverage: arm.planned,
         passed: arm.passed,
         rate: arm.estimate,
-        sealed: claim.sealedAt,
+        sealed: claim.date.at,
       },
       content: <ArmRow arm={arm} claim={claim} board={board} />,
     })),
@@ -187,7 +203,7 @@ export function BoardTable({ board }: { board: Board }) {
           caption={`Every listed claim on this board, one group per sealed claim, one row per ${words.arm.toLowerCase()}.`}
           columns={columns}
           groups={groups}
-          defaultOrder="date sealed, newest first"
+          defaultOrder="date, newest first"
         />
       </div>
       {subsetRows && (

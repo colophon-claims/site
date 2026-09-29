@@ -42,18 +42,18 @@ export default function BoardsIndex() {
 
           <div className="table-scroll boards-table-scroll">
             <table className="data-table boards-table">
-              <caption className="claim-hidden-heading">Every board, most recent seal first</caption>
+              <caption className="claim-hidden-heading">Every board, most recent first</caption>
               <thead>
                 <tr>
                   <th scope="col">Board</th>
                   <th scope="col">Coverages on it</th>
                   <th scope="col">Claims</th>
-                  <th scope="col">Most recent seal</th>
+                  <th scope="col">Most recent</th>
                 </tr>
               </thead>
               <tbody>
                 {boards.map((board) => (
-                  <tr key={board.slug} data-sealed={board.mostRecentSeal}>
+                  <tr key={board.slug} data-date={board.mostRecent.at}>
                     <th scope="row" className="boards-name">
                       <a href={board.href}>{board.name}</a>
                       <span className="boards-key">{keyText(board)}</span>
@@ -61,14 +61,14 @@ export default function BoardsIndex() {
                     <td>{board.coverages.join("; ")}</td>
                     <td>{claimsText(board)}</td>
                     <td className="mono">
-                      <time dateTime={board.mostRecentSeal}>{board.mostRecentSeal.slice(0, 10)}</time>
+                      {board.mostRecent.label} <time dateTime={board.mostRecent.at}>{board.mostRecent.day}</time>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="board-foot-line">Most recent seal first. The order is by date, not merit.</p>
+          <p className="board-foot-line">Most recent first. The order is by date, not merit.</p>
 
           <div className="board-notes">
             <p>

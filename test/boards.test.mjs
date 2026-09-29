@@ -161,7 +161,7 @@ const staticHtml = (path) => {
 /** That HTML as the words a reader sees, tags as spaces and React's text markers dropped. */
 const staticText = (path) => staticHtml(path).replace(/<!--.*?-->/gsu, "").replace(/<[^>]+>/gu, " ").replace(/\s+/gu, " ");
 
-test("the board renders in date-sealed order with no script, arms in the record's order", { skip }, () => {
+test("the board renders in date order with no script, arms in the record's order", { skip }, () => {
   const html = staticHtml(`boards/${boardSlug}/index.html`);
   const sealed = [...html.matchAll(/data-sealed="([^"]+)"/gu)].map((match) => match[1]);
   assert.equal(sealed.length, 6);
@@ -169,12 +169,16 @@ test("the board renders in date-sealed order with no script, arms in the record'
   assert.deepEqual([...html.matchAll(/data-arm="([^"]+)"/gu)].map((match) => match[1]), RECORD_ORDER);
   const sorts = [...html.matchAll(/aria-sort="([^"]+)"/gu)].map((match) => match[1]);
   assert.equal(sorts.filter((value) => value === "descending").length, 1);
-  assert.equal(sorts.filter((value) => value === "none").length, 5);
-  assert.match(html, /<th scope="col" class="board-col-sealed" aria-sort="descending"><span class="board-sort-label">Date sealed<\/span>/u);
+  // Arm, venue and coverage re-sort; the result columns never do.
+  assert.equal(sorts.filter((value) => value === "none").length, 3);
+  assert.match(html, /<th scope="col" class="board-col-sealed" aria-sort="descending"><span class="board-sort-label">Date<\/span>/u);
+  for (const column of ["board-col-bar", "board-col-rate"]) {
+    assert.match(html, new RegExp(`<th scope="col" class="${column}">`, "u"), `${column} carries no sort state`);
+  }
   const head = html.slice(html.indexOf('<table class="board-table">'), html.indexOf("</thead>"));
   assert.doesNotMatch(head, /<button/u, "no sort control before the script can run it");
   assert.equal((head.match(/aria-sort="descending"/gu) ?? []).length, 1);
-  assert.equal((head.match(/aria-sort="none"/gu) ?? []).length, 5);
+  assert.equal((head.match(/aria-sort="none"/gu) ?? []).length, 3);
 });
 
 test("every bar part and every rate is written out, with its denominator", { skip }, () => {
@@ -195,8 +199,9 @@ test("every bar part and every rate is written out, with its denominator", { ski
   assert.ok(text.includes("Method author and run owner: signing key z6Mkmz8SWi…pcZTm9"));
   assert.ok(text.includes("did:key:z6Mkmz8SWiUshwDMszSqwzMngt7ScNmsEj7vZoFRLjpcZTm9"));
   assert.ok(text.includes("9ae50617f9112b750518c04309b96648207f6d0e17ba044a077d0d5185b84c9e"));
-  assert.ok(text.includes("Date sealed, newest first, unless you re-sort. One group is one sealed claim."));
+  assert.ok(text.includes("Newest first by date, unless you re-sort: the run&#x27;s close, or when the claim was listed here if that was earlier. One group is one sealed claim."));
   assert.ok(text.includes("A result for these tasks, not a ranking of overall ability."));
+  assert.ok(text.includes("Colophon does not rank claims against each other, and claims sealed on different suites or methods are never compared."));
   assert.ok(text.includes("A later claim on the same 240 answers may use a different judge model"));
 });
 
@@ -223,12 +228,12 @@ test("the pages keep to the site's copy rules", { skip }, () => {
   }
 });
 
-test("the boards index lists the board, most recent seal first, and sends a claim lookup to Find a claim", { skip }, () => {
+test("the boards index lists the board, most recent first, and sends a claim lookup to Find a claim", { skip }, () => {
   const html = staticHtml("boards/index.html");
   assert.match(html, new RegExp(`<a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>`, "u"));
   const text = staticText("boards/index.html");
-  assert.ok(text.includes("Board Coverages on it Claims Most recent seal"));
-  assert.ok(text.includes("Full method, 240 items 1 claim, 6 grading prompts 2026-08-29"));
+  assert.ok(text.includes("Board Coverages on it Claims Most recent"));
+  assert.ok(text.includes("Full method, 240 items 1 claim, 6 grading prompts Run closed 2026-08-29"));
   assert.ok(text.includes("Boards are not ranked against each other, and neither are the claims on them."));
   assert.match(html, /Looking for one particular claim\? <a href="\/find\/">Find a claim<\/a>/u);
 });
@@ -244,3 +249,20 @@ test("the header, the claim page and the homepage card link to the board", { ski
   assert.match(crumb, new RegExp(`<a href="/boards/${boardSlug}/">LoCoMo judge report frozen bank</a>$`, "u"));
   assert.match(staticHtml("index.html"), new RegExp(`<a href="/boards/${boardSlug}/">See its board</a>`, "u"));
 });
+
+test("each claim on a board is dated by its field, quotes its three independence lines, and links its bundle", { skip }, () => {
+  const html = staticHtml(`boards/${boardSlug}/index.html`);
+  const text = staticText(`boards/${boardSlug}/index.html`);
+  // The run closed on 2026-08-29, before the report was listed on 2026-09-01.
+  assert.match(html, /Run closed<!-- --> <time dateTime="2026-08-29T16:30:51.384Z">2026-08-29<\/time>/u);
+  assert.doesNotMatch(text, /\bSealed 2026|Date sealed/u);
+  const claimPackage = JSON.parse(readFileSync(join(siteRoot, "public", "reports", slug, "bundle", "claim-package.json"), "utf8"));
+  const limits = claimPackage.venueHonesty.limits;
+  for (const line of [limits[0], limits[2], limits[3]]) {
+    assert.ok(text.includes(line.replace(/\s+/gu, " ")), line.slice(0, 40));
+  }
+  // The other two limits are not independence lines, and are not quoted on the row.
+  for (const line of [limits[1], limits[4]]) assert.ok(!text.includes(line.replace(/\s+/gu, " ")), line.slice(0, 40));
+  assert.match(html, new RegExp(`<a href="/reports/${slug}/bundle/">Bundle</a>`, "u"));
+});
+

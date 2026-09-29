@@ -64,7 +64,9 @@ test("/find/ renders with no script: the row, its facts, and the live count", { 
   assert.match(html, /<h2 class="find-row-title"><a href="\/reports\/locomo-judge-report\/">Judging the LoCoMo judges<\/a><\/h2>/u);
   assert.ok(text.includes(`${method.name}, Full method, ${method.items.length} items`));
   assert.ok(text.includes(venueLabel));
-  assert.ok(text.includes("Sealed 2026-08-29"));
+  // Dated by the run's close, which came before the listing, and called that.
+  assert.ok(text.includes("Run closed 2026-08-29"));
+  assert.doesNotMatch(text, /Sealed 2026/u);
   // The shortened key is on the row itself; the full key sits behind the
   // same collapsible disclosure the board and the claim page use.
   assert.match(html, /<code>z6Mkmz8SWi…pcZTm9<\/code>/u);

@@ -132,8 +132,15 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
             <p className="board-count">{claimCount(board)}</p>
             <BoardTable board={board} />
             <div className="board-foot">
-              <p>Date sealed, newest first, unless you re-sort. One group is one sealed claim.</p>
+              <p>
+                Newest first by date, unless you re-sort: the run&apos;s close, or when the claim was listed here
+                if that was earlier. One group is one sealed claim.
+              </p>
               <p>A result for these tasks, not a ranking of overall ability.</p>
+              <p>
+                Colophon does not rank claims against each other, and claims sealed on different suites or
+                methods are never compared.
+              </p>
             </div>
           </section>
 
