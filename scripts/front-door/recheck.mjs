@@ -31,6 +31,11 @@ const problems = checkAppendOnly(diff.stdout, slug);
 if (problems.length > 0) fail(`mutation-refused: ${problems.join("; ")}`);
 
 const data = JSON.parse(readFileSync(join(siteRoot, "data", "reports", `${slug}.json`), "utf8"));
+
+// The base must not already list these bytes under another slug: two
+// submissions of one bundle can each pass their own check before either merges.
+const listedOnBase = spawnSync("git", ["grep", "-l", data.digests.bundleIdentity, base, "--", "data/reports/"], { cwd: siteRoot, encoding: "utf8" });
+if (listedOnBase.stdout.trim() !== "") fail(`duplicate-identity: ${base} already lists this bundle (${listedOnBase.stdout.trim()})`);
 const bundleDir = join(siteRoot, "public", "reports", slug, "bundle");
 const claim = JSON.parse(readFileSync(join(bundleDir, "claim-package.json"), "utf8"));
 const parsed = parseVerificationCommand(claim.verification?.command);

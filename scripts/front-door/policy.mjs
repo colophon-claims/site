@@ -124,6 +124,7 @@ function blockedIPv4(address) {
     || (a === 198 && (b === 18 || b === 19)) // benchmarking
     || (a === 198 && b === 51 && c === 100) // documentation
     || (a === 203 && b === 0 && c === 113) // documentation
+    || (a === 168 && b === 63 && c === 129 && ipv4Octets(address)[3] === 16) // cloud host endpoint (Azure)
     || a >= 224 // multicast, reserved, broadcast
   );
 }
@@ -154,6 +155,11 @@ function blockedIPv6(address) {
   if (allZeroUntil(5) && (h[5] === 0xffff || h[5] === 0)) {
     return blockedIPv4(`${h[6] >> 8}.${h[6] & 0xff}.${h[7] >> 8}.${h[7] & 0xff}`);
   }
+  // IPv4-translated (::ffff:0:a.b.c.d): judge the IPv4 inside.
+  if (allZeroUntil(4) && h[4] === 0xffff && h[5] === 0) {
+    return blockedIPv4(`${h[6] >> 8}.${h[6] & 0xff}.${h[7] >> 8}.${h[7] & 0xff}`);
+  }
+  if (h[0] === 0x64 && h[1] === 0xff9b && h[2] === 1) return true; // local-use NAT64
   if (h[0] === 0x64 && h[1] === 0xff9b) { // NAT64: judge the IPv4 inside
     return blockedIPv4(`${h[6] >> 8}.${h[6] & 0xff}.${h[7] >> 8}.${h[7] & 0xff}`);
   }
@@ -215,16 +221,16 @@ export function parseVerificationCommand(command) {
   }
   const tokens = command.trim().split(/\s+/);
   if (tokens[0] !== "npx") {
-    refuse("unknown-format", `verification.command does not start with npx: ${command}`);
+    refuse("unknown-format", `verification.command does not start with npx: \`${command}\``);
   }
   const rest = tokens.slice(1);
   if (rest.filter((token) => token === BUNDLE_DIR_TOKEN).length !== 1) {
-    refuse("unknown-format", `verification.command must carry exactly one ${BUNDLE_DIR_TOKEN}: ${command}`);
+    refuse("unknown-format", `verification.command must carry exactly one ${BUNDLE_DIR_TOKEN}: \`${command}\``);
   }
   if (rest.length !== 2 || rest[1] !== BUNDLE_DIR_TOKEN) {
     refuse(
       "unknown-format",
-      `verification.command must be "npx <checker>@<version> ${BUNDLE_DIR_TOKEN}" with no other arguments: ${command}`,
+      `verification.command must be \`npx <checker>@<version> ${BUNDLE_DIR_TOKEN}\` with no other arguments: \`${command}\``,
     );
   }
   const spec = rest[0];
@@ -232,10 +238,10 @@ export function parseVerificationCommand(command) {
   const name = at > 0 ? spec.slice(0, at) : spec;
   const version = at > 0 ? spec.slice(at + 1) : "";
   if (!CHECKER_PACKAGES.includes(name)) {
-    refuse("unknown-format", `verification.command names ${name}, which is not the published checker.`);
+    refuse("unknown-format", `verification.command names \`${name}\`, which is not the published checker.`);
   }
   if (!EXACT_VERSION.test(version)) {
-    refuse("unknown-format", `verification.command must pin an exact checker release, got: ${spec}`);
+    refuse("unknown-format", `verification.command must pin an exact checker release, got: \`${spec}\``);
   }
   return { spec, name, version, command };
 }
@@ -290,7 +296,7 @@ export function assignSlug(proposed, bundleIdentity, listed) {
   const notes = [];
   if (proposed !== null) {
     if (!isValidSlug(proposed)) {
-      notes.push(`The proposed slug "${proposed}" is not lowercase letters, digits and single hyphens, so the listing takes one from its identity.`);
+      notes.push(`The proposed slug \`${proposed}\` is not lowercase letters, digits and single hyphens, so the listing takes one from its identity.`);
     } else if (!listed.has(proposed)) {
       return { slug: proposed, notes };
     } else {

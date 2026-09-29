@@ -153,9 +153,10 @@ The door is shut: `scripts/front-door/door.mjs` answers every submission with
 that, before fetching anything, until a bundle the sealing tool emits by
 default can pass the published checker and be projected here
 ([Jinn-Network/mono#4760](https://github.com/Jinn-Network/mono/issues/4760)).
-Opening it is a reviewed change to that file, plus two repository settings:
-allow auto-merge, and require the `Listing re-check` and Vercel checks on
-`main`.
+Opening it is a reviewed change to that file, plus repository settings: allow
+auto-merge, and require the `Listing re-check` (from GitHub Actions) and Vercel
+checks on `main`, with branches up to date before merging, so a second listing
+of the same bundle is re-checked against the first once it has merged.
 
 ## Append-only URL policy
 

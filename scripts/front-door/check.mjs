@@ -40,6 +40,8 @@ export const PROJECTED_FORMATS = [
   "benchmark-product-public-bundle/8",
 ];
 
+export const INTERNAL_ERROR = "The check stopped on an error in this site's own workflow, so nothing was listed. Open a new submission to try again.";
+
 const cap = (text) => (text.length > OUTPUT_CAP
   ? { text: text.slice(0, OUTPUT_CAP), truncated: true }
   : { text, truncated: false });
@@ -53,6 +55,12 @@ export function listedIdentities(root) {
     if (!name.endsWith(".json") || name.endsWith(".presentation.json")) continue;
     const data = JSON.parse(readFileSync(join(dir, name), "utf8"));
     listed.set(name.slice(0, -".json".length), data.digests?.bundleIdentity ?? null);
+  }
+  // A bundle directory with no data file (an unpublished report) still holds
+  // its slug: ingest never writes over it.
+  const bundles = join(root, "public", "reports");
+  if (existsSync(bundles)) {
+    for (const name of readdirSync(bundles)) if (!listed.has(name)) listed.set(name, null);
   }
   return listed;
 }
@@ -142,7 +150,7 @@ export async function check({ body, submission, outDir, githubToken, now = () =>
   if (sealedSlug !== null && slug !== sealedSlug) {
     refuse(
       "slug-collision",
-      `The bundle's reading record names the address /reports/${sealedSlug}/, which another claim already holds. A listing never replaces one, so nothing was listed.`,
+      `The bundle's reading record names the address \`/reports/${sealedSlug}/\`, which is either taken or not a valid address here. A listing never replaces one, so nothing was listed.`,
     );
   }
   if (sealedSlug !== null && proposedSlug !== null && proposedSlug !== sealedSlug) {
@@ -151,7 +159,12 @@ export async function check({ body, submission, outDir, githubToken, now = () =>
 
   const run = runChecker(parsed, bundleDir);
   if (run.status === null || run.error !== undefined) {
-    refuse("npm-unavailable", `The checker line ${parsed.command} could not run: ${run.error?.message ?? "it was stopped"}.`);
+    return {
+      outcome: "refused",
+      code: "check-failed",
+      message: `\`${parsed.spec}\` did not finish on this bundle (${run.error?.code === "ETIMEDOUT" ? "it ran past the time limit" : "it was stopped"}). Nothing was listed.`,
+      checker: { command: parsed.command, exitCode: run.status, stdout: cap(run.stdout), stderr: cap(run.stderr) },
+    };
   }
   const verdict = run.status === 0 ? readCheckerPass(run.stdout, identity) : { passed: false };
   if (!verdict.passed) {
@@ -160,8 +173,8 @@ export async function check({ body, submission, outDir, githubToken, now = () =>
       outcome: "refused",
       code: installFailed ? "npm-unavailable" : "check-failed",
       message: installFailed
-        ? `npm could not install ${parsed.spec}. Nothing was listed; submit again once npm serves it.`
-        : `${parsed.spec} did not pass this bundle${verdict.reason ? ` (${verdict.reason})` : ""}. Nothing was listed.`,
+        ? `npm could not install \`${parsed.spec}\`. Nothing was listed; submit again once npm serves it.`
+        : `\`${parsed.spec}\` did not pass this bundle${verdict.reason ? ` (${verdict.reason})` : ""}. Nothing was listed.`,
       checker: { command: parsed.command, exitCode: run.status, stdout: cap(run.stdout), stderr: cap(run.stderr) },
     };
   }
@@ -180,7 +193,7 @@ export async function check({ body, submission, outDir, githubToken, now = () =>
     return {
       outcome: "refused",
       code: "projector-refused",
-      message: `${parsed.spec} passed this bundle, but the site's ingest refused it, so nothing was listed. This is the site's fault, not the bundle's, and is being looked at.`,
+      message: `\`${parsed.spec}\` passed this bundle, but the site's ingest refused it, so nothing was listed. The ingest's own words are below.`,
       checker: { command: parsed.command, exitCode: 0, stdout: cap(run.stdout), stderr: cap("") },
       ingest: cap(projection.output),
     };
@@ -208,8 +221,11 @@ async function main() {
       githubToken: process.env.GITHUB_TOKEN,
     });
   } catch (error) {
-    if (!(error instanceof Refusal)) throw error;
-    result = { outcome: "refused", code: error.code, message: error.message };
+    // Every ending gets an answer on the issue, an unexpected one included.
+    result = error instanceof Refusal
+      ? { outcome: "refused", code: error.code, message: error.message }
+      : { outcome: "refused", code: "internal-error", message: INTERNAL_ERROR };
+    if (!(error instanceof Refusal)) console.error(error);
   }
   if (result.outcome !== "pass") rmSync(join(outDir, "bundle"), { recursive: true, force: true });
   writeFileSync(join(outDir, "result.json"), `${JSON.stringify(result, null, 2)}\n`);

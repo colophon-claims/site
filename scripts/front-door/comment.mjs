@@ -29,9 +29,9 @@ export function renderComment(result, pullRequest) {
   const lines = [];
   if (result.outcome === "pass") {
     lines.push(
-      `**Checked and listed.** ${result.checks} of ${result.checks} checks passed with \`${result.checker.command}\`, run cold on the fetched bundle.`,
+      `**Checked.** ${result.checks} of ${result.checks} checks passed with \`${result.checker.command}\`, run cold on the fetched bundle.`,
       "",
-      `The listing is ${link}, which adds only this claim's files and merges on its own once its checks pass. The claim will then be at ${SITE}/reports/${result.slug}/, and anyone can run the same command on ${SITE}/reports/${result.slug}/bundle/.`,
+      `The listing is ${link}. It adds only this claim's files, and the claim is listed when it merges, at ${SITE}/reports/${result.slug}/. The bundle is served at ${SITE}/reports/${result.slug}/bundle/; anyone can download it and run the same command on their copy.`,
       "",
     );
     for (const note of result.notes ?? []) lines.push(`Note: ${note}`, "");

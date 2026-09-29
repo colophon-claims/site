@@ -73,7 +73,8 @@ function once(url, headers) {
 }
 
 /** One GET, following up to LIMITS.redirects redirects, each hop checked. */
-async function get(href, headers = {}) {
+async function get(href, initialHeaders = {}) {
+  let headers = initialHeaders;
   let url = checkUrl(href);
   for (let hop = 0; hop <= LIMITS.redirects; hop += 1) {
     let response;
@@ -86,7 +87,18 @@ async function get(href, headers = {}) {
     const status = response.statusCode ?? 0;
     if (status >= 300 && status < 400 && response.headers.location) {
       response.resume();
-      url = checkUrl(new URL(response.headers.location, url).href);
+      let next;
+      try {
+        next = new URL(response.headers.location, url);
+      } catch {
+        refuse("fetch-failed", `${url.href} redirected to an address that is not a URL.`);
+      }
+      // A token never follows a redirect to another host.
+      if (next.host !== url.host) {
+        const { authorization: _dropped, ...rest } = headers;
+        headers = rest;
+      }
+      url = checkUrl(next.href);
       continue;
     }
     if (status !== 200) {
@@ -149,7 +161,7 @@ async function fetchDirectory(baseHref, into) {
   } catch {
     refuse("unknown-format", "bundle.json at the locator is not valid JSON.");
   }
-  const entries = Array.isArray(manifest.files) ? manifest.files : [];
+  const entries = Array.isArray(manifest?.files) ? manifest.files : [];
   if (entries.length === 0) refuse("unknown-format", "bundle.json lists no files.");
   if (entries.length > LIMITS.files) refuse("fetch-failed", `The bundle lists more than ${LIMITS.files} files.`);
   const paths = entries.map((entry) => entry?.path);
@@ -221,11 +233,18 @@ function preflightArchive(archivePath, kind) {
   // zipinfo prints a header and a trailer around one line per entry, each
   // starting with its permission string; tar prints only entry lines.
   const entryLines = kind === "zip" ? lines.filter((line) => /^[-dlbcps?][rwxsStT-]{9}/.test(line)) : lines;
+  if (entryLines.length > LIMITS.files) refuse("fetch-failed", `The archive holds more than ${LIMITS.files} entries.`);
+  let unpackedBytes = 0;
   for (const line of entryLines) {
     if (line[0] !== "-" && line[0] !== "d") {
       refuse("unknown-format", "The archive carries a link or special file. A bundle holds only plain files.");
     }
+    // Both listings give the entry's unpacked size as the third column
+    // (tar -tv) or fourth (zipinfo).
+    const columns = line.trim().split(/\s+/);
+    unpackedBytes += Number(kind === "zip" ? columns[3] : columns[2]) || 0;
   }
+  if (unpackedBytes > LIMITS.totalBytes) refuse("fetch-failed", `The archive unpacks to more than ${LIMITS.totalBytes} bytes.`);
   for (const name of names.stdout.split("\n").filter((line) => line !== "")) {
     if (name.startsWith("/") || name.includes("\\") || name.split("/").includes("..")) {
       refuse("unknown-format", `The archive carries a path outside itself: ${name}`);

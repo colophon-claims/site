@@ -95,6 +95,7 @@ test("only public https destinations are fetched", async (context) => {
     "127.0.0.1", "10.1.2.3", "172.16.0.1", "192.168.1.1", "169.254.169.254", "100.64.0.1",
     "0.0.0.0", "224.0.0.1", "255.255.255.255", "::1", "::", "fe80::1", "fc00::1", "fd12::1",
     "ff02::1", "::ffff:127.0.0.1", "::ffff:10.0.0.1", "64:ff9b::a00:1", "2001:db8::1", "2002:a00:1::",
+    "168.63.129.16", "64:ff9b:1::1", "::ffff:0:a00:1",
   ]) {
     assert.equal(isBlockedAddress(address), true, address);
   }
@@ -200,6 +201,10 @@ test("a refusal shows the checker's own output", () => {
   assert.match(comment, /\*\*Not listed\*\* \(`check-failed`\)/);
   assert.match(comment, /manifest {4}failed/);
   assert.match(comment, /cut at 60,000 characters/);
+  const pass = renderComment({ outcome: "pass", slug: "one", checks: 7, notes: [], checker: { command: "npx @colophon-claims/verify@0.2.1 <bundle-dir>", stdout: { text: "Verified: 7 of 7 checks passed", truncated: false } } }, "https://github.com/colophon-claims/site/pull/1");
+  // A pass is not a listing until its pull request merges.
+  assert.match(pass, /^\*\*Checked\.\*\*/);
+  assert.match(pass, /listed when it merges/);
   assert.doesNotMatch(comment, /—/);
 });
 
