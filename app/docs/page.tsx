@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LinkButton } from "@/components/link-button";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -19,6 +18,7 @@ const NAV = [
   { href: "#reports", label: "Reports and evidence" },
   { href: "#methods", label: "Benchmark methods" },
   { href: "#limits", label: "Limits" },
+  { href: "#publish", label: "Publish a claim" },
 ];
 
 const USE_CASES = [
@@ -28,7 +28,7 @@ const USE_CASES = [
   },
   {
     title: "You need to choose between agent setups",
-    body: "Compare them on work that represents the decision, using a method agreed before the official run.",
+    body: "Compare them on work that represents the decision, using a method locked before the official run.",
   },
   {
     title: "You expect the answer to be challenged",
@@ -43,15 +43,15 @@ const PROCESS = [
   },
   {
     title: "Choose the benchmark",
-    body: "Use an established suite when its official method fits, or define a benchmark around the claim.",
+    body: "Use an established suite when its official method fits, or a benchmark you already have.",
   },
   {
     title: "Lock the method",
-    body: "Agree the tasks, setups, repetitions, grading, exclusions, and limits before the official run begins.",
+    body: "Lock the tasks, setups, repetitions, grading, exclusions, and limits before the official run begins.",
   },
   {
     title: "Run and account",
-    body: "Execute the plan and retain every expected outcome, including failures, timeouts, and missing results.",
+    body: "Run the plan on the harness you already use, and keep every expected outcome, including failures, timeouts, and missing results.",
   },
   {
     title: "Publish the evidence",
@@ -120,7 +120,7 @@ const LIMITS = [
   },
   {
     title: "A report is not a certification or ranking.",
-    body: "It answers one declared question. Colophon does not grant a seal, accredit a result, or rank unrelated reports.",
+    body: "It answers one declared question. Colophon does not certify or accredit a result, or rank unrelated reports.",
   },
   {
     title: "The scope remains part of the result.",
@@ -146,16 +146,15 @@ export default function Docs() {
           <section className="docs-hero" id="overview">
             <h1>How Colophon turns a benchmark result into a claim others can check.</h1>
             <p className="docs-lede">
-              Colophon locks the method before execution, accounts for every planned result, and
-              publishes the answer with its evidence and limits attached.
+              You lock the method before the run. Colophon seals it, accounts for every planned
+              result, and publishes the answer with its evidence and limits attached.
             </p>
             <p className="docs-thesis">
               A benchmark score is easy to publish. The difficult part is keeping the question,
               method, missing results, and limitations attached when the number travels.
             </p>
             <p className="docs-body">
-              Colophon is a managed benchmark publishing process for agent performance claims. It
-              is for results that will inform a release, a customer claim, a choice between agent
+              Anyone can check a published claim, free. Colophon is for results that will inform a release, a customer claim, a choice between agent
               setups, or a technical argument that someone else needs to inspect.
             </p>
           </section>
@@ -239,24 +238,20 @@ export default function Docs() {
 
           <section className="docs-section" id="methods">
             <div className="docs-section-heading">
-              <h2>Established methods or a benchmark built for the claim</h2>
-              <p>
-                Colophon is currently offered as a managed engagement. There is no public
-                self-serve benchmark runner yet.
-              </p>
+              <h2>Established methods or your own benchmark</h2>
+              <p>You run the benchmark. Colophon seals and publishes the claim.</p>
             </div>
             <div className="docs-method-copy">
               <p>
-                Current managed methods include Terminal-Bench 2.1 and 3.0, SWE-bench Verified,
-                APEX-Agents, APEX-SWE-dev, DeepSWE v1.1, and Inspect eval. When an official method
-                specifies the agent, engine, tasks, repetitions, or grading, those choices remain
-                fixed. Change them and the work becomes a custom comparison using that task source.
+                You run the benchmark on Harbor, Inspect or your own harness and bring the finished
+                run back. Colophon does not run benchmarks for claimants today. Publishing your own
+                claim from this site is not available yet; until it is, write to{" "}
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
               </p>
               <p>
-                If no established method answers the question, we define the task sources, work
-                environments, grading, comparison arms, and exclusions with you before execution.
-                Where the method allows a custom agent or harness, we build and qualify that path
-                before it enters the official comparison.
+                When an official method specifies the agent, engine, tasks, repetitions, or
+                grading, those choices remain fixed. Change them and the work becomes a custom
+                comparison using that task source.
               </p>
             </div>
             <div className="docs-role-split">
@@ -267,8 +262,8 @@ export default function Docs() {
               <div>
                 <h3>Colophon</h3>
                 <p>
-                  Locks the agreed method, records what happened, accounts for the complete plan,
-                  and publishes the result.
+                  Seals the method you locked, records what happened, accounts for the complete
+                  plan, and publishes the result.
                 </p>
               </div>
             </div>
@@ -290,17 +285,15 @@ export default function Docs() {
             </ul>
           </section>
 
-          <section className="docs-contact" id="work-with-us">
+          <section className="docs-contact" id="publish">
             <div>
-              <h2>What claim needs to hold up?</h2>
+              <h2>Publishing your own claim</h2>
               <p>
-                Send us the claim, the decision it supports, and the benchmark you have in mind.
-                If no suite fits, we&apos;ll shape the task set and lock the method with you.
+                Checking a published claim is free, and needs nothing from Colophon. Publishing your
+                own claim from this site is not available yet. Until it is, write to{" "}
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> to publish.
               </p>
             </div>
-            <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">
-              Bring us your claim
-            </LinkButton>
           </section>
         </article>
       </main>

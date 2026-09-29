@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <>
-      <SiteHeader ctaLabel="Talk to us" />
+      <SiteHeader />
       <main className="home-main">
         <section className="home-hero" aria-labelledby="home-title">
           <div className="container home-hero__grid">
@@ -58,8 +58,8 @@ export default function Home() {
                 <LinkButton href={reportHref} variant="primary" size="lg">
                   See the LoCoMo report
                 </LinkButton>
-                <LinkButton href="#contact" variant="secondary" size="lg">
-                  Talk to Colophon
+                <LinkButton href="#check" variant="secondary" size="lg">
+                  Check it yourself
                 </LinkButton>
               </div>
             </div>
@@ -118,35 +118,37 @@ export default function Home() {
         <section className="home-section home-paths" aria-labelledby="paths-title">
           <div className="container">
             <div className="home-section__intro home-paths__intro">
-              <h2 id="paths-title">Choose who runs the benchmark.</h2>
-              <p>Run it yourself, or have Colophon run it. The published claim says which.</p>
+              <h2 id="paths-title">Run it where you already run it.</h2>
+              <p>
+                You run the benchmark on the harness you already use, and bring the run back to be
+                sealed. The published claim names who ran it.
+              </p>
             </div>
 
             <div className="home-paths__list">
               <article className="home-path">
                 <div className="home-path__heading">
-                  <span className="claim-origin claim-origin--self">Self-run</span>
-                  <h3>Strong for most claims</h3>
+                  <h3>Lock the method first</h3>
                 </div>
                 <p>
-                  Keep the run with your team while giving readers a result they can inspect for
-                  themselves.
+                  Fix the tasks, setups, repetitions and grading before the run, so the method
+                  cannot be changed once results are in.
                 </p>
               </article>
               <article className="home-path">
                 <div className="home-path__heading">
-                  <span className="claim-origin claim-origin--colophon">Colophon-run</span>
-                  <h3>When added distance matters</h3>
+                  <h3>Bring the run back</h3>
                 </div>
                 <p>
-                  Colophon runs your locked benchmark and seals the result, so the claim names who ran it.
+                  Every planned result is accounted for, failures included, and the claim is sealed
+                  with its evidence attached.
                 </p>
               </article>
             </div>
           </div>
         </section>
 
-        <section className="home-section home-verification" aria-labelledby="verification-title">
+        <section className="home-section home-verification" id="check" aria-labelledby="verification-title">
           <div className="container home-verification__grid">
             <div className="home-verification__copy">
               <h2 id="verification-title">Anyone can check the claim.</h2>
@@ -160,18 +162,16 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="home-contact" id="contact" aria-labelledby="contact-title">
+        <section className="home-contact" id="publish" aria-labelledby="publish-title">
           <div className="container home-contact__grid">
             <div>
-              <h2 id="contact-title">Where does your claim need to go?</h2>
+              <h2 id="publish-title">Publishing your own claim</h2>
               <p>
-                Tell us what you are trying to establish and who needs to rely on it. We can talk
-                through which path fits.
+                Checking a published claim is free, and needs nothing from Colophon. Publishing your
+                own claim from this site is not available yet. Until it is, write to{" "}
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> to publish.
               </p>
             </div>
-            <LinkButton href={`mailto:${CONTACT_EMAIL}`} variant="primary" size="lg">
-              Start a conversation
-            </LinkButton>
           </div>
         </section>
       </main>

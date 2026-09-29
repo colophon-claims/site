@@ -40,7 +40,7 @@ export function SiteFooter({ quiet = false }: { quiet?: boolean }) {
           <Link href="/boards/">Boards</Link>
           <Link href="/find/">Find a claim</Link>
           <Link href="/docs/">Docs</Link>
-          <a href="/#contact">Bring a claim</a>
+          <a href="/#publish">Publish a claim</a>
         </div>
         <div className="site-footer-col">
           <span className="site-footer-head">Reports</span>
