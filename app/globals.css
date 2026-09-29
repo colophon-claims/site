@@ -17,12 +17,30 @@
   --font-ui: "Public Sans Variable", "Public Sans", -apple-system, "Segoe UI", Helvetica, sans-serif;
 }
 
+/* Keyboard focus and in-page links stop clear of the sticky .site-header
+   (WCAG 2.4.11). No token holds the header's height, so it is measured:
+   77px from 371px wide up (16px padding + 44px nav row + 16px padding + 1px
+   rule); 114.5px, rounded to 115px, at 370px and narrower, where the nav
+   wraps under the wordmark. The air above the element is --space-4. Measure
+   again if the header's content changes. */
 html {
   min-width: 320px;
   background: var(--surface-page);
+  scroll-padding-top: calc(77px + var(--space-4));
 }
 main {
   overflow: clip;
+}
+
+/* The breakpoint is deliberately wider than the measured 371px wrap point to
+   cover readers with raised minimum font sizes: the nav wraps at 382, 404, 426
+   and 448px for 14, 16, 18 and 20px text. Between 371 and 450px this leaves
+   extra air above a focused element, which is harmless, while a too-narrow
+   breakpoint would hide it. */
+@media (max-width: 450px) {
+  html {
+    scroll-padding-top: calc(115px + var(--space-4));
+  }
 }
 
 /* ---------- layout primitives ---------- */
@@ -988,7 +1006,7 @@ main {
   gap: var(--space-13);
 }
 .docs-content > section {
-  scroll-margin-top: var(--space-13);
+  scroll-margin-top: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
@@ -1112,7 +1130,7 @@ main {
   gap: var(--space-4);
 }
 .docs-verification {
-  scroll-margin-top: var(--space-13);
+  scroll-margin-top: var(--space-5);
   padding: var(--space-9);
   background: var(--surface-card);
   border-top: var(--border-slab) solid var(--rule-accent);
@@ -1282,7 +1300,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--space-7);
-  scroll-margin-top: var(--space-13);
+  scroll-margin-top: var(--space-5);
 }
 .report-section-head {
   display: flex;
@@ -2857,7 +2875,7 @@ main {
   gap: var(--space-5);
   padding-top: var(--space-5);
   border-top: var(--border-heavy) solid var(--rule-heavy);
-  scroll-margin-top: var(--space-13);
+  scroll-margin-top: var(--space-5);
 }
 .claim-evidence-row {
   display: flex;
