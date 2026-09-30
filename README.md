@@ -31,9 +31,13 @@ Next.js, output is detected from `output: "export"`, and
 [`vercel.json`](vercel.json) is the one piece of host configuration. It holds
 two rewrites, `/reports/:slug/bundle/index.html` to `/reports/:slug/bundle/`
 and the same for an `index.html` at any depth below it, so a bundle's own
-`index.html` is served at its own path (status 200, no redirect, same bytes).
-The export writes that file only at the directory URL, so a host other than
-Vercel needs an equivalent rule. `npm run check:bundle-urls` walks a bundle's
+`index.html` is meant to be served at its own path (status 200, no redirect,
+same bytes). Confirm it after a deploy with
+`npm run check:bundle-urls -- https://colophon.claims <slug> --html-only`.
+The export writes that file at its own path, but Vercel serves an `index.html`
+only at its directory URL, which is why the rewrite is needed there. Another
+host may or may not need an equivalent rule: check it with
+`npm run check:bundle-urls`, which walks a bundle's
 manifest against a base URL and reports every listed path that does not come
 back with status 200 (`--verify-bytes` also checks each SHA-256); it is
 [`scripts/check-bundle-urls.mjs`](scripts/check-bundle-urls.mjs), with its test in
@@ -61,7 +65,8 @@ report.
 `/reports/<slug>/` is the claim page, the permanent address for one sealed
 claim and the destination a board or Find a claim links to. It leads with the
 number and its seal, then what exactly ran, who ran it, and why believe it,
-then the evidence row, with the claimant's own report unchanged below.
+then the evidence row, with the report's prose, taken unchanged from the
+claimant's reading record, below.
 
 `/boards/` lists every board; `/boards/<slug>/` is one board, a view over
 every listed claim sealed on one official suite, or on one locked method
@@ -96,8 +101,8 @@ Ingest accepts three formats. Only `/7` and `/8` can be published today:
 | `benchmark-product-public-bundle/7` | Anchored binary-qualification bundle | Yes |
 | `benchmark-product-public-bundle/8` | The same, carrying a sealed six-variable disclosure-specification record | Yes |
 
-The `/5` limit is in `listBoards` in `lib/boards.ts`, which every page that
-lists claims calls: it throws for any listed report that is not `/7` or
+The `/5` limit is in `listBoards` in `lib/boards.ts`, which every page
+reaches: it throws for any listed report that is not `/7` or
 `/8`, so ingesting a `/5` bundle and running `npm run build` fails with
 "format benchmark-product-public-bundle/5 is listed but no board reads it
 yet". The `/5` page component (`components/evidence-report-page.tsx`) is
@@ -189,7 +194,8 @@ that no file is unlisted, and that the read model names the bundle's identity.
 On `/7` and `/8` it also checks where the reading record lives and its digest,
 the check lists, and the digests the read model and claim name; it recomputes
 the published replicate-instability figure from the sealed item decisions
-instead of trusting it, and any derived figures the record carries, which must
+instead of trusting it, and every derived figure the record carries, each of
+which must match its recomputation, and the ones the prose states in words must
 also appear in the report's prose; it checks the anchors against the read
 model; and on `/8` it checks that the disclosure's subject is this bundle's
 `matrix.json`, that the read model and the claim carry the sealed record's
@@ -197,7 +203,7 @@ variables, and that every cited record is carried. It has no claim-schema
 check (that is ingest's), and it runs no checker.
 
 On a `/8` claim page the six variables and their statuses appear in the
-claimant's own report body; on every `/7` and `/8` page the full anchor list,
+report body; on every `/7` and `/8` page the full anchor list,
 with the state embedded in each proof's own bytes, is behind the evidence
 row's disclosure. This site supplies
 no trust material and evaluates none, so an anchor reads as carried, never as
@@ -244,8 +250,9 @@ https URL of a bundle directory, an https URL of a zip or tarball of one, or
    `Listing re-check` workflow on it, and asks for auto-merge.
 
 A refusal is posted on the issue, with the checker's own output when the
-checker ran, and nothing is listed. The first job runs with read-only permissions; only the second, which
-runs none of the submitted bytes, can write.
+checker ran, and nothing is listed. The first job runs with read-only
+permissions; only the second, which runs none of the submitted bytes, can
+write.
 
 The door is shut: `scripts/front-door/door.mjs` answers every submission with
 that, before fetching anything, until a bundle the sealing tool emits by
@@ -263,10 +270,10 @@ an existing slug, and nothing on the site edits an ingested bundle. Publishing
 a correction means publishing a new bundle under a new slug; the old URL keeps
 serving the old bytes.
 
-One exception predates the rule: the page for
+There is one exception: the page for
 `skill-vs-root-claude-md-haiku-4-5` was unpublished (pull request #15,
 2026-09-04) and its leftover bundle files removed (pull request #39,
-2026-09-29). Its URL returns 404. It is the only exception.
+2026-09-29). Its URL returns 404. It is the only published report removed.
 
 ## Page copy
 
@@ -285,8 +292,9 @@ The reader command shown publicly is
 `npx @colophon-claims/verify@0.2.1 ./bundle` (latest on npm as of 30 September
 2026; the checker's README says `/7` and `/8` exist only from 0.2.1, so earlier
 releases, 0.2.0 included, do not read this format; Node 22 or newer). For the
-published report's format, `/7`, the checker runs seven checks, in order: manifest, evidence-closure, trust, matrix-rederivation,
-report-verification, claim-consistency, integrity-anchors. The report also
+published report's format, `/7`, the checker runs seven checks, in order: manifest, evidence-closure, trust,
+matrix-rederivation, report-verification, claim-consistency,
+integrity-anchors. The report also
 keeps the manifest, report envelope, claim package, digests, and source
 disclosures directly available.
 
