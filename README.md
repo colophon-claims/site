@@ -32,19 +32,18 @@ Next.js, output is detected from `output: "export"`, and
 two rewrites, `/reports/:slug/bundle/index.html` to `/reports/:slug/bundle/`
 and the same for an `index.html` at any depth below it, so a bundle's own
 `index.html` is meant to be served at its own path (status 200, no redirect,
-same bytes). Confirm it after a deploy with
-`npm run check:bundle-urls -- https://colophon.claims <slug> --html-only`.
-The export writes that file at its own path, but Vercel serves an `index.html`
-only at its directory URL, which is why the rewrite is needed there. Another
-host may or may not need an equivalent rule: check it with
-`npm run check:bundle-urls`, which walks a bundle's
-manifest against a base URL and reports every listed path that does not come
-back with status 200 (`--verify-bytes` also checks each SHA-256); it is
-[`scripts/check-bundle-urls.mjs`](scripts/check-bundle-urls.mjs), with its test in
-`test/bundle-urls.test.mjs`:
+same bytes); the command below confirms it after a deploy. The export writes
+that file at its own path, but Vercel serves an `index.html` only at its
+directory URL, which is why the rewrite is needed there. Another host may or
+may not need an equivalent rule: check it with `npm run check:bundle-urls`,
+which walks a bundle's manifest against a base URL and reports every listed
+path that does not come back with status 200 (`--verify-bytes` also checks
+each SHA-256); it is
+[`scripts/check-bundle-urls.mjs`](scripts/check-bundle-urls.mjs), with its
+test in `test/bundle-urls.test.mjs`:
 
 ```bash
-npm run check:bundle-urls -- https://colophon.claims <slug> --html-only
+npm run check:bundle-urls -- https://colophon.claims <slug> --html-only --verify-bytes
 ```
 
 ## Vendored design system
@@ -101,13 +100,14 @@ Ingest accepts three formats. Only `/7` and `/8` can be published today:
 | `benchmark-product-public-bundle/7` | Anchored binary-qualification bundle | Yes |
 | `benchmark-product-public-bundle/8` | The same, carrying a sealed six-variable disclosure-specification record | Yes |
 
-The `/5` limit is in `listBoards` in `lib/boards.ts`, which every page
-reaches: it throws for any listed report that is not `/7` or
-`/8`, so ingesting a `/5` bundle and running `npm run build` fails with
-"format benchmark-product-public-bundle/5 is listed but no board reads it
-yet". The `/5` page component (`components/evidence-report-page.tsx`) is
-still in the repository, and it links the canonical report files and the
-complete manifest, but no board reads `/5` yet.
+The `/5` limit is in `listBoards` in `lib/boards.ts`, which the homepage,
+the boards and Find a claim reach: it throws for any listed report that is
+not `/7` or `/8`, so ingesting a `/5` bundle and running `npm run build`
+fails with "format benchmark-product-public-bundle/5 is listed but no board
+reads it yet". The `/5` page component
+(`components/evidence-report-page.tsx`) is still in the repository, and it
+links the canonical report files and the complete manifest, but no board
+reads `/5` yet.
 
 Every format is read through a public reading record, which carries the
 report's title, slug and text. A `/5` bundle seals it as `presentation.json`.
@@ -130,16 +130,21 @@ The ingest step:
 2. copies the bundle **byte-exact** into `public/reports/<slug>/bundle/`;
 3. emits `data/reports/<slug>.json`, the read model the report page renders.
    Every field in it is extracted from the bundle's records or from its
-   public reading record, never invented. A record supplied at ingest is
-   written beside it, byte for byte, as `data/reports/<slug>.presentation.json`.
+   public reading record, never invented; a `--listing` file adds the
+   `listing` section. A record supplied at ingest is written beside it, byte
+   for byte, as `data/reports/<slug>.presentation.json`.
    The record names the report's title and slug, and ingest refuses a `--slug`
    that differs from it.
 
 Commit the emitted data, the supplied record if there is one, and the copied
-bundle. A `/7` or `/8` report appears at `/reports/<slug>/`. Every path in the
-manifest is meant to be served byte-exact under the report's `/bundle/`
-directory; see the deploy paragraph above for the one path that needs a
-rewrite, and `npm run check:bundle-urls` to check a deployed report.
+bundle. A `/7` or `/8` report also needs a listing time: the front door writes
+one into the read model with `--listing`, and a report ingested without it needs
+an entry in `data/listed-at.json`, or `npm run build` fails with "no listing
+time; list it through the front door or record it in data/listed-at.json". It
+then appears at `/reports/<slug>/`. Every path in the manifest is meant to be
+served byte-exact under the report's `/bundle/` directory; see the deploy
+paragraph above for the one path that needs a rewrite, and
+`npm run check:bundle-urls` to check a deployed report.
 
 (`--listing <file>` is how the front door, below, hands ingest what the bundle
 does not say: when it was listed and where it was fetched from. The read model
@@ -273,7 +278,8 @@ serving the old bytes.
 There is one exception: the page for
 `skill-vs-root-claude-md-haiku-4-5` was unpublished (pull request #15,
 2026-09-04) and its leftover bundle files removed (pull request #39,
-2026-09-29). Its URL returns 404. It is the only published report removed.
+2026-09-29). Its URL returns 404. It is the only published report removed (a
+fixture page removed before go-live is not counted).
 
 ## Page copy
 
@@ -292,11 +298,11 @@ The reader command shown publicly is
 `npx @colophon-claims/verify@0.2.1 ./bundle` (latest on npm as of 30 September
 2026; the checker's README says `/7` and `/8` exist only from 0.2.1, so earlier
 releases, 0.2.0 included, do not read this format; Node 22 or newer). For the
-published report's format, `/7`, the checker runs seven checks, in order: manifest, evidence-closure, trust,
-matrix-rederivation, report-verification, claim-consistency,
-integrity-anchors. The report also
-keeps the manifest, report envelope, claim package, digests, and source
-disclosures directly available.
+published report's format, `/7`, the checker runs seven checks, in order:
+manifest, evidence-closure, trust, matrix-rederivation, report-verification,
+claim-consistency, integrity-anchors. The report also keeps the manifest,
+report envelope, claim package, digests, and source disclosures directly
+available.
 
 Broader framework and execution copy belongs in Docs, not in a report's
 provenance. A report names only the stack that produced its evidence. Docs may
@@ -305,9 +311,11 @@ name implemented source paths only with their release state attached.
 ## Checking a deploy
 
 The site is live at https://colophon.claims. A deploy is good when the site
-is served over valid HTTPS, a report URL returns the ingested bytes (run
-`npm run check:bundle-urls -- https://colophon.claims <slug> --verify-bytes --every 200`
-for a sample),
-the contact address on the page is the one above and works, and a browser
-network check shows no external requests. DNS and the human-contact surfaces
-remain operator actions.
+is served over valid HTTPS, a report URL returns the ingested bytes (the
+command below checks a sample), the contact address on the page is the one
+above and works, and a browser network check shows no external requests.
+DNS and the human-contact surfaces remain operator actions.
+
+```bash
+npm run check:bundle-urls -- https://colophon.claims <slug> --verify-bytes --every 200
+```
