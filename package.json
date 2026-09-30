@@ -11,7 +11,8 @@
     "ingest": "node scripts/ingest-report.mjs",
     "ingest:grouped": "node scripts/ingest-grouped-report.mjs",
     "test": "node --test test/*.test.mjs",
-    "validate:reports": "node scripts/validate-published-reports.mjs"
+    "validate:reports": "node scripts/validate-published-reports.mjs",
+    "check:bundle-urls": "node scripts/check-bundle-urls.mjs"
   },
   "dependencies": {
     "@fontsource-variable/newsreader": "^5.2.14",
