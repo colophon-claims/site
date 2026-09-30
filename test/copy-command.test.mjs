@@ -45,3 +45,15 @@ test("the claim page, the board and Find a claim carry no copy button before the
     assert.doesNotMatch(page(path), /copy-command__button/u, `${path}: no copy-command__button anywhere in the page`);
   }
 });
+
+const css = () => readFileSync(join(siteRoot, "app", "globals.css"), "utf8");
+
+test("the copy button keeps the site's standard focus outline and nothing clips it", () => {
+  const source = css();
+  assert.doesNotMatch(source, /\.copy-command__button:focus-visible/u, "no copy-button focus override: the vendored :focus-visible outline applies");
+  const container = source.match(/\n\.copy-command \{[^}]*\}/u);
+  assert.ok(container, "the .copy-command rule exists");
+  assert.doesNotMatch(container[0], /overflow/u, ".copy-command does not clip its children, so the outline can draw outside the button");
+  const button = source.match(/\n\.copy-command__button \{[^}]*\}/u);
+  assert.match(button[0], /border-radius: 0 var\(--copy-inner-radius\) var\(--copy-inner-radius\) 0/u, "the button carries the container's inner corner radius");
+});
