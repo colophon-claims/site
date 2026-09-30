@@ -223,7 +223,7 @@ Claim badges combine an ink identity block, a paper value block, and a written s
 
 - **Don't** make an AI-startup landing page with a gradient hero, a "trusted by 10,000 teams" logo strip, or three feature cards with icons.
 - **Don't** make a leaderboard or analytics dashboard. Ranking is not this system's visual language.
-- **Don't** make anything read as a pitch. The closing section invites a conversation; it never closes a sale.
+- **Don't** make anything read as a pitch. The closing section states how to publish today, plainly; it invites no conversation and never closes a sale.
 - **Don't** use a coloured side stripe, glass surfaces, decorative gradients, or default soft shadows. Evidence patterns are reserved for their stated meaning.
 - **Don't** use a verdict colour, green tick, or status icon without the corresponding written status and supporting context.
 - **Don't** enlarge corner radii, replace rules with large cards, or add visual urgency that competes with the record.
