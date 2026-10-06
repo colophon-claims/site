@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, lstatSync, readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
@@ -14,23 +15,23 @@ const referenceDir = join(siteRoot, "vendor", "design-system", "reference");
 const notePath = join(siteRoot, "vendor", "design-system", "VENDORED.md");
 
 // Hash what git would track. Git never records empty directories, and it skips
-// whatever .gitignore excludes, so a Finder-made .DS_Store must not fail this
-// test. Plain-name .gitignore lines (no slash, no wildcard) are honoured, and
-// .DS_Store is always skipped. No shelling out to git, so this also works
-// outside a checkout.
-function ignoredNames() {
-  const names = new Set([".DS_Store"]);
+// whatever is ignored (the repo's .gitignore, the user's global excludes), so a
+// Finder-made .DS_Store, an editor swap file or an AppleDouble ._ file must not
+// fail this test. In a checkout we ask git for the ignored set; outside a
+// checkout, or without git, the set is empty and only .DS_Store is skipped.
+function ignoredPaths() {
   try {
-    for (const raw of readFileSync(join(siteRoot, ".gitignore"), "utf8").split("\n")) {
-      const line = raw.trim();
-      if (line && !line.startsWith("#") && !/[\/*?[!]/.test(line)) names.add(line);
-    }
+    const out = execFileSync(
+      "git",
+      ["ls-files", "-o", "-i", "--exclude-standard", "-z", "--", "vendor/design-system/reference"],
+      { cwd: siteRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    );
+    return new Set(out.split("\0").filter(Boolean));
   } catch {
-    // no .gitignore: only the built-in name applies
+    return new Set();
   }
-  return names;
 }
-const ignored = ignoredNames();
+const ignored = ignoredPaths();
 
 const sha1 = (...parts) => {
   const hash = createHash("sha1");
@@ -45,8 +46,8 @@ function blobHash(bytes) {
 function treeHash(dir) {
   const entries = [];
   for (const name of readdirSync(dir)) {
-    if (ignored.has(name)) continue;
     const path = join(dir, name);
+    if (name === ".DS_Store" || ignored.has(relative(siteRoot, path))) continue;
     const stat = lstatSync(path);
     if (stat.isSymbolicLink()) throw new Error(`symlink in vendored tree: ${path}`);
     if (stat.isDirectory()) {
