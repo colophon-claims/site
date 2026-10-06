@@ -159,7 +159,7 @@ disclosure-specification record, travelling as an ordinary
 `records/<sha256>.bin` member and projected into the claim package's
 `disclosure` section.
 
-On these formats the public reading record is `colophon.report-presentation/2`
+On these formats the public reading record is `colophon.report-presentation/2`.
 Sealed, it is the bundle's `presentation.json`.
 Supplied at ingest, it is published beside the read model and the bundle is
 copied byte for byte with nothing added: inserting a member into a published

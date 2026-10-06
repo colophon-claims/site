@@ -391,5 +391,5 @@ for (const dataName of readdirSync(reportsDir).filter(REPORT_DATA).sort()) {
     );
     continue;
   }
-  fail(`${report.slug} is format ${report.format}, which this site no longer publishes`);
+  fail(`${report.slug} is format ${report.format}, which this site does not publish`);
 }

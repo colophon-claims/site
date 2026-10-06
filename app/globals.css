@@ -1661,7 +1661,7 @@ main {
   word-break: break-all;
 }
 
-/* ---------- evidence-native report ---------- */
+/* ---------- report face grid (currently unused by any component) ---------- */
 .report-face-grid {
   display: grid;
   grid-template-columns: 1fr;
