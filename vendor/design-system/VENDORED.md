@@ -4,7 +4,15 @@
 |---|---|
 | Source | `packages/benchmark-product/design-system/reference/` in the Jinn mono |
 | Source commit | `3d4e07b2e2bde85ff02660c0309ba34d5148be0e` (proof-led Colophon public surfaces, resilient compact verification command) |
+| Source branch | `codex/colophon-night-press` |
+| Tree hash of `reference/` | `01f547495e3a749ee807de088fbb52aa40d3694c` |
+| Check | `git rev-parse HEAD:vendor/design-system/reference` |
 | Vendored | 2026-08-22 |
+
+As of 2026-10-06 the source commit is not on the public repository's default
+branch, so the tree hash is the check until it is. `test/vendored-design-system.test.mjs`
+computes that hash from the files on disk and fails if it differs from the one
+recorded above.
 
 The canonical copy lives in the Jinn mono; update by re-vendoring, never by
 editing here.
@@ -16,7 +24,14 @@ git -C <jinn-mono-checkout> archive <commit> packages/benchmark-product/design-s
   | tar -x --strip-components=3 -C vendor/design-system
 ```
 
-Then update the source commit and date in this file.
+Then, in this file:
+
+1. Update the source commit, source branch and date.
+2. Replace the recorded tree hash with the output of
+   `git rev-parse <commit>:packages/benchmark-product/design-system/reference`
+   in the Jinn mono checkout. It must equal the hash the check command prints
+   here once the files are committed.
+3. Run `npm test`.
 
 ## How this site consumes it
 
