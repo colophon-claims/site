@@ -3,23 +3,27 @@
 | | |
 |---|---|
 | Source | `packages/benchmark-product/design-system/reference/` in the Jinn mono |
-| Source commit | `3d4e07b2e2bde85ff02660c0309ba34d5148be0e` (proof-led Colophon public surfaces, resilient compact verification command) |
+| Source commit | `3d4e07b2e2bde85ff02660c0309ba34d5148be0e` (subject: "fix(design-system): fall back when clipboard is denied") |
 | Source branch | `codex/colophon-night-press` |
 | Tree hash of `reference/` | `01f547495e3a749ee807de088fbb52aa40d3694c` |
 | Check | `git rev-parse HEAD:vendor/design-system/reference` |
 | Vendored | 2026-08-22 |
 
-As of 2026-10-06 the source commit is not on the public repository's default
-branch, so the tree hash is the check until it is. `test/vendored-design-system.test.mjs`
+As of 2026-10-06 the source commit is not in the public repository at all, and
+the branch above is not published there (it exists only in the maintainer's
+checkout), so do not look for either on GitHub. The tree hash is the check
+until the commit is published. `test/vendored-design-system.test.mjs`
 computes that hash from the files on disk and fails if it differs from the one
 recorded above.
 
 The canonical copy lives in the Jinn mono; update by re-vendoring, never by
 editing here.
 
-Re-vendor with:
+Re-vendor with (remove the old directory first, so files the new source
+deleted do not linger; `VENDORED.md` stays):
 
 ```bash
+rm -rf vendor/design-system/reference
 git -C <jinn-mono-checkout> archive <commit> packages/benchmark-product/design-system/reference \
   | tar -x --strip-components=3 -C vendor/design-system
 ```
