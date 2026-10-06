@@ -1,7 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
-export const EVIDENCE_BUNDLE_FORMAT = "benchmark-product-public-bundle/5" as const;
 export const QUALIFIED_BUNDLE_FORMAT = "benchmark-product-public-bundle/7" as const;
 export const DISCLOSED_BUNDLE_FORMAT = "benchmark-product-public-bundle/8" as const;
 export const GROUPED_REPORT_FORMAT = "colophon-grouped-report/1" as const;
@@ -10,115 +9,6 @@ export interface BundleFile {
   path: string;
   bytes: number;
   sha256: string;
-}
-
-interface ReportDataBase {
-  slug: string;
-  fixture: boolean;
-  title: string;
-  summary: string | null;
-  reportedAt: string | null;
-  socialCardPath: string | null;
-  files: BundleFile[];
-}
-
-export interface EvidenceReportData extends ReportDataBase {
-  format: typeof EVIDENCE_BUNDLE_FORMAT;
-  fixture: false;
-  subject: {
-    model: string;
-    benchmark: { name: string; release: string; commit: string };
-  };
-  question: {
-    instructionBytes: string;
-    comparison: string;
-    arms: { id: string; label: string; replicatesPerTask: number }[];
-  };
-  execution: {
-    source: {
-      benchmark: string;
-      release: string;
-      commit: string;
-      upstreamRuntime: {
-        name: string;
-        version: string;
-        usedForOfficialCells: boolean;
-      };
-      preservedPackageParts: string[];
-    };
-    armConstruction: {
-      owner: string;
-      transform: string;
-      reason: string;
-    };
-    agentHarness: {
-      name: string;
-      location: string;
-      heldConstantAcrossArms: boolean;
-    };
-    grading: {
-      verifier: string;
-      location: string;
-    };
-  };
-  result: {
-    unit: string;
-    informativeTasks: number;
-    estimatePpm: number;
-    confidenceInterval95Ppm: { lower: number; upper: number };
-    interpretation: string;
-    methodStatement: string;
-  };
-  population: {
-    flatTasks: number;
-    funnel: { stage: string; tasks: number }[];
-    officialFloor: { units: number; independenceClusters: number; met: boolean };
-  };
-  accounting: {
-    expectedCells: number;
-    cellsByArm: Record<string, number>;
-    admittedCells: number;
-    excludedCells: number;
-    unavailableCells: number;
-    failedHostOracles: {
-      taskId: string;
-      host: string;
-      oracleReward: string;
-      noOpReward: string;
-    }[];
-  };
-  manipulationCheck: {
-    cCells: number;
-    cFullPass: number;
-    cMeanPpm: number;
-    abMeanPpm: number;
-    upliftPpm: number;
-  };
-  limitations: string[];
-  selfRunDisclosure: string;
-  verification: {
-    bundleFormat: typeof EVIDENCE_BUNDLE_FORMAT;
-    checks: string[];
-    command: string;
-    readerAvailability: "available";
-    reportEnvelopeSha256: string;
-  };
-  provenance: {
-    internalRunId: string;
-    declarationSha256: string;
-    benchmarkSha256: string;
-    analysisManifestSha256: string;
-    cohortSha256: string;
-    matrixSha256: string;
-  };
-  digests: {
-    bundleIdentity: string;
-    reportEnvelopeSha256: string;
-    benchmarkSha256: string;
-    analysisManifestSha256: string;
-    cohortSha256: string;
-    matrixSha256: string;
-  };
 }
 
 /* ---------- anchored binary-qualification bundles (/7 and /8) ---------- */
@@ -472,16 +362,11 @@ export interface GroupedReportData {
 }
 
 export type ReportData =
-  | EvidenceReportData
   | QualifiedReportData
   | GroupedReportData;
 
 export function isGroupedReport(report: ReportData): report is GroupedReportData {
   return report.format === GROUPED_REPORT_FORMAT;
-}
-
-export function isEvidenceReport(report: ReportData): report is EvidenceReportData {
-  return report.format === EVIDENCE_BUNDLE_FORMAT;
 }
 
 export function isQualifiedReport(report: ReportData): report is QualifiedReportData {

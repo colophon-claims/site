@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { EvidenceReportPage } from "@/components/evidence-report-page";
 import { GroupedReportPage } from "@/components/grouped-report-page";
 import { QualifiedReportPage } from "@/components/qualified-report-page";
 import {
   getReport,
-  isEvidenceReport,
   isGroupedReport,
   isQualifiedReport,
   listReports,
@@ -34,7 +32,6 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
   const report = getReport(slug);
   if (isGroupedReport(report)) return <GroupedReportPage report={report} />;
   if (isQualifiedReport(report)) return <QualifiedReportPage report={report} />;
-  if (isEvidenceReport(report)) return <EvidenceReportPage report={report} />;
   // Static export: an unsupported format fails `npm run build`, never a
   // visitor's browser. No public route can render a format this dispatch
   // does not recognize. The `never` assignment also fails `tsc` if a new

@@ -9,7 +9,6 @@
  * where it was fetched from. The read model then carries a `listing` section.
  *
  * Supported formats:
- *   - benchmark-product-public-bundle/5 (evidence-native claim bundle)
  *   - benchmark-product-public-bundle/7 (anchored binary-qualification bundle)
  *   - benchmark-product-public-bundle/8 (the same, plus a sealed six-variable
  *     disclosure-specification record)
@@ -30,7 +29,6 @@ import {
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const EVIDENCE_FORMAT = "benchmark-product-public-bundle/5";
 /** The anchored binary-qualification closure: the sixteen fixed members of
  * the retired /1 closure, plus `qualification.json`, plus one
  * `anchors/<sha256>.bin` per carried anchor. */
@@ -38,18 +36,6 @@ const QUALIFIED_FORMAT = "benchmark-product-public-bundle/7";
 /** The same closure carrying a sealed six-variable disclosure-specification
  * record at `records/<sha256>.bin`, plus the `disclosure` claim section. */
 const DISCLOSED_FORMAT = "benchmark-product-public-bundle/8";
-
-const EVIDENCE_REQUIRED_FILES = [
-  "README.md",
-  "analysis-manifest.json",
-  "benchmark.json",
-  "claim-package.json",
-  "cohort.json",
-  "matrix.json",
-  "presentation.json",
-  "report-envelope.json",
-  "report.json",
-];
 
 /**
  * The /7 and /8 member list: the sixteen fixed members of the retired /1
@@ -248,11 +234,10 @@ const manifestPath = join(bundleDir, "bundle.json");
 if (!existsSync(manifestPath)) fail(`no bundle.json manifest in ${bundleDir}`);
 const manifestBytes = readFileSync(manifestPath);
 const manifest = readJson("bundle.json");
-const SUPPORTED_FORMATS = [EVIDENCE_FORMAT, QUALIFIED_FORMAT, DISCLOSED_FORMAT];
+const SUPPORTED_FORMATS = [QUALIFIED_FORMAT, DISCLOSED_FORMAT];
 if (!SUPPORTED_FORMATS.includes(manifest.format)) {
   fail(`unsupported bundle format: ${manifest.format}. Supported formats: ${SUPPORTED_FORMATS.join(", ")}`);
 }
-const isQualified = manifest.format === QUALIFIED_FORMAT || manifest.format === DISCLOSED_FORMAT;
 if (!Array.isArray(manifest.files) || manifest.files.length === 0) {
   fail("bundle.json carries no file entries");
 }
@@ -289,31 +274,19 @@ for (const entry of manifest.files) {
   }
 }
 
-if (isQualified) {
-  for (const fixed of QUALIFIED_FIXED_FILES) {
-    if (!manifestPaths.has(fixed)) fail(`fixed member missing from manifest: ${fixed}`);
-  }
-  if (![...manifestPaths].some((path) => /^records\/[a-f0-9]{64}\.bin$/.test(path))) {
-    fail("bundle carries no records/<sha256>.bin evidence members");
-  }
-  for (const path of manifestPaths) {
-    const isFixed = QUALIFIED_FIXED_FILES.includes(path) || QUALIFIED_OPTIONAL_FILES.includes(path);
-    const isRecord = /^records\/[a-f0-9]{64}\.bin$/.test(path);
-    const isAnchor = /^anchors\/[a-f0-9]{64}\.bin$/.test(path);
-    const isNative = /^native\/inspect\/[a-f0-9]{64}\.eval$/.test(path);
-    if (!isFixed && !isRecord && !isAnchor && !isNative) {
-      fail(`manifest carries a member outside ${manifest.format}: ${path}`);
-    }
-  }
-} else {
-  for (const required of EVIDENCE_REQUIRED_FILES) {
-    if (!manifestPaths.has(required)) fail(`evidence-native member missing from manifest: ${required}`);
-  }
-  if (![...manifestPaths].some((path) => /^records\/[a-f0-9]{64}\.bin$/.test(path))) {
-    fail("evidence-native bundle carries no evidence records");
-  }
-  if (![...manifestPaths].some((path) => /^artifacts\/[a-f0-9]{64}\.bin$/.test(path))) {
-    fail("evidence-native bundle carries no artifacts");
+for (const fixed of QUALIFIED_FIXED_FILES) {
+  if (!manifestPaths.has(fixed)) fail(`fixed member missing from manifest: ${fixed}`);
+}
+if (![...manifestPaths].some((path) => /^records\/[a-f0-9]{64}\.bin$/.test(path))) {
+  fail("bundle carries no records/<sha256>.bin evidence members");
+}
+for (const path of manifestPaths) {
+  const isFixed = QUALIFIED_FIXED_FILES.includes(path) || QUALIFIED_OPTIONAL_FILES.includes(path);
+  const isRecord = /^records\/[a-f0-9]{64}\.bin$/.test(path);
+  const isAnchor = /^anchors\/[a-f0-9]{64}\.bin$/.test(path);
+  const isNative = /^native\/inspect\/[a-f0-9]{64}\.eval$/.test(path);
+  if (!isFixed && !isRecord && !isAnchor && !isNative) {
+    fail(`manifest carries a member outside ${manifest.format}: ${path}`);
   }
 }
 
@@ -335,71 +308,6 @@ const files = [
   { path: "bundle.json", bytes: manifestBytes.length, sha256: bundleIdentity },
   ...manifest.files.map(({ path, bytes, sha256: digest }) => ({ path, bytes, sha256: digest })),
 ];
-
-function extractEvidenceNative() {
-  const claim = readJson("claim-package.json");
-  const presentation = readJson("presentation.json");
-  const reportEnvelopeBytes = readFileSync(join(bundleDir, "report-envelope.json"));
-  if (claim.claimSchema !== "benchmark-product.claim-package/3") {
-    fail(`unknown evidence-native claim package schema: ${claim.claimSchema}`);
-  }
-  if (presentation.schema !== "colophon.report-presentation/1") {
-    fail(`unknown public presentation schema: ${presentation.schema}`);
-  }
-  if (presentation.slug !== slug) {
-    fail(`presentation slug ${presentation.slug} does not match requested slug ${slug}`);
-  }
-  if (presentation.verification?.bundleFormat !== EVIDENCE_FORMAT) {
-    fail("presentation does not identify its evidence-native bundle format");
-  }
-  if (presentation.verification.readerAvailability !== "available") {
-    fail("presentation does not identify the public reader as available");
-  }
-  const reportEnvelopeSha256 = sha256(reportEnvelopeBytes);
-  if (presentation.verification.reportEnvelopeSha256 !== reportEnvelopeSha256) {
-    fail("presentation report-envelope digest does not match report-envelope.json");
-  }
-  if (typeof presentation.title !== "string" || /demo[- ]?1/i.test(presentation.title)) {
-    fail("public report title is missing or exposes an internal run label");
-  }
-  if (
-    typeof presentation.execution?.source?.upstreamRuntime?.name !== "string" ||
-    typeof presentation.execution?.armConstruction?.reason !== "string" ||
-    typeof presentation.execution?.agentHarness?.name !== "string" ||
-    typeof presentation.execution?.grading?.verifier !== "string"
-  ) {
-    fail("public presentation execution provenance is incomplete");
-  }
-  return {
-    format: EVIDENCE_FORMAT,
-    slug,
-    fixture: false,
-    title: presentation.title,
-    summary: presentation.summary,
-    reportedAt: presentation.sealedAt,
-    subject: presentation.subject,
-    question: presentation.question,
-    execution: presentation.execution,
-    result: presentation.result,
-    population: presentation.population,
-    accounting: presentation.accounting,
-    manipulationCheck: presentation.manipulationCheck,
-    limitations: presentation.limitations,
-    selfRunDisclosure: presentation.selfRunDisclosure,
-    verification: presentation.verification,
-    provenance: presentation.provenance,
-    digests: {
-      bundleIdentity,
-      reportEnvelopeSha256,
-      benchmarkSha256: presentation.provenance.benchmarkSha256,
-      analysisManifestSha256: presentation.provenance.analysisManifestSha256,
-      cohortSha256: presentation.provenance.cohortSha256,
-      matrixSha256: presentation.provenance.matrixSha256,
-    },
-    socialCardPath: null,
-    files,
-  };
-}
 
 /**
  * Reads and checks the sealed disclosure-specification record the `/8` claim
@@ -798,14 +706,11 @@ function extractQualified() {
   };
 }
 
-const data = isQualified
-  ? extractQualified()
-  : extractEvidenceNative();
+const data = extractQualified();
 
 /**
  * The formats whose run.json the published checker parses as a Run record,
- * which requires `closeAt`. On `/5` nothing checks a run.json, so it never
- * dates a row.
+ * which requires `closeAt`.
  */
 const RUN_RECORD_FORMATS = [QUALIFIED_FORMAT, DISCLOSED_FORMAT];
 const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;

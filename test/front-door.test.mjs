@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-import { check } from "../scripts/front-door/check.mjs";
+import { assertProjectable, check } from "../scripts/front-door/check.mjs";
 import { renderComment } from "../scripts/front-door/comment.mjs";
 import { DOOR } from "../scripts/front-door/door.mjs";
 import { fetchLocator, unpack } from "../scripts/front-door/fetch.mjs";
@@ -258,4 +258,20 @@ test("ingest records the listing: provenance, listing time, board key, venue and
   const noCommit = ingest({ listedAt: "2026-09-30T12:00:00Z", locator: "o/r@main:x", syntax: "github-tree" });
   assert.notEqual(noCommit.status, 0);
   assert.match(noCommit.stderr, /resolved commit/);
+});
+
+test("the check refuses a /5 bundle as an unknown format and names /7 and /8", () => {
+  const manifest = { format: "benchmark-product-public-bundle/5", files: [{ path: "presentation.json" }] };
+  assert.throws(
+    () => assertProjectable(manifest, {}),
+    (error) => refusedWith("unknown-format")(error)
+      && /benchmark-product-public-bundle\/5/u.test(error.message)
+      && /benchmark-product-public-bundle\/7/u.test(error.message)
+      && /benchmark-product-public-bundle\/8/u.test(error.message)
+      && !/—/u.test(error.message),
+  );
+  // /7 and /8 pass this gate.
+  for (const format of ["benchmark-product-public-bundle/7", "benchmark-product-public-bundle/8"]) {
+    assert.doesNotThrow(() => assertProjectable({ format, files: [{ path: "presentation.json" }] }, {}));
+  }
 });
