@@ -33,9 +33,12 @@ import {
 const siteRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const OUTPUT_CAP = 60_000;
 const CHECKER_TIMEOUT_MS = 20 * 60_000;
-/** The formats the site's ingest projects. Each renders from a sealed presentation.json. */
+/**
+ * The formats the site's ingest projects and a board reads. Each renders from
+ * a sealed presentation.json. `/5` is not among them: ingest refuses it and no
+ * board reads it, so it is refused here as an unknown format.
+ */
 export const PROJECTED_FORMATS = [
-  "benchmark-product-public-bundle/5",
   "benchmark-product-public-bundle/7",
   "benchmark-product-public-bundle/8",
 ];
@@ -77,12 +80,12 @@ function readBundleJson(bundleDir, name) {
  * What ingest can project, checked before the checker runs so a bundle that
  * could never be listed is refused with the missing piece named.
  */
-function assertProjectable(manifest, claim) {
+export function assertProjectable(manifest, claim) {
   const paths = new Set((manifest.files ?? []).map((entry) => entry?.path));
   if (!PROJECTED_FORMATS.includes(manifest.format)) {
     refuse(
       "unknown-format",
-      `The bundle is format ${manifest.format}. This site lists ${PROJECTED_FORMATS.join(", ")} today.`,
+      `The bundle is format ${manifest.format}, which this site does not list. It lists ${PROJECTED_FORMATS.join(" and ")} and no other format.`,
     );
   }
   if (!paths.has("presentation.json")) {
