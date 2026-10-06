@@ -391,5 +391,5 @@ for (const dataName of readdirSync(reportsDir).filter(REPORT_DATA).sort()) {
     );
     continue;
   }
-  console.log(`validated ${report.slug} (${validated.fileCount} files, sha256:${validated.identity})`);
+  fail(`${report.slug} is format ${report.format}, which this site no longer publishes`);
 }

@@ -32,8 +32,8 @@ test("refuses a bundle declaring the removed legacy format /1", (context) => {
   const result = run(root, [bundle, "--slug", "old-report"]);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /unsupported bundle format: benchmark-product-public-bundle\/1/u);
-  // The refusal names the formats the site still accepts.
-  assert.match(result.stderr, /benchmark-product-public-bundle\/5/u);
+  // The refusal names the formats the site still accepts, and not /5.
+  assert.doesNotMatch(result.stderr, /Supported formats:.*\/5/u);
   assert.match(result.stderr, /benchmark-product-public-bundle\/7/u);
   assert.match(result.stderr, /benchmark-product-public-bundle\/8/u);
 });
@@ -43,4 +43,19 @@ test("no longer accepts the --fixture flag", (context) => {
   const result = run(root, [join(root, "nonexistent-bundle"), "--slug", "old-report", "--fixture"]);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /unexpected argument: --fixture/u);
+});
+
+test("refuses a bundle declaring the retired format /5 and names /7 and /8", (context) => {
+  const root = scratchSite(context);
+  const bundle = join(root, "source");
+  mkdirSync(bundle, { recursive: true });
+  writeFileSync(
+    join(bundle, "bundle.json"),
+    `${JSON.stringify({ format: "benchmark-product-public-bundle/5", files: [] }, null, 2)}\n`,
+  );
+
+  const result = run(root, [bundle, "--slug", "old-report"]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /unsupported bundle format: benchmark-product-public-bundle\/5/u);
+  assert.match(result.stderr, /Supported formats: benchmark-product-public-bundle\/7, benchmark-product-public-bundle\/8\s*$/u);
 });

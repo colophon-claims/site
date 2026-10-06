@@ -92,26 +92,23 @@ Any other member a board reads, such as `evidence.json` or
 ## Publishing a report
 
 A report starts as an immutable public bundle emitted locally by Colophon.
-Ingest accepts three formats. Only `/7` and `/8` can be published today:
+Ingest accepts two formats, `/7` and `/8`, and refuses any other, naming
+these two. `/5` was retired: nothing publishes it, no board reads it, and the
+checker's check list for it differs from `/7`.
 
-| Format | What it is | Can be published today |
-|---|---|---|
-| `benchmark-product-public-bundle/5` | Evidence-native claim bundle | No |
-| `benchmark-product-public-bundle/7` | Anchored binary-qualification bundle | Yes |
-| `benchmark-product-public-bundle/8` | The same, carrying a sealed six-variable disclosure-specification record | Yes |
+| Format | What it is |
+|---|---|
+| `benchmark-product-public-bundle/7` | Anchored binary-qualification bundle |
+| `benchmark-product-public-bundle/8` | The same, carrying a sealed six-variable disclosure-specification record |
 
-The `/5` limit is in `listBoards` in `lib/boards.ts`, which the homepage,
-the boards and Find a claim reach: it throws for any listed report that is
-not `/7` or `/8`, so ingesting a `/5` bundle and running `npm run build`
-fails with "format benchmark-product-public-bundle/5 is listed but no board
-reads it yet". The `/5` page component
-(`components/evidence-report-page.tsx`) is still in the repository, and it
-links the canonical report files and the complete manifest, but no board
-reads `/5` yet.
+The board reader, `listBoards` in `lib/boards.ts`, which the homepage, the
+boards and Find a claim reach, throws for any listed report that is not `/7`
+or `/8`, so the build fails rather than rendering a format nothing reads. The
+front door's check refuses the same way before it lists anything.
 
 Every format is read through a public reading record, which carries the
-report's title, slug and text. A `/5` bundle seals it as `presentation.json`.
-A `/7` or `/8` bundle either seals it the same way or takes it at ingest with
+report's title, slug and text. A `/7` or `/8` bundle either seals it as
+`presentation.json` or takes it at ingest with
 `--presentation <file>`. The published LoCoMo judge report took the second
 route: its bundle carries no `presentation.json`, and its record is
 `data/reports/locomo-judge-report.presentation.json`. To put a report on the
@@ -163,7 +160,7 @@ disclosure-specification record, travelling as an ordinary
 `disclosure` section.
 
 On these formats the public reading record is `colophon.report-presentation/2`
-(a `/5` bundle's is `/1`). Sealed, it is the bundle's `presentation.json`.
+Sealed, it is the bundle's `presentation.json`.
 Supplied at ingest, it is published beside the read model and the bundle is
 copied byte for byte with nothing added: inserting a member into a published
 bundle would change the very digest an auditor checks. Either way the site
@@ -224,7 +221,7 @@ Grouped ingest, `npm run ingest:grouped`, is still in the repository but
 cannot publish today. It takes one binary-instrument bundle (`/4`), one
 pairwise-disagreement bundle and one paired-majority-delta bundle (`/2` or
 `/4`) from one run and emits a `colophon-grouped-report/1` read model, which
-`listBoards` refuses the same way it refuses `/5`, so `npm run build` fails:
+`listBoards` refuses (it reads only `/7` and `/8`), so `npm run build` fails:
 
 ```bash
 npm run ingest:grouped -- <binary-bundle> <pairwise-bundle> <paired-delta-bundle> --slug <slug> --title "<title>" --reported-at <RFC3339-UTC>
